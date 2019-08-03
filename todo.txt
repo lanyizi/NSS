@@ -1,0 +1,107 @@
+节操的要求：
+管理员：可以设置鉴定员，外加鉴定员的所有权限
+鉴定员：可以上传数据，包括称呼、qq号、等级、鉴定时间、上传的鉴定录像，外加游客的所有权限
+游客：无需登录，可以显示玩家数据，包括玩家的信息是由哪个鉴定员上传的
+
+然后，目前我的想法是这样的，所有数据都通过javascript操作ajax获取，所有POST请求都传递json（这样使用javascript传递数据更加方便，只需要把一个object塞进request里就行，见https://stackoverflow.com/a/39565776/4399840），任何请求返回的数据也都是json
+
+POST /nss.php?do=login 
+<- POST数据：
+{
+    'username': 'USERNAME',
+    'password': 'PASSWORD'
+}
+-> 返回：
+{
+    'token' : '一个token，用来当作之后的凭据' 
+    //token还可以由javascript保存到cookie里，这样一旦记住，就不需要再登录，见 https://stackoverflow.com/a/4825695/4399840
+}
+
+GET /nss.php?do=accesslevel&token=TOKEN
+-> 返回：
+{
+    'level': 0, //目前token的权限（2管理员，1鉴定员，0游客），假如返回的是0，那么在网页上显示登录界面，否则显示已登录
+    'username': '当前登录的人的名称（假如不是游客的话）'
+}
+
+GET /nss.php?do=list-judgers
+-> 返回列表：
+[
+    {
+        'name': '鉴定员名称',
+        'description': '鉴定员的一些信息'
+    },
+    {
+        ....
+    }
+]
+
+POST /nss.php?do=set-judger
+<- POST数据：
+{
+    'name': '鉴定员名称',
+    'description': '鉴定员的一些信息',
+    'token': '管理员自己的token'
+}
+-> 返回：
+{
+    'result': true, // 设置鉴定员的结果，true或者false
+    'message': '消息提示，比如说“设置成功”'
+}
+
+GET /nss.php?do=list-players
+-> 返回被鉴定的玩家列表
+{
+    'name': '玩家名称',
+    'nickname': '玩家称呼（可选）', // 你可以用 if(data[0].nickname) { (有) } else { (没有) } 来检测到底有没有称呼
+    'level': 7 // 级别，使用数字
+    'qq': 'QQ号',
+    'judgedate': 1564863390, //鉴定时间，使用UNIX时间戳，比如你可以这样在javascript里获取日期： date = new Date(data[0].judgedate * 1000)
+    'faction': '主阵营',
+    'replaylinks': ['鉴定录像1下载链接'，'鉴定录像2下载链接（假如有的话）', ...],
+    'description': '说明（假如有的话）'
+}
+
+POST /nss.php?do=judge-player
+<- POST数据：
+{
+    'token': '鉴定员或管理员的token',
+    'name': '玩家名称',
+    'nickname': '玩家称呼（可选，假如没有称呼则为空字符串或者null）',
+    'level': 7. // 级别，使用数字
+    'qq': 'QQ号',
+    'judgedate': 1564863390, //鉴定时间，使用UNIX时间戳，你可以把默认值设为当前时间，即 Math.floor(Date.now() / 1000)
+    'faction': '主阵营',
+    'replaylinks': ['鉴定录像1下载链接'，'鉴定录像2下载链接（假如有的话）', ...],
+    'description': '说明（假如有的话）'
+}
+-> 返回：
+{
+    'result': true, // 设置玩家的结果，true或者false
+    'message': '消息提示，比如说“设置成功”'
+}
+
+POST /nss.php?do=remove-player
+<- POST数据：
+{
+    'token': '鉴定员或管理员的token',
+    'name': '玩家名称'
+}
+-> 返回：
+{
+    'result': true, // 删除玩家的结果，true或者false
+    'message': '消息提示，比如说“删除成功”'
+}
+
+POST /nss.php?do=upload-replay
+<- POST数据：
+{
+    'filename': '录像文件名',
+    'data': '录像数据，用btoa()函数把录像文件数据编码为Base64字符串'
+    // 关于如何读取文件，可以参考https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications
+}
+-> 返回：
+{
+    'link': '被上传的录像的链接，假如上传失败则为null'
+    'message': '消息提示，比如说“上传成功”'
+}
