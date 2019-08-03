@@ -25,6 +25,7 @@ GET /nss.php?do=accesslevel&token=TOKEN
 -> 返回：
 {
     'level': 0, //目前token的权限（2管理员，1鉴定员，0游客），假如返回的是0，那么在网页上显示登录界面，否则显示已登录
+    // 假如token无效，或是没有定义token（比如nss.php?do=accesslevel&token=null或者nss.php?do=accesslevel），那么就视为游客
     'username': '当前登录的人的名称（假如不是游客的话）'
 }
 
