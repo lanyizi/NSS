@@ -7,6 +7,8 @@
 
 然后，目前我的想法是这样的，所有数据都通过javascript操作ajax获取，所有POST请求都传递json（这样使用javascript传递数据更加方便，只需要把一个object塞进request里就行，见https://stackoverflow.com/a/39565776/4399840），任何请求返回的数据也都是json
 
+【注：以下任何API在内部出错的情况下都会返回null，并把状态码设为500】
+
 POST /nss.php?do=login 
 <- POST数据：
 {
@@ -15,7 +17,7 @@ POST /nss.php?do=login
 }
 -> 返回：
 {
-    'token' : '一个token，用来当作之后的凭据' 
+    'token': '一个token，用来当作之后的凭据',
     //token还可以由javascript保存到cookie里，这样一旦记住，就不需要再登录，见 https://stackoverflow.com/a/4825695/4399840
 }
 
@@ -38,12 +40,13 @@ GET /nss.php?do=list-judgers
     }
 ]
 
-POST /nss.php?do=set-judger
+POST /nss.php?do=set-judger // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
 <- POST数据：
 {
+    'token': '管理员自己的token',
     'name': '鉴定员名称',
-    'description': '鉴定员的一些信息',
-    'token': '管理员自己的token'
+    'password': '鉴定员的密码',
+    'description': '鉴定员的一些信息'
 }
 -> 返回：
 {
