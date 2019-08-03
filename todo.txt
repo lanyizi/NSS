@@ -41,10 +41,10 @@ GET /nss.php?do=list-judgers
 POST /nss.php?do=set-judger // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
 <- POST数据：
 {
+    'token': '管理员自己的token',
     'name': '鉴定员名称',
-    'description': '鉴定员的一些信息',
     'password': '鉴定员的密码',
-    'token': '管理员自己的token'
+    'description': '鉴定员的一些信息'
 }
 -> 返回：
 {
