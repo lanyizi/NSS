@@ -98,7 +98,7 @@ class Auth {
         ];
     
         $admin = $this->verifyToken($token);
-        $adminName = $admin['name'];
+        $adminName = $admin['username'];
         $adminLevel = $admin['accessLevel'];
         if(!($adminLevel > 0)) {
             return $noPrivilegeResult;
