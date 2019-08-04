@@ -77,10 +77,13 @@ class NSS {
     }
 
     public function getJudgers() {
-        return $this->database->select('nss-admins', [
+        $judgers = $this->database->select('nss-admins', [
             'username',
             'description'
         ]);
+        return [
+            'judgers' => $judgers
+        ];
     }
 
     public function setJudger() {
@@ -89,7 +92,16 @@ class NSS {
         $password = $this->input['password'];
         $accessLevel = $this->input['accessLevel'];
         $description = $this->input['description'];
-        return $this->auth->setUser($adminToken, $username, $password, $accessLevel, $description);
+        try {
+            return $this->auth->setUser($adminToken, $username, $password, $accessLevel, $description);
+        }
+        catch(Exception $exception) {
+            $errorMessage = $exception->getMessage();
+            return [
+                'result' => false,
+                'message' => "遇到了内部错误：$errorMessage"
+            ];
+        }
     }
 
     public function getPlayers() {
@@ -114,7 +126,9 @@ class NSS {
             ]);
         }
 
-        return $playerData;
+        return [
+            'players' => $playerData
+        ];
     }
 
     public function judgePlayer() {
@@ -126,20 +140,23 @@ class NSS {
             ];
         }
 
+        $replays = getOrDefault($this->input['replays'], []);
+
         $playerData = [
             'name' => $this->input['name'],
             'nickname' => getOrDefault($this->input['nickname']),
             'level' => $this->input['level'],
             'qq' => $this->input['qq'],
+            'judger' => $access['username'],
             'judgeDate' => $this->input['judgedate'],
             'faction' => $this->input['faction'],
-            'description' => getOrDefault($this->input['nickname'], ''),
+            'description' => getOrDefault($this->input['description'], ''),
+            //录像就直接用JSON字符串保存好了
+            'replays' => json_encode($replays)
         ];
 
-        $replays = getOrDefault($this->input['nickname'], []);
-        
         // 把数据存入数据库
-        $this->database->action(function() {
+        try {
             $id = $this->database->get('nss-players', 'id', [
                 'name' => $this->input['name']
             ]);
@@ -156,17 +173,18 @@ class NSS {
                 $id = $this->database->id();
             }
 
-            foreach($replays as $replay) {
-                $replayData = [
-                    'replay' => $replay,
-                    'player' => $id,
-                ];
-
-                if(!$this->database->has('nss-replays-players', $replayData)) {
-                    $this->database->insert('nss-players',  $replayData);
-                }
-            }
-        });
+            return [
+                'result' => true,
+                'message' => '操作成功'
+            ];
+        }
+        catch(Exception $exception) {
+            $errorMessage = $exception->getMessage();
+            return [
+                'result' => true,
+                'message' => "内部错误：$errorMessage"
+            ];
+        }
     }
 
     public function removePlayer() {
@@ -178,20 +196,53 @@ class NSS {
             ];
         }
 
-        $this->database->delete('nss-players', [
-            'name' => $this->input['name']
-        ]);
+        try {
+            // 删除玩家
+            $this->database->delete('nss-players', [
+                'name' => $this->input['name']
+            ]);
+
+            return [
+                'result' => true,
+                'message' => '操作成功'
+            ];
+        }
+        catch(Exception $exception) {
+            $errorMessage = $exception->getMessage();
+            return [
+                'result' => false,
+                'message' => "遇到了内部错误：$errorMessage"
+            ];
+        }
     }
 
-    /*public function uploadReplay() {
+    public function uploadReplay() {
+        
+        $replayFile = base64_decode($this->input['data']);
+        $replayMagic = 'RA3 REPLAY HEADER';
+        if(substr($replayFile, 0, strlen($replayMagic)) != $replayMagic) {
+            return [
+                'result' => false,
+                'message' => '不是红警3录像文件'
+            ];
+        }
 
-        file_put_contents(base64_decode($this->input['data']))
-        $this->database->
+        $this->database->action(function() {
+            $replayFile = base64_decode($this->input['data']);
 
-        $replayData = [
-            'fileName' => $this->input['fileName']
-        ]
-    }*/
+            
+            
+
+            if($replayFile)
+
+            $replayData = [
+                'fileName' => $this->input['fileName']
+            ];
+            $writeResult = file_put_contents();
+        });
+
+        
+    }
 
 }
 
