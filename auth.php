@@ -10,7 +10,7 @@ class Auth {
     }
 
     // 登录
-    function login($username, $password) {
+    public function login($username, $password) {
         // 默认 token
         $defaultToken = [
             'token' => '0'
@@ -44,7 +44,7 @@ class Auth {
         ];
     }
 
-    function verifyToken($inputToken) {
+    public function verifyToken($inputToken) {
         // 默认身份
         $default = [
             'username' => '游客',
@@ -91,7 +91,7 @@ class Auth {
         ];
     }
 
-    function setUser($token, $username, $password, $accessLevel, $description) {
+    public function setUser($token, $username, $password, $accessLevel, $description) {
         $noPrivilegeResult = [
             'result' => false,
             'message' => '没有权限'
