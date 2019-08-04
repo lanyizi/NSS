@@ -1,129 +1,148 @@
 <?php
-require_once('salts.php');
+require_once('util.php');
 
-function isNullOrEmptyString($str){
-    return (!isset($str) || trim($str) === '');
-}
+class Auth {
 
-function makeToken($database, $username, $password) {
-    if(!isNullOrEmptyString($username) || !isNullOrEmptyString($password)) {
-        return '0';
+    private $database;
+
+    public function __construct($database) {
+        $this->$database = $database;
     }
 
-    $userdata = $database->select('nss-admins', [
-        'passhash'
-    ], [
-        'name' => $username,
-    ]);
+    // 登录
+    function login($username, $password) {
+        // 默认 token
+        $defaultToken = [
+            'token' => '0';
+        ];
 
-    if(sizeof($userdata) == 0) {
-        return '0';
-    }
+        if(!isNullOrEmptyString($username) || !isNullOrEmptyString($password)) {
+            return $defaultToken;
+        }
 
-    $passhash = $userdata[0]['passhash'];
-
-    if(!password_verify($password, $passhash)) {
-        return '0';
-    }
-
-    $salt = openssl_random_pseudo_bytes(16);
-    $tokenpass = hash_pbkdf2('sha256', "$passhash!NSSTOKEN", $salt, 1234);
-    $hexSalt = bin2hex($salt);
-
-    return "$hexSalt|$tokenpass|$username";
-}
-
-function verifyToken($database, $token) {
-    $default = [
-        'name' => '游客',
-        'accessLevel' => 0
-    ];
-
-    if($token == '0') {
-        return $default;
-    }
-
-    $splitted = explode('|', $token, 3);
-    if(sizeof($splitted) != 3) {
-        return $default;
-    }
-
-    $salt = hex2bin($splitted[0]);
-    $tokenpass = $splitted[1];
-    $username = $splitted[2];
-
-    $userdata = $database->select('nss-admins', [
-        'passhash', 'accesslevel'
-    ], [
-        'name' => $username,
-    ]);
-
-    if(sizeof($userdata) == 0) {
-        return $default;
-    }
-
-    $passhash = $userdata[0]['passhash'];
-    $accessLevel = $userdata[0]['accesslevel'];
-    $calculated = hash_pbkdf2('sha256', "$passhash!NSSTOKEN", $salt, 1234);
-    if(!hash_equals($tokenpass, $calculated)) {
-        return $default;
-    }
-
-    return [
-        'name' => $username,
-        'accessLevel' => $accessLevel
-    ];
-}
-
-function setUser($database, $token, $username, $password, $accessLevel, $description) {
-    $noPrivilegeResult = [
-        'result' => false,
-        'message' => '没有权限'
-    ];
-
-    $admin = verifyToken($database, $token);
-    $adminName = $admin['name'];
-    $adminLevel = $admin['accessLevel'];
-    if($adminLevel == 0) {
-        return $noPrivilegeResult;
-    }
-
-    if(($adminName != $username) && ($adminLevel < 2)) {
-        return $noPrivilegeResult;
-    }
-
-    if(($adminName == $username) && ($accessLevel != $adminLevel)) {
-        return $noPrivilegeResult;
-    }
-
-    $existing = $database->select('nss-admins', [
-        'name'
-    ], [
-        'name' => $username
-    ]);
-
-    $newData = [
-        'name' => $username,
-        'password' => password_hash($password, PASSWORD_DEFAULT),
-        'accessLevel' => $accessLevel,
-        'description' => $description,
-        'updated-by' => $adminName,
-        'updated-date' => time()
-    ];
-
-    if(sizeof($existing) == 0) {
-        $database->insert('nss-admins', $newData);
-    }
-    else {
-        $database->replace('nss-admins', $newData, [
-            'name' => $username
+        // 在数据库里查找当前用户名$username对应的密码
+        $passHash = $this->$database->get('nss-admins', 'passHash', [
+            'username' => $username,
         ]);
+
+        // 假如找不到用户，那么返回默认 token
+        if(!isset($passHash)) {
+            return $defaultToken;
+        }
+
+        // 假设密码错误，那么返回默认 token
+        if(!password_verify($password, $passHash)) {
+            return $defaultToken;
+        }
+
+        // 生成一个 token
+        $hexSalt = bin2hex(openssl_random_pseudo_bytes(16));
+        $tokenHash = $this->makeTokenHash($passHash, $hexSalt);
+
+        return [
+            'token' => "$hexSalt|$tokenHash|$username"
+        ];
     }
 
-    return [
-        'result' => true,
-        'message' => '操作成功'
-    ];
+    function verifyToken($inputToken) {
+        // 默认身份
+        $default = [
+            'username' => '游客',
+            'accessLevel' => 0
+        ];
+    
+        if($inputToken == '0') {
+            return $default;
+        }
+    
+        // 重新解析 token，把它分成3部分，salt，hash，username
+        $splitted = explode('|', $inputToken, 3);
+        if(sizeof($splitted) != 3) {
+            return $default;
+        }
+    
+        $hexSalt = $splitted[0];
+        $tokenHash = $splitted[1];
+        $username = $splitted[2];
+
+        $userdata = $this->$database->get('nss-admins', [
+            'passhash', 'accesslevel'
+        ], [
+            'username' => $username,
+        ]);
+    
+        // 假如找不到用户，那么返回默认 token
+        if(!isset($userdata)) {
+            return $default;
+        }
+    
+        $passHash = $userdata['passhash'];
+        $accessLevel = $userdata['accesslevel'];
+        // 计算校验
+        $realHash = $this->makeTokenHash($passHash, $hexSalt);
+        // 假设校验失败，那么返回默认 token
+        if(!hash_equals($realHash, $tokenHash)) {
+            return $default;
+        }
+    
+        return [
+            'username' => $username,
+            'accessLevel' => $accessLevel
+        ];
+    }
+
+    function setUser($token, $username, $password, $accessLevel, $description) {
+        $noPrivilegeResult = [
+            'result' => false,
+            'message' => '没有权限'
+        ];
+    
+        $admin = $this->verifyToken($token);
+        $adminName = $admin['name'];
+        $adminLevel = $admin['accessLevel'];
+        if(!($adminLevel > 0)) {
+            return $noPrivilegeResult;
+        }
+    
+        if(($adminName != $username) && ($adminLevel < 2)) {
+            return $noPrivilegeResult;
+        }
+    
+        if(($adminName == $username) && ($accessLevel != $adminLevel)) {
+            return $noPrivilegeResult;
+        }
+    
+        $newData = [
+            'username' => $username,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
+            'accessLevel' => $accessLevel,
+            'description' => $description,
+            'updated-by' => $adminName,
+            'updated-date' => time()
+        ];
+    
+        if($this->$database->has('nss-admins', [
+            'username' => $username
+        ])) {
+            $this->$database->replace('nss-admins', $newData, [
+                'username' => $username
+            ]);
+        }
+        else {
+            $this->$database->insert('nss-admins', $newData);
+        }
+    
+        return [
+            'result' => true,
+            'message' => '操作成功'
+        ];
+    }
+
+    // 根据密码生成一个 hash
+    private function makeTokenHash($passhash, $hexSalt) {
+        return hash_pbkdf2('sha256', "$passhash!NSSTOKEN", hex2Bin($hexSalt), 1234);
+    }
 }
+
 
 ?>

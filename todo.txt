@@ -21,7 +21,7 @@ POST /nss.php?do=login
     //token还可以由javascript保存到cookie里，这样一旦记住，就不需要再登录，见 https://stackoverflow.com/a/4825695/4399840
 }
 
-GET /nss.php?do=accesslevel&token=TOKEN
+GET /nss.php?do=getAccessLevel&token=TOKEN
 -> 返回：
 {
     'level': 0, //目前token的权限（2管理员，1鉴定员，0游客），假如返回的是0，那么在网页上显示登录界面，否则显示已登录
@@ -29,11 +29,11 @@ GET /nss.php?do=accesslevel&token=TOKEN
     'username': '当前登录的人的名称（假如不是游客的话）'
 }
 
-GET /nss.php?do=list-judgers
+GET /nss.php?do=getJudgers
 -> 返回列表：
 [
     {
-        'name': '鉴定员名称',
+        'username': '鉴定员名称',
         'description': '鉴定员的一些信息'
     },
     {
@@ -41,11 +41,11 @@ GET /nss.php?do=list-judgers
     }
 ]
 
-POST /nss.php?do=set-judger // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
+POST /nss.php?do=setJudger // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
 <- POST数据：
 {
     'token': '管理员自己的token',
-    'name': '鉴定员名称',
+    'username': '鉴定员名称',
     'password': '鉴定员的密码',
     'accessLevel': '鉴定员的权限级别',
     'description': '鉴定员的一些信息'
@@ -56,7 +56,7 @@ POST /nss.php?do=set-judger // 这个主要是用来让管理员设置鉴定员�
     'message': '消息提示，比如说“设置成功”'
 }
 
-GET /nss.php?do=list-players
+GET /nss.php?do=getPlayers
 -> 返回被鉴定的玩家列表
 {
     'name': '玩家名称',
@@ -64,12 +64,13 @@ GET /nss.php?do=list-players
     'level': 7 // 级别，使用数字
     'qq': 'QQ号',
     'judgedate': 1564863390, //鉴定时间，使用UNIX时间戳，比如你可以这样在javascript里获取日期： date = new Date(data[0].judgedate * 1000)
+    'judger': '鉴定员用户名',
     'faction': '主阵营',
-    'replaylinks': ['鉴定录像1下载链接'，'鉴定录像2下载链接（假如有的话）', ...],
+    'replays': ['鉴定录像1的ID'，'鉴定录像2的ID（假如有的话）', ...],
     'description': '说明（假如有的话）'
 }
 
-POST /nss.php?do=judge-player
+POST /nss.php?do=judgePlayer
 <- POST数据：
 {
     'token': '鉴定员或管理员的token',
@@ -79,7 +80,7 @@ POST /nss.php?do=judge-player
     'qq': 'QQ号',
     'judgedate': 1564863390, //鉴定时间，使用UNIX时间戳，你可以把默认值设为当前时间，即 Math.floor(Date.now() / 1000)
     'faction': '主阵营',
-    'replaylinks': ['鉴定录像1下载链接'，'鉴定录像2下载链接（假如有的话）', ...],
+    'replays': ['鉴定录像1的ID'，'鉴定录像2的ID（假如有的话）', ...],
     'description': '说明（假如有的话）'
 }
 -> 返回：
@@ -88,7 +89,7 @@ POST /nss.php?do=judge-player
     'message': '消息提示，比如说“设置成功”'
 }
 
-POST /nss.php?do=remove-player
+POST /nss.php?do=removePlayer
 <- POST数据：
 {
     'token': '鉴定员或管理员的token',
@@ -100,7 +101,7 @@ POST /nss.php?do=remove-player
     'message': '消息提示，比如说“删除成功”'
 }
 
-POST /nss.php?do=upload-replay
+POST /nss.php?do=uploadReplay
 <- POST数据：
 {
     'filename': '录像文件名',
@@ -109,6 +110,17 @@ POST /nss.php?do=upload-replay
 }
 -> 返回：
 {
-    'link': '被上传的录像的链接，假如上传失败则为null'
+    'id': '被上传的录像的ID，假如上传失败则为null'
     'message': '消息提示，比如说“上传成功”'
+}
+
+POST /nss.php?do=removeReplay
+<- POST数据：
+{
+    'id': '要删除的录像ID',
+}
+-> 返回：
+{
+    'result': true // 删除录像的结果，true或者false
+    'message': '消息提示，比如说“删除成功”'
 }
