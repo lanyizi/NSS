@@ -77,11 +77,11 @@ class NSS {
     }
 
     public function setJudger() {
-        $adminToken = $this->input('token');
-        $username = $this->input('username');
-        $password = $this->input('password');
-        $accessLevel = $this->input('accessLevel');
-        $description = $this->input('description');
+        $adminToken = $this->input['token'];
+        $username = $this->input['username'];
+        $password = $this->input['password'];
+        $accessLevel = $this->input['accessLevel'];
+        $description = $this->input['description'];
         return $this->auth->setUser($adminToken, $username, $password, $accessLevel, $description);
     }
 
@@ -92,7 +92,7 @@ class NSS {
             'name',
             'level',
             'qq',
-            'judgedate',
+            'judgeDate',
             'judger',
             'faction',
             'description'
@@ -124,7 +124,7 @@ class NSS {
             'nickname' => getOrDefault($this->input['nickname']),
             'level' => $this->input['level'],
             'qq' => $this->input['qq'],
-            'judgedate' => $this->input['judgedate'],
+            'judgeDate' => $this->input['judgedate'],
             'faction' => $this->input['faction'],
             'description' => getOrDefault($this->input['nickname'], ''),
         ];
@@ -175,6 +175,16 @@ class NSS {
             'name' => $this->input['name']
         ]);
     }
+
+    /*public function uploadReplay() {
+
+        file_put_contents(base64_decode($this->input['data']))
+        $this->database->
+
+        $replayData = [
+            'fileName' => $this->input['fileName']
+        ]
+    }*/
 
 }
 
