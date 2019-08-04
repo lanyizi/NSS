@@ -116,7 +116,7 @@ class NSS {
             return [
                 'result' => false,
                 'message' => '没有权限'
-            ]
+            ];
         }
 
         $playerData = [
@@ -168,15 +168,13 @@ class NSS {
             return [
                 'result' => false,
                 'message' => '没有权限'
-            ]
+            ];
         }
 
         $this->$database->delete('nss-players', [
             'name' => $this->$input['name']
         ]);
     }
-
-
 
 }
 
