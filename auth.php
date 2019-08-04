@@ -13,7 +13,7 @@ class Auth {
     function login($username, $password) {
         // 默认 token
         $defaultToken = [
-            'token' => '0';
+            'token' => '0'
         ];
 
         if(!isNullOrEmptyString($username) || !isNullOrEmptyString($password)) {
