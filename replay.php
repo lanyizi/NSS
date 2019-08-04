@@ -30,10 +30,10 @@ class RA3Replay {
         }
 
         $index += 38;
-        $timeStamp = unpack('V', substr($replayData, $index, 4)); // 时间戳
+        $timeStamp = unpack('Vvalue', substr($replayData, $index, 4))['value']; // 时间戳
         $index += 4;
         $index += 31;
-        $headerLength = unpack('V', substr($replayData, $index, 4));
+        $headerLength = unpack('Vvalue', substr($replayData, $index, 4))['value'];
         $index += 4;
         $header = substr($replayData, $index, $headerLength);
 
@@ -66,16 +66,17 @@ class RA3Replay {
 
         $end = false;
         $string == '';
-        do {
+        while($true) {
             $first = $data[$index];
             $second = $data[$index + 1];
-            $end = (ord($first ) == 0) && (ord($second) == 0);
+            $index += 2;
+            if((ord($first ) == 0) && (ord($second) == 0)) {
+                break;
+            }
             // 把这两个字符添加到字符串尾部
             $string .= $first;
             $string .= $second;
-            $index += 2;
         }
-        while(!$end);
 
         return [
             'string' => iconv('utf-16', 'utf-8', $string),
@@ -84,13 +85,19 @@ class RA3Replay {
     }
 }
 
+
+
 $testReplay = $_GET['replay'];
 if(!empty($testReplay)) {
+    header('Content-Type: application/json;charset=utf-8');
+
     echo json_encode(RA3Replay::parseRA3Replay(file_get_contents('23333333333333333333333jcc.RA3Replay')));
-    echo '\r\n<br/>\r\n';
+    echo '\r\n';
     echo json_encode(RA3Replay::parseRA3Replay(file_get_contents('233333333333333333333333jc.RA3Replay')));
-    echo '\r\n<br/>\r\n';
+    echo '\r\n';
     echo json_encode(RA3Replay::parseRA3Replay(file_get_contents('2333333333333333333333333.RA3Replay')));
+    echo '\r\n';
+    echo json_encode(RA3Replay::parseRA3Replay(file_get_contents('jujuka23333333333333333333.RA3Replay')));
 }
 
 ?>
