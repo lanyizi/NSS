@@ -6,7 +6,7 @@ class Auth {
     private $database;
 
     public function __construct($database) {
-        $this->$database = $database;
+        $this->database = $database;
     }
 
     // 登录
@@ -21,7 +21,7 @@ class Auth {
         }
 
         // 在数据库里查找当前用户名$username对应的密码
-        $passHash = $this->$database->get('nss-admins', 'passHash', [
+        $passHash = $this->database->get('nss-admins', 'passHash', [
             'username' => $username,
         ]);
 
@@ -65,7 +65,7 @@ class Auth {
         $tokenHash = $splitted[1];
         $username = $splitted[2];
 
-        $userdata = $this->$database->get('nss-admins', [
+        $userdata = $this->database->get('nss-admins', [
             'passhash', 'accesslevel'
         ], [
             'username' => $username,
@@ -121,15 +121,15 @@ class Auth {
             'updated-date' => time()
         ];
     
-        if($this->$database->has('nss-admins', [
+        if($this->database->has('nss-admins', [
             'username' => $username
         ])) {
-            $this->$database->replace('nss-admins', $newData, [
+            $this->database->replace('nss-admins', $newData, [
                 'username' => $username
             ]);
         }
         else {
-            $this->$database->insert('nss-admins', $newData);
+            $this->database->insert('nss-admins', $newData);
         }
     
         return [
