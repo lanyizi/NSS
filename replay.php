@@ -11,7 +11,7 @@ class RA3Replay {
         // 是否是遭遇战
         $skirmishFlag = ord($replayData[$magicLength]);
     
-        $index = $magicLength + 18;
+        $index = $magicLength + 19;
         $index = self::readUTF16String($replayData, $index)['newIndex']; // 跳过
         $index = self::readUTF16String($replayData, $index)['newIndex']; // 跳过
         $mapNameHolder = self::readUTF16String($replayData, $index); // 地图名称
