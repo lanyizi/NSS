@@ -67,7 +67,7 @@ class RA3Replay {
 
         $end = false;
         $string == '';
-        while($true) {
+        while(true) {
             $first = $data[$index];
             $second = $data[$index + 1];
             $index += 2;
