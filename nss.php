@@ -1,6 +1,7 @@
 <?php
 require_once('Medoo-master/src/Medoo.php');
 require_once('auth.php');
+require_once('util.php');
 
 use Medoo\Medoo;
 
@@ -21,7 +22,7 @@ function main() {
 
         $nss = new NSS($input, $database);
         // 执行请求
-        $nss->do($_GET['do']);
+        $nss->doAction($_GET['do']);
     }
     catch(Exception $exception) {
         http_response_code(500);
@@ -42,7 +43,7 @@ class NSS {
     }
 
     // 根据 what 的值，调用不同的方法
-    public function do($what) {
+    public function doAction($what) {
         if(!method_exists($this, $what)) {
             http_response_code(400);
             return null;
@@ -176,7 +177,7 @@ class NSS {
     }
 
 
-    
+
 }
 
 echo json_encode(main());
