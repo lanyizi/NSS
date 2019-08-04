@@ -216,7 +216,7 @@ class NSS {
         }
     }
 
-    public function uploadReplay() {
+    /*public function uploadReplay() {
         
         $replayFile = base64_decode($this->input['data']);
         $replayMagic = 'RA3 REPLAY HEADER';
@@ -242,7 +242,7 @@ class NSS {
         });
 
         
-    }
+    }*/
 
 }
 
