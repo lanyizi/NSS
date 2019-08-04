@@ -1,6 +1,14 @@
 <?php
 
 class RA3Replay {
+    // 返回一些比较重要的数据：
+    // [
+    //     'fileSize' => 录像文件大小,
+    //     'mapName' => '地图名称',
+    //     'mapPath' => '地图路径',
+    //     'timeStamp' => '录像时间戳',
+    //     'players' => [ '玩家列表' ]
+    // ]
     public static function parseRA3Replay($replayData) {
         $replayMagic = 'RA3 REPLAY HEADER';
         $magicLength = strlen($replayMagic);
