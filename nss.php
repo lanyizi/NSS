@@ -18,6 +18,8 @@ function main() {
             'server' => 'localhost',
             'username' => 'lanyi',
             'password' => '',
+            'charset' => 'utf8mb4',
+	        'collation' => 'utf8mb4_general_ci',
             'option' => [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ],
