@@ -10,6 +10,11 @@ function main() {
         // 表明返回的数据是 json
         header('Content-Type: application/json;charset=utf-8');
 
+        // 强制 https
+        if($_SERVER["HTTPS"] != "on") {
+            return null;
+        }
+
         $input = json_decode(file_get_contents('php://input'), true);
         $database = new Medoo([
             // required
