@@ -30,10 +30,10 @@ class RA3Replay {
         }
 
         $index += 38;
-        $timeStamp = unpack('Vvalue', substr($replayData, $index, 4))['value']; // 时间戳
+        $timeStamp = unpack('V', substr($replayData, $index, 4))[1]; // 时间戳
         $index += 4;
         $index += 31;
-        $headerLength = unpack('Vvalue', substr($replayData, $index, 4))['value'];
+        $headerLength = unpack('V', substr($replayData, $index, 4))[1];
         $index += 4;
         $header = substr($replayData, $index, $headerLength);
 
@@ -57,7 +57,8 @@ class RA3Replay {
             'mapName' => $mapName,
             'mapPath' => $mapPath,
             'timeStamp' => $timeStamp,
-            'players' => $players
+            'players' => $players,
+            'header' => $header,
         ];
     }
 
