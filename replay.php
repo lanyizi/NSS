@@ -92,19 +92,4 @@ class RA3Replay {
     }
 }
 
-
-
-$testReplay = $_GET['replay'];
-if(!empty($testReplay)) {
-    header('Content-Type: application/json;charset=utf-8');
-
-    echo json_encode(RA3Replay::parseRA3Replay(file_get_contents('23333333333333333333333jcc.RA3Replay')));
-    echo '\r\n';
-    echo json_encode(RA3Replay::parseRA3Replay(file_get_contents('233333333333333333333333jc.RA3Replay')));
-    echo '\r\n';
-    echo json_encode(RA3Replay::parseRA3Replay(file_get_contents('2333333333333333333333333.RA3Replay')));
-    echo '\r\n';
-    echo json_encode(RA3Replay::parseRA3Replay(file_get_contents('jujuka23333333333333333333.RA3Replay')));
-}
-
 ?>
