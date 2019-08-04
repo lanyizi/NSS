@@ -64,6 +64,7 @@ GET /nss.php?do=list-players
     'level': 7 // 级别，使用数字
     'qq': 'QQ号',
     'judgedate': 1564863390, //鉴定时间，使用UNIX时间戳，比如你可以这样在javascript里获取日期： date = new Date(data[0].judgedate * 1000)
+    'judger': '鉴定员',
     'faction': '主阵营',
     'replaylinks': ['鉴定录像1下载链接'，'鉴定录像2下载链接（假如有的话）', ...],
     'description': '说明（假如有的话）'
