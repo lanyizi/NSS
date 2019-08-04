@@ -50,8 +50,8 @@ class Auth {
             'username' => '游客',
             'accessLevel' => 0
         ];
-    
-        if($inputToken == '0') {
+
+        if(empty($inputToken)) {
             return $default;
         }
     
