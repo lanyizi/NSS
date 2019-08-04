@@ -16,7 +16,7 @@ class Auth {
             'token' => '0'
         ];
 
-        if(!isNullOrEmptyString($username) || !isNullOrEmptyString($password)) {
+        if(isNullOrEmptyString($username) || isNullOrEmptyString($password)) {
             return $defaultToken;
         }
 
