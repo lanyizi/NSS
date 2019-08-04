@@ -22,7 +22,7 @@ function main() {
 
         $nss = new NSS($input, $database);
         // 执行请求
-        $nss->doAction($_GET['do']);
+        return $nss->doAction($_GET['do']);
     }
     catch(Exception $exception) {
         http_response_code(500);
