@@ -10,7 +10,7 @@ function main() {
         // 表明返回的数据是 json
         header('Content-Type: application/json;charset=utf-8');
 
-        input = json_decode(file_get_contents('php://input'));
+        $input = json_decode(file_get_contents('php://input'));
         $database = new Medoo([
             // required
             'database_type' => 'mysql',
@@ -36,8 +36,8 @@ class NSS {
     private $input;
     private $auth;
 
-    public function __construct(input, $database) {
-        $this->input = input;
+    public function __construct($input, $database) {
+        $this->input = $input;
         $this->database = $database;
         $this->auth = new Auth($this->database);
     }
