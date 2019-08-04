@@ -63,7 +63,7 @@ GET /nss.php?do=getPlayers 【已实现】
     'nickname': '玩家称呼（可选）', // 你可以用 if(data[0].nickname) { (有) } else { (没有) } 来检测到底有没有称呼
     'level': 7 // 级别，使用数字
     'qq': 'QQ号',
-    'judgedate': 1564863390, //鉴定时间，使用UNIX时间戳，比如你可以这样在javascript里获取日期： date = new Date(data[0].judgedate * 1000)
+    'judgeDate': 1564863390, //鉴定时间，使用UNIX时间戳，比如你可以这样在javascript里获取日期： date = new Date(data[0].judgedate * 1000)
     'judger': '鉴定员用户名',
     'faction': '主阵营',
     'replays': ['鉴定录像1的ID'，'鉴定录像2的ID（假如有的话）', ...],
@@ -78,7 +78,7 @@ POST /nss.php?do=judgePlayer 【已实现】
     'nickname': '玩家称呼（可选，假如没有称呼则为空字符串或者null）',
     'level': 7. // 级别，使用数字
     'qq': 'QQ号',
-    'judgedate': 1564863390, //鉴定时间，使用UNIX时间戳，你可以把默认值设为当前时间，即 Math.floor(Date.now() / 1000)
+    'judgeDate': 1564863390, //鉴定时间，使用UNIX时间戳，你可以把默认值设为当前时间，即 Math.floor(Date.now() / 1000)
     'faction': '主阵营',
     'replays': ['鉴定录像1的ID'，'鉴定录像2的ID（假如有的话）', ...],
     'description': '说明（假如有的话）'
@@ -104,7 +104,7 @@ POST /nss.php?do=removePlayer 【已实现】
 POST /nss.php?do=uploadReplay
 <- POST数据：
 {
-    'filename': '录像文件名',
+    'fileName': '录像文件名',
     'data': '录像数据，用btoa()函数把录像文件数据编码为Base64字符串'
     // 关于如何读取文件，可以参考https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications
 }
