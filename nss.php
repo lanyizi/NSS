@@ -31,7 +31,9 @@ function main() {
     }
     catch(Exception $exception) {
         http_response_code(500);
-        return $exception->getMessage();
+        return [
+            'exception' => $exception->getMessage()
+        ];
     }
 }
 
