@@ -11,7 +11,7 @@ class RA3Replay {
         // 是否是遭遇战
         $skirmishFlag = ord($replayData[$magicLength]);
     
-        $index = $magicLength + 19;
+        $index = $magicLength + 18;
         $index = self::readUTF16String($replayData, $index)['newIndex']; // 跳过
         $index = self::readUTF16String($replayData, $index)['newIndex']; // 跳过
         $mapNameHolder = self::readUTF16String($replayData, $index); // 地图名称
@@ -65,13 +65,12 @@ class RA3Replay {
     // 返回：['string' => '读取的字符串', 'newIndex' => 读取到的位置]
     private static function readUTF16String($data, $index) {
 
-        $end = false;
         $string == '';
         while(true) {
             $first = $data[$index];
             $second = $data[$index + 1];
             $index += 2;
-            if((ord($first ) == 0) && (ord($second) == 0)) {
+            if((ord($first) == 0) && (ord($second) == 0)) {
                 break;
             }
             // 把这两个字符添加到字符串尾部
