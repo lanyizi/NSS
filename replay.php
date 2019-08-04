@@ -37,7 +37,7 @@ class RA3Replay {
         $index += 4;
         $header = substr($replayData, $index, $headerLength);
 
-        $chunks = array_chunk(preg_split('/(=|;)/', $header), 2);
+        $chunks = array_chunk(preg_split('/(=|;)/', $header, -1, PREG_SPLIT_NO_EMPTY), 2);
         $array = array_combine(array_column($chunks, 0), array_column($chunks, 1));
         $mapPath = substr($array['M'], 3); // 地图路径
         $playerArray = explode(':', $array['S']);
@@ -58,7 +58,6 @@ class RA3Replay {
             'mapPath' => $mapPath,
             'timeStamp' => $timeStamp,
             'players' => $players,
-            'header' => $header,
         ];
     }
 
