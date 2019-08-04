@@ -114,7 +114,7 @@ class Auth {
     
         $newData = [
             'username' => $username,
-            'password' => password_hash($password, PASSWORD_DEFAULT),
+            'passhash' => password_hash($password, PASSWORD_DEFAULT),
             'accessLevel' => $accessLevel,
             'description' => $description,
             'updated-by' => $adminName,

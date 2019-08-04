@@ -18,6 +18,9 @@ function main() {
             'server' => 'localhost',
             'username' => 'lanyi',
             'password' => '',
+            'option' => [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            ],
         ]);
 
         $nss = new NSS($input, $database);
