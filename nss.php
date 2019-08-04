@@ -20,7 +20,7 @@ function main() {
             'password' => '',
         ]);
 
-        $nss = new NSS(input, $database);
+        $nss = new NSS($input, $database);
         // 执行请求
         $nss->doAction($_GET['do']);
     }
