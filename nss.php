@@ -10,7 +10,7 @@ function main() {
         // 表明返回的数据是 json
         header('Content-Type: application/json;charset=utf-8');
 
-        $input = json_decode(file_get_contents('php://input'));
+        $input = json_decode(file_get_contents('php://input'), true);
         $database = new Medoo([
             // required
             'database_type' => 'mysql',
