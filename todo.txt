@@ -129,6 +129,7 @@ POST /nss.php?do=uploadReplay
 POST /nss.php?do=removeReplay
 <- POST数据：
 {
+    'token': '鉴定员或管理员的token',
     'id': '要删除的录像ID',
 }
 -> 返回：

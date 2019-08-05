@@ -42,11 +42,19 @@ class NSS {
     private $database;
     private $input;
     private $auth;
+    private $replayDirectory;
 
     public function __construct($input, $database) {
         $this->input = $input;
         $this->database = $database;
         $this->auth = new Auth($this->database);
+        $this->replayDirectory = 'uploadedReplays';
+
+        // 假如不存在录像文件夹，那就创建一个
+        if(!is_dir($this->replayDirectory)) {
+            mkdir($this->replayDirectory, 0777, true);
+        }
+        
     }
 
     // 根据 what 的值，调用不同的方法
@@ -114,16 +122,14 @@ class NSS {
             'judgeDate',
             'judger',
             'faction',
-            'description'
+            'description',
+            'replays'
         ]);
 
         foreach($playerData as $index => $player) {
-            // 从数据库获取与玩家关联的录像ID，并把它添加到玩家信息里
-            $playerData[$index]['replays'] = $this->database->select('nss-replays-players', [
-                'replay'
-            ], [
-                'player' => $player['id']
-            ]);
+            // 解析录像列表json，迭代时 $player 本身无法被赋值，
+            // 只好通过 $index 重新访问数组元素
+            $playerData[$index]['replays'] = json_decode($player['replays']);
         }
 
         return [
@@ -182,7 +188,7 @@ class NSS {
             $errorMessage = $exception->getMessage();
             return [
                 'result' => true,
-                'message' => "内部错误：$errorMessage"
+                'message' => "遇到了内部错误：$errorMessage"
             ];
         }
     }
@@ -216,33 +222,83 @@ class NSS {
         }
     }
 
-    /*public function uploadReplay() {
-        
-        $replayFile = base64_decode($this->input['data']);
-        $replayMagic = 'RA3 REPLAY HEADER';
-        if(substr($replayFile, 0, strlen($replayMagic)) != $replayMagic) {
+    public function uploadReplay() {
+        $result = [
+            'id' = null,
+            'message' => '上传成功'
+        ];
+        // 开始一次事务（transaction）
+        $this->database->action(function() use (&$result) {
+            try {
+                $replayFile = base64_decode($this->input['data']);
+                $replayData = RA3Replay::parseRA3Replay($replayFile);
+                $replayData['players'] = json_encode($replayData['players']); // 用JSON来存储玩家数组
+                $replayData['fileName'] = $this->input['fileName'];
+
+                $this->database->insert('nss-replays', $replayData);
+                $result['id'] = $this->database->id();
+                $finalFileName = $this->getFinalReplayName($result['id']);
+                $writeResult = file_put_contents($finalFileName, $replayFile);
+                if(!$writeResult) {
+                    $result['id'] = null;
+                    $result['message'] = '保存录像文件失败';
+                    return false; // 返回 false 会导致事务回滚，之前添加到数据库里的数据也会回滚
+                }
+            }
+            catch(Exception $exception) {
+                $errorMessage = $exception->getMessage();
+                $result['id'] = null;
+                $result['message'] = "遇到了内部错误：$errorMessage";
+                return false;
+            }
+        });
+
+        return $result;
+    }
+
+    public function removeReplay() {
+        $access = $this->auth->verifyToken($this->input['token']);
+        if(!($access['accessLevel'] > 0)) {
             return [
                 'result' => false,
-                'message' => '不是红警3录像文件'
+                'message' => '没有权限'
             ];
         }
 
-        $this->database->action(function() {
-            $replayFile = base64_decode($this->input['data']);
+        $result = [
+            'result' = true,
+            'message' => '删除成功'
+        ];
 
-            
-            
-
-            if($replayFile)
-
-            $replayData = [
-                'fileName' => $this->input['fileName']
-            ];
-            $writeResult = file_put_contents();
+        // 开始一次事务（transaction）
+        $this->database->action(function() use (&$result) {
+            try {
+                $this->database->delete('nss-replays', [
+                    'id' => $this->input['id']
+                ]);
+    
+                $finalFileName = $this->getFinalReplayName($result['id']);
+                $deleteResult = unlink($finalFileName);
+                if(!$deleteResult) {
+                    $result['result'] = false;
+                    $result['message'] = "删除录像失败";
+                    return false;
+                }
+            }
+            catch(Exception $exception) {
+                $errorMessage = $exception->getMessage();
+                $result['result'] = false;
+                $result['message'] = "遇到了内部错误：$errorMessage";
+                return false;
+            }
         });
 
-        
-    }*/
+        return $result;
+    }
+
+    private function getFinalReplayName($id) {
+        return $this->replayDirectory . '/' . $id . '.RA3Replay';
+    }
 
 }
 
