@@ -113,7 +113,7 @@ POST /nss.php?do=removePlayer 【已实现】
     'message': '消息提示，比如说“删除成功”'
 }
 
-POST /nss.php?do=uploadReplay
+POST /nss.php?do=uploadReplay 【已实现】
 <- POST数据：
 {
     'fileName': '录像文件名',
@@ -126,7 +126,7 @@ POST /nss.php?do=uploadReplay
     'message': '消息提示，比如说“上传成功”'
 }
 
-POST /nss.php?do=removeReplay
+POST /nss.php?do=removeReplay 【已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的token',
