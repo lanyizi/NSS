@@ -2,7 +2,7 @@
 require_once('Medoo-master/src/Medoo.php');
 require_once('auth.php');
 require_once('util.php');
-require_once('replay.php')
+require_once('replay.php');
 
 use Medoo\Medoo;
 
