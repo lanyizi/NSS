@@ -69,7 +69,7 @@ function accessLevel() {
         });
 }
 
-function list_judgers() {
+function listJudgers() {
     //TESTONLY!
     alert("111");
     var table = document.getElementById("judgersInfoTable");
