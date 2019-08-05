@@ -71,6 +71,7 @@ function accessLevel() {
 
 function list_judgers() {
     //TESTONLY!
+    alert("111");
     var table = document.getElementById("judgersInfoTable");
 
     //Insert row
@@ -83,6 +84,9 @@ function list_judgers() {
 
     var cellDescription = newRow.insertCell(1)
     cellDescription.innerHTML = "TEST";
+
+    alert("222");
+
     fetch("/nss.php?do=getJudgers")
         .then(res => {
             return res.json();
