@@ -6,13 +6,16 @@
     <script>
         function accessLevel() {
             var existCookie = "0";
-            var allCookie = document.cookie;
+            var allCookie = decodeURIComponent(document.cookie);
             var splitedCookie = allCookie.split(";");
+            alert(splitedCookie);
             for (var i = 0; i < splitedCookie.length; i++) {
                 if (splitedCookie[i].indexOf("token=") == 0) {
                     existCookie = splitedCookie[i].substring(6, splitedCookie[i].length);
                 }
             }
+
+            alert(existCookie);
 
             transdata = {
                 'verifyToken': existCookie
