@@ -1,50 +1,9 @@
 <!DOCTYPE html>
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="nss.js"></script>
 
 <head>
-    <script>
-        function login() {
-            var transdata = {
-                'username': document.getElementById("login_username").value,
-                'password': document.getElementById("login_password").value
-            };
-
-            //temp is a temporary value of feedback
-            fetch("nss.php?do=login", {
-                    method: 'post',
-                    body: JSON.stringify(transdata),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(res => {
-                    return res.json();
-                })
-                .then(feedback => {
-                    if (feedback.token == '0') {
-                        alert("Wrong username or password")
-                        window.location.href = "login_page.html";
-                        return "Login Fail";
-                    }
-                    alert("Login Success")
-                        //Get the time and set for 2 hours access
-                    var date = new Date();
-                    date.setTime(date.getTime() + (2 * 60 * 60 * 1000));
-
-                    //Get token
-
-                    var token = feedback.token;
-
-                    //Set cookie
-                    document.cookie = "token=" + token + "; expires=" + date.toGMTString();
-
-                    //Back to index
-                    window.location.href = "index.html";
-                    return "Login Success";
-                });
-        }
-    </script>
 </head>
 
 <body>
