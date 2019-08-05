@@ -13,7 +13,7 @@ function login(username, password) {
     if (temp = '0') {
         alert("错误的用户名或密码")
         window.location.href = "login_page.html";
-        return "Login Fail";
+        //return "Login Fail";
     }
 
     //Get the time and set for 2 hours access
