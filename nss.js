@@ -1,5 +1,5 @@
 function login() {
-    var transdata = { 'username': username, 'password': password };
+    var transdata = document.getElementById("login_info");
 
     //temp is a temporary value of feedback
     var temp = fetch("/nss.php?do=login", {
