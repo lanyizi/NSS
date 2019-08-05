@@ -75,8 +75,7 @@ function listJudgers() {
     var table = document.getElementById("judgersInfoTable");
 
     //Insert row
-    var rowNum = table.rows.length;
-    var newRow = table.insertRow(rowNum - 1);
+    var newRow = table.insertRow(0);
 
     //Insert cells of the row
     var cellName = newRow.insertCell(0)
