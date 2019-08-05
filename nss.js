@@ -1,8 +1,8 @@
 function login() {
     //Set json
     var transdata = {
-        'username': document.getElementById("login_username").value,
-        'password': document.getElementById("login_password").value
+        'username': document.getElementById("loginUsername").value,
+        'password': document.getElementById("loginPassword").value
     };
 
     //Fetch, show result, and set cookie
@@ -19,7 +19,7 @@ function login() {
         .then(feedback => {
             if (feedback.token == '0') {
                 alert("Wrong username or password")
-                window.location.href = "login_page.html";
+                window.location.href = "login.html";
                 return "Login Fail";
             }
             alert("Login Success")
@@ -41,22 +41,8 @@ function login() {
 }
 
 function accessLevel() {
-    //Set default token
-    var existCookie = "0";
-
-    //Get and decode cookie
-    var allCookie = decodeURIComponent(document.cookie);
-    var splitedCookie = allCookie.split(";");
-
-    //Find cookie "token"
-    for (var i = 0; i < splitedCookie.length; i++) {
-        if (splitedCookie[i].indexOf("token=") == 0) {
-            existCookie = splitedCookie[i].substring(6, splitedCookie[i].length);
-        }
-    }
-
     //Fetch, and change html
-    fetch("nss.php?do=getAccessLevel&token=" + existCookie)
+    fetch("nss.php?do=getAccessLevel&token=" + getLocalToken())
         .then(res => {
             return res.json();
         })
@@ -91,9 +77,55 @@ function listJudgers() {
         });
 }
 
-// function set_judgers() {
+function setJudgers() {
+    //Set json
+    transdata = {
+        'token': getLocalToken(),
+        'username': document.getElementById("setUsername").value,
+        'password': document.getElementById("setPassword").value,
+        'accessLevel': document.getElementById("accessLevel").value,
+        'description': document.getElementById("description").value
+    }
 
-// }
+    fetch("nss.php?do=setJudger", {
+            method: 'post',
+            body: JSON.stringify(transdata),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            return res.json;
+        })
+        .then(feedback => {
+            if (feedback.result) {
+                alert("Set success")
+                window.location.href = "adminControl.html";
+                return "Set success";
+            }
+            alert("Set failed");
+            window.location.href = "adminControl.html";
+            return "Set failed";
+        });
+}
+
+function getLocalToken() {
+    //Set default token
+    var token = "0";
+
+    //Get and decode cookie
+    var allCookie = decodeURIComponent(document.cookie);
+    var splitedCookie = allCookie.split(";");
+
+    //Find cookie "token"
+    for (var i = 0; i < splitedCookie.length; i++) {
+        if (splitedCookie[i].indexOf("token=") == 0) {
+            token = splitedCookie[i].substring(6, splitedCookie[i].length);
+        }
+    }
+
+    return token
+}
 
 // function list_players(token, name, password, accesslevel, description) {
 
