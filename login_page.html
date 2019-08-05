@@ -18,11 +18,10 @@
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(res => res.json())
-                .then(data => data);
+                .then(res => res.json());
 
             alert("1111");
-            alert(feedback);
+            alert(await feedback);
             //If not pass
             if (feedback.Token == '0') {
                 alert("Wrong username or password")
