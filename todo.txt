@@ -9,7 +9,7 @@
 
 【注：以下任何API在内部出错的情况下都会返回null，并把状态码设为500】
 
-POST /nss.php?do=login 【已实现】
+POST /nss.php?do=login 【后端已实现】【前端已实现】
 <- POST数据：
 {
     'username': 'USERNAME',
@@ -21,7 +21,7 @@ POST /nss.php?do=login 【已实现】
     //token还可以由javascript保存到cookie里，这样一旦记住，就不需要再登录，见 https://stackoverflow.com/a/4825695/4399840
 }
 
-GET /nss.php?do=getAccessLevel&token=TOKEN 【已实现】
+GET /nss.php?do=getAccessLevel&token=TOKEN 【后端已实现】【前端已实现】
 -> 返回：
 {
     'level': 0, //目前token的权限（2管理员，1鉴定员，0游客），假如返回的是0，那么在网页上显示登录界面，否则显示已登录
@@ -29,7 +29,7 @@ GET /nss.php?do=getAccessLevel&token=TOKEN 【已实现】
     'username': '当前登录的人的名称（假如不是游客的话）'
 }
 
-GET /nss.php?do=getJudgers 【已实现】
+GET /nss.php?do=getJudgers 【后端已实现】
 -> 返回：
 {
     'judgers' : // judgers 是一个数组
@@ -45,7 +45,7 @@ GET /nss.php?do=getJudgers 【已实现】
 }
 
 
-POST /nss.php?do=setJudger 【已实现】 // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
+POST /nss.php?do=setJudger 【后端已实现】 // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
 <- POST数据：
 {
     'token': '管理员自己的token',
@@ -60,7 +60,7 @@ POST /nss.php?do=setJudger 【已实现】 // 这个主要是用来让管理员�
     'message': '消息提示，比如说“设置成功”'
 }
 
-GET /nss.php?do=getPlayers 【已实现】
+GET /nss.php?do=getPlayers 【后端已实现】
 -> 返回被鉴定的玩家列表
 {
     'players': // players 是一个数组
@@ -82,7 +82,7 @@ GET /nss.php?do=getPlayers 【已实现】
     ]
 }
 
-POST /nss.php?do=judgePlayer 【已实现】
+POST /nss.php?do=judgePlayer 【后端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的token',
@@ -101,7 +101,7 @@ POST /nss.php?do=judgePlayer 【已实现】
     'message': '消息提示，比如说“设置成功”'
 }
 
-POST /nss.php?do=removePlayer 【已实现】
+POST /nss.php?do=removePlayer 【后端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的token',
@@ -113,7 +113,7 @@ POST /nss.php?do=removePlayer 【已实现】
     'message': '消息提示，比如说“删除成功”'
 }
 
-POST /nss.php?do=uploadReplay 【已实现】
+POST /nss.php?do=uploadReplay 【后端已实现】
 <- POST数据：
 {
     'fileName': '录像文件名',
@@ -126,7 +126,7 @@ POST /nss.php?do=uploadReplay 【已实现】
     'message': '消息提示，比如说“上传成功”'
 }
 
-POST /nss.php?do=removeReplay 【已实现】
+POST /nss.php?do=removeReplay 【后端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的token',
