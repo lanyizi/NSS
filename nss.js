@@ -13,7 +13,7 @@ function login(username, password) {
     if (temp = '0') {
         alert("错误的用户名或密码")
         window.location.href = "login_page.html";
-        return '0';
+        return "Login Fail";
     }
 
     //Get the time and set for 2 hours access
@@ -27,33 +27,33 @@ function login(username, password) {
     //Set cookie
     document.cookie = "Token=" + token + "; expires=" + date.toGMTString();
 
-    return token;
+    return "Login Success";
 }
 
-function accesslevel() {
+// function accesslevel() {
 
-}
+// }
 
-function list_judgers() {
+// function list_judgers() {
 
-}
+// }
 
-function set_judgers() {
+// function set_judgers() {
 
-}
+// }
 
-function list_players(token, name, password, accesslevel, description) {
+// function list_players(token, name, password, accesslevel, description) {
 
-}
+// }
 
-function judge_player(token, name, nickname, level, qq, judgedate, faction, replaylinks, description) {
+// function judge_player(token, name, nickname, level, qq, judgedate, faction, replaylinks, description) {
 
-}
+// }
 
-function remove_player(token, name) {
+// function remove_player(token, name) {
 
-}
+// }
 
-function upload_replay(filename, data) {
+// function upload_replay(filename, data) {
 
-}
+// }
