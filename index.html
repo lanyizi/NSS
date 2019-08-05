@@ -1,34 +1,13 @@
 <!DOCTYPE html>
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="nss.js"></script>
 
 <head>
     <script>
-        function accessLevel() {
-            var existCookie = "0";
-            var allCookie = decodeURIComponent(document.cookie);
-            var splitedCookie = allCookie.split(";");
-            for (var i = 0; i < splitedCookie.length; i++) {
-                if (splitedCookie[i].indexOf("token=") == 0) {
-                    existCookie = splitedCookie[i].substring(6, splitedCookie[i].length);
-                }
-            }
-
-            fetch("nss.php?do=getAccessLevel&token=" + existCookie)
-                .then(res => {
-                    return res.json();
-                })
-                .then(feedback => {
-                    document.getElementById("showUsername").innerHTML = feedback.username;
-                    document.getElementById('toLoginPage').style.visibility = 'hidden';
-                    if (feedback.accessLevel == 0) {
-                        document.getElementById('toLoginPage').style.visibility = 'visible';
-                    }
-                });
-        }
-
         accessLevel();
     </script>
+
 </head>
 
 <body>

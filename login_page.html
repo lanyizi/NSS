@@ -39,6 +39,8 @@
                     //Set cookie
                     document.cookie = "token=" + token + "; expires=" + date.toGMTString();
 
+                    //Back to index
+                    window.location.href = "index.html";
                     return "Login Success";
                 });
         }
