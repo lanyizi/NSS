@@ -1,31 +1,52 @@
 <!DOCTYPE html>
 <html>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script src="nss.js"></script>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <!-- 引用Vue.js -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="nss.js"></script>
+        <!--
+            这两个函数调用，我们也移到vue里调用吧
+            <script>
+                accessLevel();
+                listJudgers();
+            </script>
+        -->
+    </head>
+    <body>
+        Hello, World!
+        <div id="nss">
+            <!-- 在vue里，可以使用 v-if 来控制元素是否显示 -->
+            <!-- 比如说只在 accessLevel == 0 的情况下显示这个元素 -->
+            <div id="loginStatus" v-if="accessLevel == 0">
+                <p id="showUsername"></p>
+                <a href="login.html" id="toLoginPage">Login</a>
+            </div>
 
-<head>
-    <script>
-        accessLevel();
-        listJudgers();
-    </script>
-</head>
+            <div id="judgersInfo">
+                <table border="1" id="judgersInfoTable">
+                    <tr>
+                        <td>鉴定员名称</td>
+                        <td>个人信息</td>
+                    </tr>
+                </table>
+                
+                <table id="judgersInfoTable">
+                    <thead>
+                        <th>鉴定员名称</th>
+                        <th>个人信息</th>
+                    </thead>
+                    <!-- Vue 可以让数据很容易地与html元素绑定 -->
+                    <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
+                    <!-- judgers 就是 vue data 里面的那个judgers数组 -->
+                    <tr v-for="row in judgers">
+                        <td>{{ row.username }}</td>
+                        <td>{{ row.username }}</td>
+                    </tr>
+                </table>
+                
+            </div>
+        </div>
 
-<body>
-    Hello, World!
-
-    <div id="loginStatus">
-        <p id="showUsername"></p>
-        <a href="login.html" id="toLoginPage">Login</a>
-    </div>
-
-    <div id="judgersInfo">
-        <table border="1" id="judgersInfoTable">
-            <tr>
-                <td>鉴定员名称</td>
-                <td>个人信息</td>
-            </tr>
-        </table>
-    </div>
-</body>
-
+    </body>
 </html>

@@ -1,3 +1,16 @@
+// 创建一个vue实例
+let nss = new Vue({
+    el: '#nss', // 与vue关联的元素是html里id为nss的那个div
+    data: { // 数据
+        accessLevel: 0,
+        judgers: [], // 一开始，鉴定员列表是个空数组
+    },
+    mounted: function () { // mounted 会在vue实例被挂载后被调用
+        accessLevel();
+        listJudgers();
+    },
+});
+
 function login() {
     //Set json
     var transdata = {
