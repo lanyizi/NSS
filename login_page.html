@@ -5,7 +5,10 @@
 <head>
     <script>
         function login() {
-            var transdata = document.getElementById("login_info");
+            var transdata = {
+                'username': document.getElementById("login_username"),
+                'password': document.getElementById("login_password")
+            };
 
             //temp is a temporary value of feedback
             var temp = fetch("/nss.php?do=login", {
@@ -43,9 +46,9 @@
 <body>
     <form action="" method="POST" id="login_info" onsubmit="login()">
         Username:<br>
-        <input type="text" name="username" value="">
+        <input type="text" name="username" value="" id="login_username">
         <br> Password:<br>
-        <input type="password" name="password" value="">
+        <input type="password" name="password" value="" id="login_password">
         <br><br>
         <input type="submit" value="Submit">
     </form>
