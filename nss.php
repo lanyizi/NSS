@@ -2,6 +2,7 @@
 require_once('Medoo-master/src/Medoo.php');
 require_once('auth.php');
 require_once('util.php');
+require_once('replay.php')
 
 use Medoo\Medoo;
 
@@ -224,7 +225,7 @@ class NSS {
 
     public function uploadReplay() {
         $result = [
-            'id' = null,
+            'id' => null,
             'message' => '上传成功'
         ];
         // 开始一次事务（transaction）
@@ -266,7 +267,7 @@ class NSS {
         }
 
         $result = [
-            'result' = true,
+            'result' => true,
             'message' => '删除成功'
         ];
 
