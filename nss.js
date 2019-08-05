@@ -70,34 +70,25 @@ function accessLevel() {
 }
 
 function listJudgers() {
-    var table = document.getElementById("judgersInfoTable");
-    var newRow = table.insertRow(0);
+    fetch("nss.php?do=getJudgers")
+        .then(res => {
+            return res.json();
+        })
+        .then(feedback => {
+            for (var i = 0; i < feedback.judgers.length; i++) {
+                var table = document.getElementById("judgersInfoTable");
 
-    //Insert cells of the row
-    var cellName = newRow.insertCell(0)
-    cellName.innerHTML = "RC";
+                //Insert row
+                var newRow = table.insertRow(i);
 
-    var cellDescription = newRow.insertCell(1)
-    cellDescription.innerHTML = "TEST";
-    // fetch("nss.php?do=getJudgers")
-    //     .then(res => {
-    //         return res.json();
-    //     })
-    //     .then(feedback => {
-    //         for (var i = 0; i < feedback.judgers.length; i++) {
-    //             var table = document.getElementById("judgersInfoTable");
+                //Insert cells of the row
+                var cellName = newRow.insertCell(0)
+                cellName.innerHTML = feedback.judgers[i].username;
 
-    //             //Insert row
-    //             var newRow = table.insertRow(i);
-
-    //             //Insert cells of the row
-    //             var cellName = newRow.insertCell(0)
-    //             cellName.innerHTML = feedback.judgers[i].username;
-
-    //             var cellDescription = newRow.insertCell(1)
-    //             cellDescription.innerHTML = feedback.judgers[i].description;
-    //         }
-    //     });
+                var cellDescription = newRow.insertCell(1)
+                cellDescription.innerHTML = feedback.judgers[i].description;
+            }
+        });
 }
 
 // function set_judgers() {
