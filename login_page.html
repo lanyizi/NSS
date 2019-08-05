@@ -3,12 +3,15 @@
 
 <head>
     <script>
-        alert("aaaaaa")
+        function test() {
+            alert("aaaaaa");
+            return 0;
+        }
     </script>
 </head>
 
 <body>
-    <form action="" method="POST" id="login_info">
+    <form action="" method="POST" id="login_info" onsubmit="test()">
         Username:<br>
         <input type="text" name="username" value="">
         <br> Password:<br>
