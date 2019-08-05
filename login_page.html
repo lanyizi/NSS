@@ -10,6 +10,8 @@
                 'password': document.getElementById("login_password").value
             };
 
+            alert("1111");
+
             //temp is a temporary value of feedback
             var temp = fetch("nss.php?do=login", {
                     method: 'post',
@@ -21,7 +23,6 @@
                 .then(res => res.json());
 
             var feedback = JSON.parse(temp);
-            alert("1111");
             //If not pass
             if (feedback[0] == '0') {
                 alert("Wrong username or password")
