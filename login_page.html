@@ -20,6 +20,8 @@
                 })
                 .then(res => res.json());
 
+            aletr(feedback.token);
+
             //If not pass
             if (feedback.token == '0') {
                 alert("Wrong username or password")
