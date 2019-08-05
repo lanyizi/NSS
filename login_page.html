@@ -6,11 +6,9 @@
     <script>
         function login() {
             var transdata = {
-                'username': document.getElementById("login_username"),
-                'password': document.getElementById("login_password")
+                'username': document.getElementById("login_username").value,
+                'password': document.getElementById("login_password").value
             };
-
-            alert(document.getElementById("login_username").value);
 
             //temp is a temporary value of feedback
             var temp = fetch("/nss.php?do=login", {
