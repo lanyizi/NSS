@@ -3,12 +3,65 @@ let nss = new Vue({
     el: '#nss', // 与vue关联的元素是html里id为nss的那个div
     data: { // 数据
         accessLevel: 0,
+        username: '',
         judgers: [], // 一开始，鉴定员列表是个空数组
+        players: [], // 一开始，玩家列表是个空数组
     },
     mounted: function () { // mounted 会在vue实例被挂载后被调用
-        accessLevel();
+        getAccessLevel();
         listJudgers();
     },
+    methods: { // 在这里放你的Vue实例的所有的方法，
+        // 注意Vue的methods只能是
+        // xxx: function () { ... } 这样子的，
+        // 而不能是 xxx => { ... }，
+        // 因为与前者不同，后者的 'this' 将不会是 Vue 实例
+        // （见 https://vuejs.org/v2/api/#methods ）
+        getAccessLevel: function () {
+            //Get and decode cookie
+            let cookies = new Map(
+                decodeURIComponent(document.cookie)
+                    .split(';') // 按照';'把 cookie 分成一个数组
+                    .map(splitted => splitted.split('=', 2))
+                // 然后按照'='把每个部分再分成两部分
+                // 并把它转换成一个 Map，这时'='左边的部分就是 key
+                // 右边的部分则是 value
+            );
+            
+            // 从 cookies 获取 token 的值，假如没有的话就用"0"作为 token 的值
+            let token = cookies.get('token') || "0";
+
+            //Fetch, and change html
+            fetch("nss.php?do=getAccessLevel&token=" + token)
+                .then(response => response.json())
+                .then(response => {
+                    // 设置数据
+                    this.username = response.username;
+                    this.accessLevel = response.accessLevel;
+                });
+        },
+        listJudgers: function () {
+            fetch("nss.php?do=getJudgers")
+                .then(response => {
+                    return response.json();
+                })
+                .then(response => {
+                    // 设置数据
+                    this.judgers = response.judgers;
+                });
+        },
+        listPlayers: function () {
+            fetch("nss.php?do=getPlayers")
+                .then(response => response.json())
+                .then(response => {
+                    // 设置数据
+                    this.players = response.players;
+                });   
+        },
+        showReplayList: function(replays) {
+            alert('还没做');
+        }
+    }
 });
 
 function login() {
@@ -53,56 +106,7 @@ function login() {
         });
 }
 
-function accessLevel() {
-    //Set default token
-    var existCookie = "0";
 
-    //Get and decode cookie
-    var allCookie = decodeURIComponent(document.cookie);
-    var splitedCookie = allCookie.split(";");
-
-    //Find cookie "token"
-    for (var i = 0; i < splitedCookie.length; i++) {
-        if (splitedCookie[i].indexOf("token=") == 0) {
-            existCookie = splitedCookie[i].substring(6, splitedCookie[i].length);
-        }
-    }
-
-    //Fetch, and change html
-    fetch("nss.php?do=getAccessLevel&token=" + existCookie)
-        .then(res => {
-            return res.json();
-        })
-        .then(feedback => {
-            document.getElementById("showUsername").innerHTML = feedback.username;
-            document.getElementById('toLoginPage').style.visibility = 'hidden';
-            if (feedback.accessLevel == 0) {
-                document.getElementById('toLoginPage').style.visibility = 'visible';
-            }
-        });
-}
-
-function listJudgers() {
-    fetch("nss.php?do=getJudgers")
-        .then(res => {
-            return res.json();
-        })
-        .then(feedback => {
-            for (var i = 0; i < feedback.judgers.length; i++) {
-                var table = document.getElementById("judgersInfoTable");
-
-                //Insert row
-                var newRow = table.insertRow(i + 1);
-
-                //Insert cells of the row
-                var cellName = newRow.insertCell(0)
-                cellName.innerHTML = feedback.judgers[i].username;
-
-                var cellDescription = newRow.insertCell(1)
-                cellDescription.innerHTML = feedback.judgers[i].description;
-            }
-        });
-}
 
 // function set_judgers() {
 
