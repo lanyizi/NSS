@@ -11,7 +11,7 @@
             };
 
             //temp is a temporary value of feedback
-            var feedback = await fetch("nss.php?do=login", {
+            var feedback = fetch("nss.php?do=login", {
                     method: 'post',
                     body: JSON.stringify(transdata),
                     headers: {
