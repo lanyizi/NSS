@@ -79,7 +79,7 @@ function listJudgers() {
                 var table = document.getElementById("judgersInfoTable");
 
                 //Insert row
-                var newRow = table.insertRow(i);
+                var newRow = table.insertRow(i + 1);
 
                 //Insert cells of the row
                 var cellName = newRow.insertCell(0)
