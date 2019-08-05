@@ -67,8 +67,6 @@ function accessLevel() {
                 document.getElementById('toLoginPage').style.visibility = 'visible';
             }
         });
-
-    return 0;
 }
 
 function list_judgers() {
@@ -89,7 +87,7 @@ function list_judgers() {
 
     alert("222");
 
-    fetch("/nss.php?do=getJudgers")
+    fetch("nss.php?do=getJudgers")
         .then(res => {
             return res.json();
         })
