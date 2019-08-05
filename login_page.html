@@ -20,8 +20,9 @@
                 })
                 .then(res => res.json());
 
+            var feedback = JSON.parse(temp);
             //If not pass
-            if (temp == '0') {
+            if (feedback[0] == '0') {
                 alert("Wrong username or password")
                 window.location.href = "login_page.html";
                 return "Login Fail";
@@ -32,7 +33,7 @@
             date.setTime(date.getTime() + (2 * 60 * 60 * 1000));
 
             //Get token
-            var feedback = JSON.parse(temp);
+
             var token = feedback[Object.keys(feedback)[1]];
 
             //Set cookie
