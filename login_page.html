@@ -34,7 +34,7 @@
 
                     //Get token
 
-                    var token = feedback.token[Object.keys(feedback.token)[1]];
+                    var token = feedback.token;
 
                     //Set cookie
                     document.cookie = "Token=" + token + "; expires=" + date.toGMTString();
