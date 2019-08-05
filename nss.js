@@ -67,6 +67,8 @@ function accessLevel() {
                 document.getElementById('toLoginPage').style.visibility = 'visible';
             }
         });
+
+    return 0;
 }
 
 function list_judgers() {
