@@ -70,6 +70,19 @@ function accessLevel() {
 }
 
 function list_judgers() {
+    //TESTONLY!
+    var table = document.getElementById("judgersInfoTable");
+
+    //Insert row
+    var rowNum = table.rows.length;
+    var newRow = table.insertRow(rowNum - 1);
+
+    //Insert cells of the row
+    var cellName = newRow.insertCell(0)
+    cellName.innerHTML = "RC";
+
+    var cellDescription = newRow.insertCell(1)
+    cellDescription.innerHTML = "TEST";
     fetch("/nss.php?do=getJudgers")
         .then(res => {
             return res.json();
