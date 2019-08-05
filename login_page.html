@@ -11,7 +11,7 @@
             };
 
             //temp is a temporary value of feedback
-            var feedback = fetch("nss.php?do=login", {
+            fetch("nss.php?do=login", {
                     method: 'post',
                     body: JSON.stringify(transdata),
                     headers: {
@@ -21,30 +21,26 @@
                 .then(res => {
                     return res.json();
                 })
-                .then(data => {
-                    alert(data);
+                .then(feedback => {
+                    if (feedback.token == '0') {
+                        alert("Wrong username or password")
+                        window.location.href = "login_page.html";
+                        return "Login Fail";
+                    }
+
+                    //Get the time and set for 2 hours access
+                    var date = new Date();
+                    date.setTime(date.getTime() + (2 * 60 * 60 * 1000));
+
+                    //Get token
+
+                    var token = feedback.token[Object.keys(feedback.token)[1]];
+
+                    //Set cookie
+                    document.cookie = "Token=" + token + "; expires=" + date.toGMTString();
+
+                    return "Login Success";
                 });
-
-            alert("111");
-            //If not pass
-            if (feedback.token == '0') {
-                alert("Wrong username or password")
-                window.location.href = "login_page.html";
-                return "Login Fail";
-            }
-
-            //Get the time and set for 2 hours access
-            var date = new Date();
-            date.setTime(date.getTime() + (2 * 60 * 60 * 1000));
-
-            //Get token
-
-            var token = feedback.token[Object.keys(feedback.token)[1]];
-
-            //Set cookie
-            document.cookie = "Token=" + token + "; expires=" + date.toGMTString();
-
-            return "Login Success";
         }
     </script>
 </head>
