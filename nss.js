@@ -12,7 +12,7 @@ function login(username, password) {
     //If not pass
     if (temp = '0') {
         alert("Wrong username or password")
-        window.location.href = "login_page.html";
+            //window.location.href = "login_page.html";
         return "Login Fail";
     }
 
