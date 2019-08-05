@@ -6,13 +6,26 @@
 <head>
     <script>
         accessLevel();
+        list_judgers();
     </script>
 </head>
 
 <body>
     Hello, World!
-    <p id="showUsername"></p>
-    <a href="login.html" id="toLoginPage">Login</a>
+
+    <div id="loginStatus">
+        <p id="showUsername"></p>
+        <a href="login.html" id="toLoginPage">Login</a>
+    </div>
+
+    <div id="judgersInfo">
+        <table border="1" id="judgersInfoTable">
+            <tr>
+                <td>鉴定员名称</td>
+                <td>个人信息</td>
+            </tr>
+        </table>
+    </div>
 </body>
 
 </html>

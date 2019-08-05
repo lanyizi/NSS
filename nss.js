@@ -1,10 +1,11 @@
 function login() {
+    //Set json
     var transdata = {
         'username': document.getElementById("login_username").value,
         'password': document.getElementById("login_password").value
     };
 
-    //temp is a temporary value of feedback
+    //Fetch, show result, and set cookie
     fetch("nss.php?do=login", {
             method: 'post',
             body: JSON.stringify(transdata),
@@ -40,15 +41,21 @@ function login() {
 }
 
 function accessLevel() {
+    //Set default token
     var existCookie = "0";
+
+    //Get and decode cookie
     var allCookie = decodeURIComponent(document.cookie);
     var splitedCookie = allCookie.split(";");
+
+    //Find cookie "token"
     for (var i = 0; i < splitedCookie.length; i++) {
         if (splitedCookie[i].indexOf("token=") == 0) {
             existCookie = splitedCookie[i].substring(6, splitedCookie[i].length);
         }
     }
 
+    //Fetch, and change html
     fetch("nss.php?do=getAccessLevel&token=" + existCookie)
         .then(res => {
             return res.json();
@@ -62,9 +69,28 @@ function accessLevel() {
         });
 }
 
-// function list_judgers() {
+function list_judgers() {
+    fetch("/nss.php?do=getJudgers")
+        .then(res => {
+            return res.json();
+        })
+        .then(feedback => {
+            for (var i = 0; i < feedback.judgers.length; i++) {
+                var table = document.getElementById("judgersInfoTable");
 
-// }
+                //Insert row
+                var rowNum = table.rows.length;
+                var newRow = table.insertRow(rowNum - 1);
+
+                //Insert cells of the row
+                var cellName = newRow.insertCell(0)
+                cellName.innerHTML = feedback.judgers[i].username;
+
+                var cellDescription = newRow.insertCell(1)
+                cellDescription.innerHTML = feedback.judgers[i].description;
+            }
+        });
+}
 
 // function set_judgers() {
 
