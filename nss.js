@@ -124,6 +124,7 @@ function getLocalToken() {
         }
     }
 
+
     return token
 }
 
