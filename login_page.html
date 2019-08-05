@@ -10,8 +10,6 @@
                 'password': document.getElementById("login_password").value
             };
 
-            alert("1111");
-
             //temp is a temporary value of feedback
             var temp = fetch("nss.php?do=login", {
                     method: 'post',
@@ -24,7 +22,7 @@
 
             var feedback = JSON.parse(temp);
             //If not pass
-            if (feedback[0] == '0') {
+            if (feedback.Token == '0') {
                 alert("Wrong username or password")
                 window.location.href = "login_page.html";
                 return "Login Fail";
@@ -36,7 +34,7 @@
 
             //Get token
 
-            var token = feedback[Object.keys(feedback)[1]];
+            var token = feedback.Token[Object.keys(feedback)[1]];
 
             //Set cookie
             document.cookie = "Token=" + token + "; expires=" + date.toGMTString();
