@@ -29,7 +29,7 @@ GET /nss.php?do=getAccessLevel&token=TOKEN 【后端已实现】【前端已实�
     'username': '当前登录的人的名称（假如不是游客的话）'
 }
 
-GET /nss.php?do=getJudgers 【后端已实现】
+GET /nss.php?do=getJudgers 【后端已实现】【前端已实现】
 -> 返回：
 {
     'judgers' : // judgers 是一个数组
