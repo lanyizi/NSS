@@ -21,6 +21,8 @@
                 .then(res => res.json());
 
             var feedback = JSON.parse(temp);
+
+            alert(feedback.Token);
             //If not pass
             if (feedback.Token == '0') {
                 alert("Wrong username or password")
