@@ -232,12 +232,15 @@ class NSS {
         $this->database->action(function() use (&$result) {
             try {
                 $replayFile = base64_decode($this->input['data']);
+                // 解析录像信息
                 $replayData = RA3Replay::parseRA3Replay($replayFile);
                 $replayData['players'] = json_encode($replayData['players']); // 用JSON来存储玩家数组
                 $replayData['fileName'] = $this->input['fileName'];
 
+                // 把录像信息加到数据库里
                 $this->database->insert('nss-replays', $replayData);
                 $result['id'] = $this->database->id();
+                // 保存录像文件
                 $finalFileName = $this->getFinalReplayName($result['id']);
                 $writeResult = file_put_contents($finalFileName, $replayFile);
                 if(!$writeResult) {
@@ -283,7 +286,7 @@ class NSS {
                 if(!$deleteResult) {
                     $result['result'] = false;
                     $result['message'] = "删除录像失败";
-                    return false;
+                    return false; // 返回 false 会导致事务回滚，之前对数据库造成的修改也会回滚
                 }
             }
             catch(Exception $exception) {
