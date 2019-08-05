@@ -10,7 +10,7 @@
                 'password': document.getElementById("login_password")
             };
 
-            alert(transdata[Object.keys(transdata)[0]]);
+            alert(document.getElementById("login_username"));
 
             //temp is a temporary value of feedback
             var temp = fetch("/nss.php?do=login", {
