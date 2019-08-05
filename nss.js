@@ -71,7 +71,7 @@ function accessLevel() {
 
 function listJudgers() {
     var table = document.getElementById("judgersInfoTable");
-    var newRow = table.insertRow(i);
+    var newRow = table.insertRow(0);
 
     //Insert cells of the row
     var cellName = newRow.insertCell(0)
