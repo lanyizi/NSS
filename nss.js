@@ -1,8 +1,8 @@
 function login(username, password) {
-    transdata = { 'username': username, 'password': password };
+    var transdata = { 'username': username, 'password': password };
 
     //temp is a temporary value of feedback
-    temp = fetch("/nss.php?do=login", {
+    var temp = fetch("/nss.php?do=login", {
             method: 'post',
             body: JSON.stringify(transdata),
             headers: { 'Content-Type': 'application/json' }
@@ -21,8 +21,8 @@ function login(username, password) {
     date.setTime(date.getTime() + (2 * 60 * 60 * 1000));
 
     //Get token
-    feedback = JSON.parse(temp);
-    token = feedback[Object.keys(feedback)[1]];
+    var feedback = JSON.parse(temp);
+    var token = feedback[Object.keys(feedback)[1]];
 
     //Set cookie
     document.cookie = "Token=" + token + "; expires=" + date.toGMTString();
