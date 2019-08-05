@@ -11,7 +11,7 @@
             };
 
             //temp is a temporary value of feedback
-            var feedback = fetch("nss.php?do=login", {
+            var feedback = await fetch("nss.php?do=login", {
                     method: 'post',
                     body: JSON.stringify(transdata),
                     headers: {
@@ -21,7 +21,7 @@
                 .then(res => res.json());
 
             alert("1111");
-            alert(await feedback);
+            alert(feedback);
             //If not pass
             if (feedback.Token == '0') {
                 alert("Wrong username or password")
