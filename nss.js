@@ -70,22 +70,6 @@ function accessLevel() {
 }
 
 function listJudgers() {
-    //TESTONLY!
-    alert("111");
-    var table = document.getElementById("judgersInfoTable");
-
-    //Insert row
-    var newRow = table.insertRow(0);
-
-    //Insert cells of the row
-    var cellName = newRow.insertCell(0)
-    cellName.innerHTML = "RC";
-
-    var cellDescription = newRow.insertCell(1)
-    cellDescription.innerHTML = "TEST";
-
-    alert("222");
-
     fetch("nss.php?do=getJudgers")
         .then(res => {
             return res.json();
@@ -95,8 +79,7 @@ function listJudgers() {
                 var table = document.getElementById("judgersInfoTable");
 
                 //Insert row
-                var rowNum = table.rows.length;
-                var newRow = table.insertRow(rowNum - 1);
+                var newRow = table.insertRow(i);
 
                 //Insert cells of the row
                 var cellName = newRow.insertCell(0)
