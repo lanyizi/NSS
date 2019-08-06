@@ -45,7 +45,7 @@ GET /nss.php?do=getJudgers 【后端已实现】【前端已实现】
 }
 
 
-POST /nss.php?do=setJudger 【后端已实现】 // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
+POST /nss.php?do=setJudger 【后端已实现】【前端已实现】 // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
 <- POST数据：
 {
     'token': '管理员自己的token',
