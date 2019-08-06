@@ -99,11 +99,11 @@ function setJudgers() {
         })
         .then(feedback => {
             if (feedback.result) {
-                alert("Set success")
+                alert(feedback.message);
                 window.location.href = "admincontrol.html";
                 return "Set success";
             }
-            alert("Set failed");
+            alert(feedback.message);
             window.location.href = "admincontrol.html";
             return "Set failed";
         });
@@ -179,11 +179,11 @@ function judgePlayer() {
         })
         .then(feedback => {
             if (feedback.result) {
-                alert("Judge success")
+                alert(feedback.message)
                 window.location.href = "judgecontrol.html";
                 return "Judge success";
             }
-            alert("Judge failed");
+            alert(feedback.message);
             window.location.href = "judgecontrol.html";
             return "Judge failed";
         });
