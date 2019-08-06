@@ -111,6 +111,7 @@
                     // 因为与前者不同，后者的 'this' 将不会是 Vue 实例
                     // （见 https://vuejs.org/v2/api/#methods ）
                     getAccessLevel: function () {
+                        let token = getLocalToken();
                         // 每个回调函数都有自己的 this
                         // 在 then 里面的这些函数里再使用 this 就不能再指向
                         // Vue 实例了，所以我们先把当前的 this 保存为另一个变量
@@ -125,6 +126,7 @@
                             });
                     },
                     listJudgers: function () {
+                        let self = this;
                         fetch("nss.php?do=getJudgers")
                             .then(response => {
                                 return response.json();
@@ -135,6 +137,7 @@
                             });
                     },
                     listPlayers: function () {
+                        let self = this;
                         fetch("nss.php?do=getPlayers")
                             .then(response => response.json())
                             .then(response => {

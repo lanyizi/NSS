@@ -8,7 +8,7 @@ function getLocalToken() {
     );
     
     // 从 cookies 获取 token 的值，假如没有的话就用"0"作为 token 的值
-    let token = cookies.get('token') || "0";
+    return (cookies.get('token') || "0");
 }
 
 function login() {
