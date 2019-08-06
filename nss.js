@@ -121,11 +121,3 @@ function judgePlayer() {
             return "Judge failed";
         });
 }
-
-// function remove_player(token, name) {
-
-// }
-
-// function upload_replay(filename, data) {
-
-// }
