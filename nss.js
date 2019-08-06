@@ -109,6 +109,49 @@ function setJudgers() {
         });
 }
 
+function listPlayers() {
+    fetch("nss.php?do=getPlayers")
+        .then(res => {
+            return res.json();
+        })
+        .then(feedback => {
+            for (var i = 0; i < feedback.players.length; i++) {
+                var table = document.getElementById("playersInfoTable");
+
+                //Insert row
+                var newRow = table.insertRow(i + 1);
+
+                //Insert cells of the row
+                var cellName = newRow.insertCell(0)
+                cellName.innerHTML = feedback.players[i].name;
+
+                var cellDescription = newRow.insertCell(1)
+                cellDescription.innerHTML = feedback.players[i].nickname;
+
+                var cellDescription = newRow.insertCell(2)
+                cellDescription.innerHTML = feedback.players[i].level;
+
+                var cellDescription = newRow.insertCell(3)
+                cellDescription.innerHTML = feedback.players[i].qq;
+
+                var cellDescription = newRow.insertCell(4)
+                cellDescription.innerHTML = feedback.players[i].judegeDate;
+
+                var cellDescription = newRow.insertCell(5)
+                cellDescription.innerHTML = feedback.players[i].judger;
+
+                var cellDescription = newRow.insertCell(6)
+                cellDescription.innerHTML = feedback.players[i].faction;
+
+                var cellDescription = newRow.insertCell(7)
+                cellDescription.innerHTML = feedback.players[i].replays;
+
+                var cellDescription = newRow.insertCell(8)
+                cellDescription.innerHTML = feedback.players[i].description;
+            }
+        });
+}
+
 function getLocalToken() {
     //Set default token
     var token = "0";
@@ -126,11 +169,6 @@ function getLocalToken() {
 
     return token;
 }
-
-// function list_players(token, name, password, accesslevel, description) {
-
-// }
-
 // function judge_player(token, name, nickname, level, qq, judgedate, faction, replaylinks, description) {
 
 // }
