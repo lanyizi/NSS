@@ -145,8 +145,9 @@
                         .then(response => {
                             // 设置数据
                             self.players = response.players;
-                            self.players.judgeDate = new Date(response.players.judgeDate * 1000);
-                            self.players.judgeDate = 1010;
+                            for (var i = 0; i < self.players.length; i++) {
+                                self.players[i].judgeDate = new Date(response.players[i].judgeDate * 1000);
+                            }
                         });
                 },
                 showReplayList: function(replays) {
