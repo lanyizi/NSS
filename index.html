@@ -1,155 +1,158 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <!-- 引用Vue.js -->
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-        <script src="nss.js?v=2"></script>
-        <!--
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- 引用Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="nss.js?v=2"></script>
+    <!--
             这两个函数调用，我们也移到vue里调用吧
             <script>
                 accessLevel();
                 listJudgers();
             </script>
         -->
-    </head>
-    <body>
-        Hello, World!
-        <div id="nss">
-            
-            <div id="loginStatus">
-                <!-- {{username}} 就是 Vue 的 data 里的那个 username -->
-                <p id="showUsername">当前身份：{{username}}</p>
-                <!-- 在vue里，可以使用 v-if 来控制元素是否显示 -->
-                <!-- 比如说只在 accessLevel == 0 的情况下显示这个元素 -->
-                <a href="login.html" id="toLoginPage" v-if="accessLevel == 0">登录</a>
-            </div>
+</head>
 
+<body>
+    Hello, World!
+    <div id="nss">
 
-            <div id="judgersInfo">
-                <table id="judgersInfoTable">
-                    <thead>
-                        <th>鉴定员名称</th>
-                        <th>个人信息</th>
-                    </thead>
-                    <!-- Vue 可以让数据很容易地与html元素绑定 -->
-                    <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
-                    <!-- judgers 就是 vue data 里面的那个judgers数组 -->
-                    <tr v-for="row in judgers">
-                        <td>{{ row.username }}</td>
-                        <td>{{ row.description }}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
-            <div id="setJudger" v-if="accessLevel > 0">
-                <a href="admincontrol.html">设置鉴定员</a>
-            </div>
-
-            <div id="playersInfo">
-                <table id="playersInfoTable">
-                    <thead>
-                        <th>玩家名称</th>
-                        <th>昵称</th>
-                        <th>级别</th>
-                        <th>QQ号</th>
-                        <th>鉴定日期</th>
-                        <th>鉴定员</th>
-                        <th>主阵营</th>
-                        <th>录像</th>
-                        <th>说明</th>
-                    </thead>
-                    <!-- Vue 可以让数据很容易地与html元素绑定 -->
-                    <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
-                    <!-- judgers 就是 vue data 里面的那个judgers数组 -->
-                    <tr v-for="row in players">
-                        <td>{{ row.username }}</td>
-                        <td>{{ row.nickname }}</td>
-                        <td>{{ row.level }}</td>
-                        <td>{{ row.qq }}</td>
-                        <td>{{ row.judgeDate }}</td>
-                        <td>{{ row.judger }}</td>
-                        <td>{{ row.faction }}</td>
-                        <td>
-                            <!-- 使用v-on:click（而不是onclick），
-                                因为这样可以使用 Vue 里的变量，比如说目前的这个 row -->
-                            <a href="#" v-if='row.replays.length > 0' v-on:click='showReplayList(row.replays)'>
-                                查看录像
-                            </a>
-                        </td>
-                        <td>{{ row.description }}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
-            <div id="setJudger" v-if="accessLevel > 0">
-                <a href="judgecontrol.html">鉴定玩家</a>
-            </div>
+        <div id="loginStatus">
+            <!-- {{username}} 就是 Vue 的 data 里的那个 username -->
+            <p id="showUsername">当前身份：{{username}}</p>
+            <!-- 在vue里，可以使用 v-if 来控制元素是否显示 -->
+            <!-- 比如说只在 accessLevel == 0 的情况下显示这个元素 -->
+            <a href="login.html" id="toLoginPage" v-if="accessLevel == 0">登录</a>
         </div>
 
-        <script>
-            // 创建一个vue实例
-            let nss = new Vue({
-                el: '#nss', // 与vue关联的元素是html里id为nss的那个div
-                data: { // 数据
-                    accessLevel: 0,
-                    username: '',
-                    judgers: [], // 一开始，鉴定员列表是个空数组
-                    players: [], // 一开始，玩家列表是个空数组
+
+        <div id="judgersInfo">
+            <table id="judgersInfoTable">
+                <thead>
+                    <th>鉴定员名称</th>
+                    <th>个人信息</th>
+                </thead>
+                <!-- Vue 可以让数据很容易地与html元素绑定 -->
+                <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
+                <!-- judgers 就是 vue data 里面的那个judgers数组 -->
+                <tr v-for="row in judgers">
+                    <td>{{ row.username }}</td>
+                    <td>{{ row.description }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
+        <div id="setJudger" v-if="accessLevel > 0">
+            <a href="admincontrol.html">设置鉴定员</a>
+        </div>
+
+        <div id="playersInfo">
+            <table id="playersInfoTable">
+                <thead>
+                    <th>玩家名称</th>
+                    <th>昵称</th>
+                    <th>级别</th>
+                    <th>QQ号</th>
+                    <th>鉴定日期</th>
+                    <th>鉴定员</th>
+                    <th>主阵营</th>
+                    <th>录像</th>
+                    <th>说明</th>
+                </thead>
+                <!-- Vue 可以让数据很容易地与html元素绑定 -->
+                <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
+                <!-- judgers 就是 vue data 里面的那个judgers数组 -->
+                <tr v-for="row in players">
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.level }}</td>
+                    <td>{{ row.qq }}</td>
+                    <td>{{ row.judgeDate }}</td>
+                    <td>{{ row.judger }}</td>
+                    <td>{{ row.faction }}</td>
+                    <td>
+                        <!-- 使用v-on:click（而不是onclick），
+                                因为这样可以使用 Vue 里的变量，比如说目前的这个 row -->
+                        <a href="#" v-if='row.replays.length > 0' v-on:click='showReplayList(row.replays)'>
+                                查看录像
+                            </a>
+                    </td>
+                    <td>{{ row.description }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
+        <div id="setJudger" v-if="accessLevel > 0">
+            <a href="judgecontrol.html">鉴定玩家</a>
+        </div>
+    </div>
+
+    <script>
+        // 创建一个vue实例
+        let nss = new Vue({
+            el: '#nss', // 与vue关联的元素是html里id为nss的那个div
+            data: { // 数据
+                accessLevel: 0,
+                username: '',
+                judgers: [], // 一开始，鉴定员列表是个空数组
+                players: [], // 一开始，玩家列表是个空数组
+            },
+            mounted: function() { // mounted 会在vue实例被挂载后被调用
+                this.getAccessLevel();
+                this.listJudgers();
+                this.listPlayers();
+            },
+            methods: { // 在这里放你的Vue实例的所有的方法，
+                // 注意Vue的methods只能是
+                // xxx: function () { ... } 这样子的，
+                // 而不能是 xxx => { ... }，
+                // 因为与前者不同，后者的 'this' 将不会是 Vue 实例
+                // （见 https://vuejs.org/v2/api/#methods ）
+                getAccessLevel: function() {
+                    let token = getLocalToken();
+                    // 每个回调函数都有自己的 this
+                    // 在 then 里面的这些函数里再使用 this 就不能再指向
+                    // Vue 实例了，所以我们先把当前的 this 保存为另一个变量
+                    // 以供在回调函数里使用
+                    let self = this;
+                    fetch("nss.php?do=getAccessLevel&token=" + token)
+                        .then(response => response.json())
+                        .then(response => {
+                            // 设置数据
+                            self.username = response.username;
+                            self.accessLevel = response.accessLevel;
+                        });
                 },
-                mounted: function () { // mounted 会在vue实例被挂载后被调用
-                    this.getAccessLevel();
-                    this.listJudgers();
-                    this.listPlayers();
+                listJudgers: function() {
+                    let self = this;
+                    fetch("nss.php?do=getJudgers")
+                        .then(response => {
+                            return response.json();
+                        })
+                        .then(response => {
+                            // 设置数据
+                            self.judgers = response.judgers;
+                        });
                 },
-                methods: { // 在这里放你的Vue实例的所有的方法，
-                    // 注意Vue的methods只能是
-                    // xxx: function () { ... } 这样子的，
-                    // 而不能是 xxx => { ... }，
-                    // 因为与前者不同，后者的 'this' 将不会是 Vue 实例
-                    // （见 https://vuejs.org/v2/api/#methods ）
-                    getAccessLevel: function () {
-                        let token = getLocalToken();
-                        // 每个回调函数都有自己的 this
-                        // 在 then 里面的这些函数里再使用 this 就不能再指向
-                        // Vue 实例了，所以我们先把当前的 this 保存为另一个变量
-                        // 以供在回调函数里使用
-                        let self = this;
-                        fetch("nss.php?do=getAccessLevel&token=" + token)
-                            .then(response => response.json())
-                            .then(response => {
-                                // 设置数据
-                                self.username = response.username;
-                                self.accessLevel = response.accessLevel;
-                            });
-                    },
-                    listJudgers: function () {
-                        let self = this;
-                        fetch("nss.php?do=getJudgers")
-                            .then(response => {
-                                return response.json();
-                            })
-                            .then(response => {
-                                // 设置数据
-                                self.judgers = response.judgers;
-                            });
-                    },
-                    listPlayers: function () {
-                        let self = this;
-                        fetch("nss.php?do=getPlayers")
-                            .then(response => response.json())
-                            .then(response => {
-                                // 设置数据
-                                self.players = response.players;
-                            });   
-                    },
-                    showReplayList: function(replays) {
-                        alert('还没做');
-                    }
+                listPlayers: function() {
+                    let self = this;
+                    fetch("nss.php?do=getPlayers")
+                        .then(response => response.json())
+                        .then(response => {
+                            // 设置数据
+                            self.players = response.players;
+                        });
+                },
+                showReplayList: function(replays) {
+                    alert('还没做');
                 }
-            });
-        </script>
-    </body>
+            }
+        });
+    </script>
+</body>
+
 </html>
