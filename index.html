@@ -1,53 +1,92 @@
 <!DOCTYPE html>
 <html>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script src="nss.js?v=1"></script>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <!-- 引用Vue.js -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="nss.js?v=2"></script>
+        <!--
+            这两个函数调用，我们也移到vue里调用吧
+            <script>
+                accessLevel();
+                listJudgers();
+            </script>
+        -->
+    </head>
+    <body>
+        Hello, World!
+        <div id="nss">
+            
+            <div id="loginStatus">
+                <!-- {{username}} 就是 Vue 的 data 里的那个 username -->
+                <p id="showUsername">当前身份：{{username}}</p>
+                <!-- 在vue里，可以使用 v-if 来控制元素是否显示 -->
+                <!-- 比如说只在 accessLevel == 0 的情况下显示这个元素 -->
+                <a href="login.html" id="toLoginPage" v-if="accessLevel == 0"></a>>Login</a>
+            </div>
 
-<head>
-    <script>
-        accessLevel();
-    </script>
-</head>
 
-<body>
-    Hello, World!
+            <div id="judgersInfo">
+                <table id="judgersInfoTable">
+                    <thead>
+                        <th>鉴定员名称</th>
+                        <th>个人信息</th>
+                    </thead>
+                    <!-- Vue 可以让数据很容易地与html元素绑定 -->
+                    <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
+                    <!-- judgers 就是 vue data 里面的那个judgers数组 -->
+                    <tr v-for="row in judgers">
+                        <td>{{ row.username }}</td>
+                        <td>{{ row.description }}</td>
+                    </tr>
+                </table>
+            </div>
 
-    <div id="loginStatus">
-        <p id="showUsername"></p>
-        <a href="login.html" id="toLoginPage">Login</a>
-    </div>
+            <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
+            <div id="setJudger" v-if="accessLevel > 0">
+                <a href="admincontrol.html">设置鉴定员</a>
+            </div>
 
-    <a href="admincontrol.html">Set Judgers</a>
+            <div id="playersInfo">
+                <table id="playersInfoTable">
+                    <thead>
+                        <th>玩家名称</th>
+                        <th>昵称</th>
+                        <th>级别</th>
+                        <th>QQ号</th>
+                        <th>鉴定日期</th>
+                        <th>鉴定员</th>
+                        <th>主阵营</th>
+                        <th>录像</th>
+                        <th>说明</th>
+                    </thead>
+                    <!-- Vue 可以让数据很容易地与html元素绑定 -->
+                    <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
+                    <!-- judgers 就是 vue data 里面的那个judgers数组 -->
+                    <tr v-for="row in judgers">
+                        <td>{{ row.username }}</td>
+                        <td>{{ row.nickname }}</td>
+                        <td>{{ row.level }}</td>
+                        <td>{{ row.qq }}</td>
+                        <td>{{ row.judgeDate }}</td>
+                        <td>{{ row.judger }}</td>
+                        <td>{{ row.faction }}</td>
+                        <td>
+                            <!-- 使用v-on:click（而不是onclick），
+                                因为这样可以使用 Vue 里的变量，比如说目前的这个 row -->
+                            <a href="#" v-if='row.replays.length > 0' v-on:click='showReplayList(row.replays)'>
+                                查看录像
+                            </a>
+                        </td>
+                        <td>{{ row.description }}</td>
+                    </tr>
+                </table>
+            </div>
 
-    <div id="judgersInfo">
-        <table border="1" id="judgersInfoTable">
-            <tr>
-                <td>鉴定员名称</td>
-                <td>个人信息</td>
-            </tr>
-        </table>
-    </div>
-
-    <a href="judgecontrol.html">Judge Players</a>
-
-    <div id="playerInfo">
-        <table border="1" id="playersInfoTable">
-            <tr>
-                <td>玩家名称</td>
-                <td>昵称</td>
-                <td>等级</td>
-                <td>QQ</td>
-                <td>鉴定员名称</td>
-                <td>主阵营</td>
-                <td>鉴定录像ID</td>
-                <td>说明</td>
-            </tr>
-        </table>
-    </div>
-
-    <script>
-        listJudgers();
-    </script>
-</body>
-
+            <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
+            <div id="setJudger" v-if="accessLevel > 0">
+                <a href="judgecontrol.html">鉴定玩家</a>
+            </div>
+        </div>
+    </body>
 </html>

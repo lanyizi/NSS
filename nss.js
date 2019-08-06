@@ -1,3 +1,73 @@
+function getLocalToken() {
+    let cookies = new Map(
+        decodeURIComponent(document.cookie)
+            .split(';') // 按照';'把 cookie 分成一个数组
+            .map(splitted => splitted.split('=', 2))
+        // 然后按照'='把每个部分再分成两部分（key 和 value）
+        // 并把这些 key 和 value 转换成一个 Map
+    );
+    
+    // 从 cookies 获取 token 的值，假如没有的话就用"0"作为 token 的值
+    let token = cookies.get('token') || "0";
+}
+
+// 创建一个vue实例
+let nss = new Vue({
+    el: '#nss', // 与vue关联的元素是html里id为nss的那个div
+    data: { // 数据
+        accessLevel: 0,
+        username: '',
+        judgers: [], // 一开始，鉴定员列表是个空数组
+        players: [], // 一开始，玩家列表是个空数组
+    },
+    mounted: function () { // mounted 会在vue实例被挂载后被调用
+        getAccessLevel();
+        listJudgers();
+    },
+    methods: { // 在这里放你的Vue实例的所有的方法，
+        // 注意Vue的methods只能是
+        // xxx: function () { ... } 这样子的，
+        // 而不能是 xxx => { ... }，
+        // 因为与前者不同，后者的 'this' 将不会是 Vue 实例
+        // （见 https://vuejs.org/v2/api/#methods ）
+        getAccessLevel: function () {
+            // 每个回调函数都有自己的 this
+            // 在 then 里面的这些函数里再使用 this 就不能再指向
+            // Vue 实例了，所以我们先把当前的 this 保存为另一个变量
+            // 以供在回调函数里使用
+            let self = this;
+            fetch("nss.php?do=getAccessLevel&token=" + token)
+                .then(response => response.json())
+                .then(response => {
+                    // 设置数据
+                    self.username = response.username;
+                    self.accessLevel = response.accessLevel;
+                });
+        },
+        listJudgers: function () {
+            fetch("nss.php?do=getJudgers")
+                .then(response => {
+                    return response.json();
+                })
+                .then(response => {
+                    // 设置数据
+                    self.judgers = response.judgers;
+                });
+        },
+        listPlayers: function () {
+            fetch("nss.php?do=getPlayers")
+                .then(response => response.json())
+                .then(response => {
+                    // 设置数据
+                    self.players = response.players;
+                });   
+        },
+        showReplayList: function(replays) {
+            alert('还没做');
+        }
+    }
+});
+
 function login() {
     //Set json
     var transdata = {
@@ -40,43 +110,6 @@ function login() {
         });
 }
 
-function accessLevel() {
-    //Fetch, and change html
-    fetch("nss.php?do=getAccessLevel&token=" + getLocalToken())
-        .then(res => {
-            return res.json();
-        })
-        .then(feedback => {
-            document.getElementById("showUsername").innerHTML = feedback.username;
-            document.getElementById('toLoginPage').style.visibility = 'hidden';
-            if (feedback.accessLevel == 0) {
-                document.getElementById('toLoginPage').style.visibility = 'visible';
-            }
-        });
-}
-
-function listJudgers() {
-    fetch("nss.php?do=getJudgers")
-        .then(res => {
-            return res.json();
-        })
-        .then(feedback => {
-            for (var i = 0; i < feedback.judgers.length; i++) {
-                var table = document.getElementById("judgersInfoTable");
-
-                //Insert row
-                var newRow = table.insertRow(i + 1);
-
-                //Insert cells of the row
-                var cellName = newRow.insertCell(0)
-                cellName.innerHTML = feedback.judgers[i].username;
-
-                var cellDescription = newRow.insertCell(1)
-                cellDescription.innerHTML = feedback.judgers[i].description;
-            }
-        });
-}
-
 function setJudgers() {
     //Set json
     transdata = {
@@ -109,49 +142,6 @@ function setJudgers() {
         });
 }
 
-function listPlayers() {
-    fetch("nss.php?do=getPlayers")
-        .then(res => {
-            return res.json();
-        })
-        .then(feedback => {
-            for (var i = 0; i < feedback.players.length; i++) {
-                var table = document.getElementById("playersInfoTable");
-
-                //Insert row
-                var newRow = table.insertRow(i + 1);
-
-                //Insert cells of the row
-                var cellName = newRow.insertCell(0)
-                cellName.innerHTML = feedback.players[i].name;
-
-                var cellDescription = newRow.insertCell(1)
-                cellDescription.innerHTML = feedback.players[i].nickname;
-
-                var cellDescription = newRow.insertCell(2)
-                cellDescription.innerHTML = feedback.players[i].level;
-
-                var cellDescription = newRow.insertCell(3)
-                cellDescription.innerHTML = feedback.players[i].qq;
-
-                var cellDescription = newRow.insertCell(4)
-                cellDescription.innerHTML = feedback.players[i].judegeDate;
-
-                var cellDescription = newRow.insertCell(5)
-                cellDescription.innerHTML = feedback.players[i].judger;
-
-                var cellDescription = newRow.insertCell(6)
-                cellDescription.innerHTML = feedback.players[i].faction;
-
-                var cellDescription = newRow.insertCell(7)
-                cellDescription.innerHTML = feedback.players[i].replays;
-
-                var cellDescription = newRow.insertCell(8)
-                cellDescription.innerHTML = feedback.players[i].description;
-            }
-        });
-}
-
 function judgePlayer() {
     //Set json
     transdata = {
@@ -159,7 +149,7 @@ function judgePlayer() {
         'name': document.getElementById("setName").value,
         'nickname': document.getElementById("setNickname").value,
         'level': document.getElementById("setLevel").value,
-        'QQ': document.getElementById("setQQ").value,
+        'qq': document.getElementById("setQQ").value,
         'judgeDate': Math.floor(Date.now() / 1000),
         'judegerName': document.getElementById("setJudgerName").value,
         'faction': document.getElementById("setFaction").value,
@@ -187,24 +177,6 @@ function judgePlayer() {
             window.location.href = "judgecontrol.html";
             return "Judge failed";
         });
-}
-
-function getLocalToken() {
-    //Set default token
-    var token = "0";
-
-    //Get and decode cookie
-    var allCookie = decodeURIComponent(document.cookie);
-    var splitedCookie = allCookie.split(";");
-
-    //Find cookie "token"
-    for (var i = 0; i < splitedCookie.length; i++) {
-        if (splitedCookie[i].indexOf("token=") == 0) {
-            token = splitedCookie[i].substring(6, splitedCookie[i].length);
-        }
-    }
-
-    return token;
 }
 
 // function remove_player(token, name) {
