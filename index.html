@@ -88,5 +88,64 @@
                 <a href="judgecontrol.html">鉴定玩家</a>
             </div>
         </div>
+
+        <script>
+            // 创建一个vue实例
+            let nss = new Vue({
+                el: '#nss', // 与vue关联的元素是html里id为nss的那个div
+                data: { // 数据
+                    accessLevel: 0,
+                    username: '',
+                    judgers: [], // 一开始，鉴定员列表是个空数组
+                    players: [], // 一开始，玩家列表是个空数组
+                },
+                mounted: function () { // mounted 会在vue实例被挂载后被调用
+                    getAccessLevel();
+                    listJudgers();
+                },
+                methods: { // 在这里放你的Vue实例的所有的方法，
+                    // 注意Vue的methods只能是
+                    // xxx: function () { ... } 这样子的，
+                    // 而不能是 xxx => { ... }，
+                    // 因为与前者不同，后者的 'this' 将不会是 Vue 实例
+                    // （见 https://vuejs.org/v2/api/#methods ）
+                    getAccessLevel: function () {
+                        // 每个回调函数都有自己的 this
+                        // 在 then 里面的这些函数里再使用 this 就不能再指向
+                        // Vue 实例了，所以我们先把当前的 this 保存为另一个变量
+                        // 以供在回调函数里使用
+                        let self = this;
+                        fetch("nss.php?do=getAccessLevel&token=" + token)
+                            .then(response => response.json())
+                            .then(response => {
+                                // 设置数据
+                                self.username = response.username;
+                                self.accessLevel = response.accessLevel;
+                            });
+                    },
+                    listJudgers: function () {
+                        fetch("nss.php?do=getJudgers")
+                            .then(response => {
+                                return response.json();
+                            })
+                            .then(response => {
+                                // 设置数据
+                                self.judgers = response.judgers;
+                            });
+                    },
+                    listPlayers: function () {
+                        fetch("nss.php?do=getPlayers")
+                            .then(response => response.json())
+                            .then(response => {
+                                // 设置数据
+                                self.players = response.players;
+                            });   
+                    },
+                    showReplayList: function(replays) {
+                        alert('还没做');
+                    }
+                }
+            });
+        </script>
     </body>
 </html>
