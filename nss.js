@@ -124,7 +124,7 @@ function getLocalToken() {
         }
     }
 
-    return token
+    return token;
 }
 
 // function list_players(token, name, password, accesslevel, description) {
