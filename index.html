@@ -100,8 +100,9 @@
                     players: [], // 一开始，玩家列表是个空数组
                 },
                 mounted: function () { // mounted 会在vue实例被挂载后被调用
-                    getAccessLevel();
-                    listJudgers();
+                    this.getAccessLevel();
+                    this.listJudgers();
+                    this.listPlayers();
                 },
                 methods: { // 在这里放你的Vue实例的所有的方法，
                     // 注意Vue的methods只能是
