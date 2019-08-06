@@ -1,3 +1,16 @@
+function getLocalToken() {
+    let cookies = new Map(
+        decodeURIComponent(document.cookie)
+            .split(';') // 按照';'把 cookie 分成一个数组
+            .map(splitted => splitted.split('=', 2))
+        // 然后按照'='把每个部分再分成两部分（key 和 value）
+        // 并把这些 key 和 value 转换成一个 Map
+    );
+    
+    // 从 cookies 获取 token 的值，假如没有的话就用"0"作为 token 的值
+    let token = cookies.get('token') || "0";
+}
+
 // 创建一个vue实例
 let nss = new Vue({
     el: '#nss', // 与vue关联的元素是html里id为nss的那个div
@@ -18,26 +31,17 @@ let nss = new Vue({
         // 因为与前者不同，后者的 'this' 将不会是 Vue 实例
         // （见 https://vuejs.org/v2/api/#methods ）
         getAccessLevel: function () {
-            //Get and decode cookie
-            let cookies = new Map(
-                decodeURIComponent(document.cookie)
-                    .split(';') // 按照';'把 cookie 分成一个数组
-                    .map(splitted => splitted.split('=', 2))
-                // 然后按照'='把每个部分再分成两部分
-                // 并把它转换成一个 Map，这时'='左边的部分就是 key
-                // 右边的部分则是 value
-            );
-            
-            // 从 cookies 获取 token 的值，假如没有的话就用"0"作为 token 的值
-            let token = cookies.get('token') || "0";
-
-            //Fetch, and change html
+            // 每个回调函数都有自己的 this
+            // 在 then 里面的这些函数里再使用 this 就不能再指向
+            // Vue 实例了，所以我们先把当前的 this 保存为另一个变量
+            // 以供在回调函数里使用
+            let self = this;
             fetch("nss.php?do=getAccessLevel&token=" + token)
                 .then(response => response.json())
                 .then(response => {
                     // 设置数据
-                    this.username = response.username;
-                    this.accessLevel = response.accessLevel;
+                    self.username = response.username;
+                    self.accessLevel = response.accessLevel;
                 });
         },
         listJudgers: function () {
@@ -47,7 +51,7 @@ let nss = new Vue({
                 })
                 .then(response => {
                     // 设置数据
-                    this.judgers = response.judgers;
+                    self.judgers = response.judgers;
                 });
         },
         listPlayers: function () {
@@ -55,7 +59,7 @@ let nss = new Vue({
                 .then(response => response.json())
                 .then(response => {
                     // 设置数据
-                    this.players = response.players;
+                    self.players = response.players;
                 });   
         },
         showReplayList: function(replays) {
@@ -67,8 +71,8 @@ let nss = new Vue({
 function login() {
     //Set json
     var transdata = {
-        'username': document.getElementById("login_username").value,
-        'password': document.getElementById("login_password").value
+        'username': document.getElementById("loginUsername").value,
+        'password': document.getElementById("loginPassword").value
     };
 
     //Fetch, show result, and set cookie
@@ -85,7 +89,7 @@ function login() {
         .then(feedback => {
             if (feedback.token == '0') {
                 alert("Wrong username or password")
-                window.location.href = "login_page.html";
+                window.location.href = "login.html";
                 return "Login Fail";
             }
             alert("Login Success")
@@ -106,11 +110,39 @@ function login() {
         });
 }
 
+function setJudgers() {
+    //Set json
+    transdata = {
+        'token': getLocalToken(),
+        'username': document.getElementById("setUsername").value,
+        'password': document.getElementById("setPassword").value,
+        'accessLevel': document.getElementById("accessLevel").value,
+        'description': document.getElementById("description").value
+    }
+
+    fetch("nss.php?do=setJudger", {
+            method: 'post',
+            body: JSON.stringify(transdata),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            return res.json;
+        })
+        .then(feedback => {
+            if (feedback.result) {
+                alert("Set success")
+                window.location.href = "admincontrol.html";
+                return "Set success";
+            }
+            alert("Set failed");
+            window.location.href = "admincontrol.html";
+            return "Set failed";
+        });
+}
 
 
-// function set_judgers() {
-
-// }
 
 // function list_players(token, name, password, accesslevel, description) {
 
