@@ -1,12 +1,12 @@
 function getLocalToken() {
     let cookies = new Map(
         decodeURIComponent(document.cookie)
-            .split(';') // 按照';'把 cookie 分成一个数组
-            .map(splitted => splitted.split('=', 2))
+        .split(';') // 按照';'把 cookie 分成一个数组
+        .map(splitted => splitted.split('=', 2))
         // 然后按照'='把每个部分再分成两部分（key 和 value）
         // 并把这些 key 和 value 转换成一个 Map
     );
-    
+
     // 从 cookies 获取 token 的值，假如没有的话就用"0"作为 token 的值
     return (cookies.get('token') || "0");
 }
