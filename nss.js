@@ -93,7 +93,7 @@ function judgePlayer() {
         'nickname': document.getElementById("setNickname").value,
         'level': document.getElementById("setLevel").value,
         'qq': document.getElementById("setQQ").value,
-        'judgeDate': 100000000,
+        'judgeDate': Math.floor(Date.now() / 1000),
         'judegerName': document.getElementById("setJudgerName").value,
         'faction': document.getElementById("setFaction").value,
         'replays': document.getElementById("setReplays").value,

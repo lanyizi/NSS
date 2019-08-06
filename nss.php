@@ -155,7 +155,7 @@ class NSS {
             'level' => $this->input['level'],
             'qq' => $this->input['qq'],
             'judger' => $access['username'],
-            'judgeDate' => $this->input['judgedate'],
+            'judgeDate' => $this->input['judgeDate'],
             'faction' => $this->input['faction'],
             'description' => getOrDefault($this->input['description'], ''),
             //录像就直接用JSON字符串保存好了
