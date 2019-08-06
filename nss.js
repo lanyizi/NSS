@@ -120,3 +120,31 @@ function judgePlayer() {
             return "Judge failed";
         });
 }
+
+function removePlayer() {
+    transdata = {
+        'token': getLocalToken(),
+        'name': document.getElementById("removeName").value
+    }
+
+    fetch("nss.php?do=removePlayer", {
+            method: 'post',
+            body: JSON.stringify(transdata),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            return res.json();
+        })
+        .then(feedback => {
+            if (feedback.result) {
+                alert(feedback.message)
+                window.location.href = "judgecontrol.html";
+                return "Remove success";
+            }
+            alert(feedback.message);
+            window.location.href = "judgecontrol.html";
+            return "Remove failed";
+        });
+}

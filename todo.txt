@@ -82,7 +82,7 @@ GET /nss.php?do=getPlayers 【后端已实现】【前端已实现】
     ]
 }
 
-POST /nss.php?do=judgePlayer 【后端已实现】
+POST /nss.php?do=judgePlayer 【后端已实现】【前端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的token',
