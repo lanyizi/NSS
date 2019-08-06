@@ -95,16 +95,16 @@ function setJudgers() {
             }
         })
         .then(res => {
-            return res.json;
+            return res.json();
         })
         .then(feedback => {
             if (feedback.result) {
                 alert("Set success")
-                window.location.href = "adminControl.html";
+                window.location.href = "admincontrol.html";
                 return "Set success";
             }
             alert("Set failed");
-            window.location.href = "adminControl.html";
+            window.location.href = "admincontrol.html";
             return "Set failed";
         });
 }
