@@ -162,7 +162,7 @@ function judgePlayer() {
         'QQ': document.getElementById("setQQ").value,
         'judgeDate': Math.floor(Date.now() / 1000),
         'judegerName': document.getElementById("setJudgerName").value,
-        'faction': document.getElementById("serFaction").value,
+        'faction': document.getElementById("setFaction").value,
         'replays': document.getElementById("setReplays").value,
         'description': document.getElementById("setDescription").value
     }
