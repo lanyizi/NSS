@@ -128,29 +128,56 @@ function setJudgers() {
             }
         })
         .then(res => {
-            return res.json;
+            return res.json();
         })
         .then(feedback => {
             if (feedback.result) {
-                alert("Set success")
+                alert(feedback.message);
                 window.location.href = "admincontrol.html";
                 return "Set success";
             }
-            alert("Set failed");
+            alert(feedback.message);
             window.location.href = "admincontrol.html";
             return "Set failed";
         });
 }
 
+function judgePlayer() {
+    //Set json
+    transdata = {
+        'token': getLocalToken(),
+        'name': document.getElementById("setName").value,
+        'nickname': document.getElementById("setNickname").value,
+        'level': document.getElementById("setLevel").value,
+        'qq': document.getElementById("setQQ").value,
+        'judgeDate': Math.floor(Date.now() / 1000),
+        'judegerName': document.getElementById("setJudgerName").value,
+        'faction': document.getElementById("serFaction").value,
+        'replays': document.getElementById("setReplays").value,
+        'description': document.getElementById("setDescription").value
+    }
 
-
-// function list_players(token, name, password, accesslevel, description) {
-
-// }
-
-// function judge_player(token, name, nickname, level, qq, judgedate, faction, replaylinks, description) {
-
-// }
+    fetch("nss.php?do=judgePlayer", {
+            method: 'post',
+            body: JSON.stringify(transdata),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            return res.json();
+        })
+        .then(feedback => {
+            if (feedback.result) {
+                alert(feedback.message)
+                window.location.href = "judgecontrol.html";
+                return "Judge success";
+            }
+            alert(feedback.message);
+            window.location.href = "judgecontrol.html";
+            return "Judge failed";
+        });
+}
 
 // function remove_player(token, name) {
 

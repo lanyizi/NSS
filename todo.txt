@@ -45,7 +45,7 @@ GET /nss.php?do=getJudgers 【后端已实现】【前端已实现】
 }
 
 
-POST /nss.php?do=setJudger 【后端已实现】 // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
+POST /nss.php?do=setJudger 【后端已实现】【前端已实现】 // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
 <- POST数据：
 {
     'token': '管理员自己的token',
@@ -60,7 +60,7 @@ POST /nss.php?do=setJudger 【后端已实现】 // 这个主要是用来让管�
     'message': '消息提示，比如说“设置成功”'
 }
 
-GET /nss.php?do=getPlayers 【后端已实现】
+GET /nss.php?do=getPlayers 【后端已实现】【前端已实现】
 -> 返回被鉴定的玩家列表
 {
     'players': // players 是一个数组
