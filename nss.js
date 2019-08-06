@@ -152,6 +152,43 @@ function listPlayers() {
         });
 }
 
+function judgePlayer() {
+    //Set json
+    transdata = {
+        'token': getLocalToken(),
+        'name': document.getElementById("setName").value,
+        'nickname': document.getElementById("setNickname").value,
+        'level': document.getElementById("setLevel").value,
+        'QQ': document.getElementById("setQQ").value,
+        'judgeDate': Math.floor(Date.now() / 1000),
+        'judegerName': document.getElementById("setJudgerName").value,
+        'faction': document.getElementById("serFaction").value,
+        'replays': document.getElementById("setReplays").value,
+        'description': document.getElementById("setDescription").value
+    }
+
+    fetch("nss.php?do=judgePlayer", {
+            method: 'post',
+            body: JSON.stringify(transdata),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            return res.json();
+        })
+        .then(feedback => {
+            if (feedback.result) {
+                alert("Judge success")
+                window.location.href = "judgecontrol.html";
+                return "Judge success";
+            }
+            alert("Judge failed");
+            window.location.href = "judgecontrol.html";
+            return "Judge failed";
+        });
+}
+
 function getLocalToken() {
     //Set default token
     var token = "0";
@@ -169,9 +206,6 @@ function getLocalToken() {
 
     return token;
 }
-// function judge_player(token, name, nickname, level, qq, judgedate, faction, replaylinks, description) {
-
-// }
 
 // function remove_player(token, name) {
 
