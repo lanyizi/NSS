@@ -146,6 +146,7 @@
                             // 设置数据
                             self.players = response.players;
                             self.players.judgeDate = new Date(response.players.judgeDate * 1000);
+                            self.players.judgeDate = 1010;
                         });
                 },
                 showReplayList: function(replays) {
