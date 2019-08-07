@@ -110,7 +110,7 @@ function judgePlayer() {
             return res.json();
         })
         .then(feedback => {
-            if (feedback.result) {
+            if (feedback.id != null) {
                 alert(feedback.message)
                 window.location.href = "judgecontrol.html";
                 return "Judge success";
