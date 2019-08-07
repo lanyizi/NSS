@@ -88,7 +88,7 @@ function setJudgers() {
 function removeJudger() {
     transdata = {
         'token': getLocalToken(),
-        'uername': document.getElementById("removeUsername").value
+        'username': document.getElementById("removeUsername").value
     }
 
     fetch("nss.php?do=removeJudger", {
