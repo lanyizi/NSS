@@ -138,6 +138,42 @@ class Auth {
         ];
     }
 
+    public function removeUser($token, $username) {
+        $access = $this->verifyToken($token);
+        if(!($access['accessLevel'] > 1)) {
+            return [
+                'result' => false,
+                'message' => '没有权限'
+            ];
+        }
+
+        try {
+            // 删除鉴定员
+            $result = $this->database->delete('nss-admins', [
+                'username' => $username
+            ]);
+
+            if($result->rowCount() == 0) {
+                return [
+                    'result' => false,
+                    'message' => '没有找到这个鉴定员'
+                ];
+            }
+
+            return [
+                'result' => true,
+                'message' => '操作成功'
+            ];
+        }
+        catch(Exception $exception) {
+            $errorMessage = $exception->getMessage();
+            return [
+                'result' => false,
+                'message' => "遇到了内部错误：$errorMessage"
+            ];
+        }
+    }
+
     // 根据密码生成一个 hash
     private function makeTokenHash($passhash, $hexSalt) {
         return hash_pbkdf2('sha256', "$passhash!NSSTOKEN", hex2Bin($hexSalt), 1234);

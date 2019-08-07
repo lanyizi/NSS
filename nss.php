@@ -113,11 +113,16 @@ class NSS {
         }
     }
 
+    public function removeJudger() {
+        $this->auth->removeUser($this->input['token'], $this->input['username']);
+    }
+
     public function getPlayers() {
         // 从数据库获取玩家信息
         $playerData = $this->database->select('nss-players', [
             'id',
             'name',
+            'nickname',
             'level',
             'qq',
             'judgeDate',
@@ -142,7 +147,7 @@ class NSS {
         $access = $this->auth->verifyToken($this->input['token']);
         if(!($access['accessLevel'] > 0)) {
             return [
-                'result' => false,
+                'id' => null,
                 'message' => '没有权限'
             ];
         }
@@ -181,14 +186,14 @@ class NSS {
             }
 
             return [
-                'result' => true,
+                'id' => $id,
                 'message' => '操作成功'
             ];
         }
         catch(Exception $exception) {
             $errorMessage = $exception->getMessage();
             return [
-                'result' => true,
+                'id' => null,
                 'message' => "遇到了内部错误：$errorMessage"
             ];
         }
@@ -205,10 +210,17 @@ class NSS {
 
         try {
             // 删除玩家
-            $this->database->delete('nss-players', [
+            $result = $this->database->delete('nss-players', [
                 'name' => $this->input['name']
             ]);
 
+            if($result->rowCount() == 0) {
+                return [
+                    'result' => false,
+                    'message' => '没有找到这个玩家'
+                ];
+            }
+            
             return [
                 'result' => true,
                 'message' => '操作成功'
@@ -221,6 +233,32 @@ class NSS {
                 'message' => "遇到了内部错误：$errorMessage"
             ];
         }
+    }
+
+    public function getReplayInformation() {
+        $id = $_GET['id'];
+        $replayInformation = $this->database->get('nss-replays', [
+            'fileName',
+            'fileSize',
+            'mapName',
+            'mapPath',
+            'timeStamp',
+            'players'
+        ], [
+            'id' => $id
+        ]);
+
+        if(empty($replayInformation)) {
+            $replayInformation = null;
+        }
+        else {
+            $replayInformation['players'] = json_decode($replayInformation['players']);
+            $replayInformation['url'] = $this->getFinalReplayName($id);
+        }
+
+        return [
+            'replay' => $replayInformation
+        ];
     }
 
     public function uploadReplay() {

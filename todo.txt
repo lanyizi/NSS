@@ -5,9 +5,9 @@
 鉴定员：可以上传数据，包括称呼、qq号、等级、鉴定时间、上传的鉴定录像，外加游客的所有权限
 游客：无需登录，可以显示玩家数据，包括玩家的信息是由哪个鉴定员上传的
 
-然后，目前我的想法是这样的，所有数据都通过javascript操作ajax获取，所有POST请求都传递json（这样使用javascript传递数据更加方便，只需要把一个object塞进request里就行，见https://stackoverflow.com/a/39565776/4399840），任何请求返回的数据也都是json
+然后，目前我的想法是这样的，所有数据都通过 javascript 操作 ajax 获取，所有 POST 请求都传递 json（这样使用 javascript 传递数据更加方便，只需要把一个 object 塞进 request 里就行，见 https://stackoverflow.com/a/39565776/4399840），任何请求返回的数据也都是 json
 
-【注：以下任何API在内部出错的情况下都会返回null，并把状态码设为500】
+【注：以下任何 API 在内部出错的情况下都会返回 null，并把状态码设为500】
 
 POST /nss.php?do=login 【后端已实现】【前端已实现】
 <- POST数据：
@@ -17,15 +17,15 @@ POST /nss.php?do=login 【后端已实现】【前端已实现】
 }
 -> 返回：
 {
-    'token': '一个token，用来当作之后的凭据',
-    //token还可以由javascript保存到cookie里，这样一旦记住，就不需要再登录，见 https://stackoverflow.com/a/4825695/4399840
+    'token': '一个 token，用来当作之后的凭据',
+    //token 还可以由 javascript 保存到 cookie 里，这样一旦记住，就不需要再登录，见 https://stackoverflow.com/a/4825695/4399840
 }
 
 GET /nss.php?do=getAccessLevel&token=TOKEN 【后端已实现】【前端已实现】
 -> 返回：
 {
     'level': 0, //目前token的权限（2管理员，1鉴定员，0游客），假如返回的是0，那么在网页上显示登录界面，否则显示已登录
-    // 假如token无效，或是没有定义token（比如nss.php?do=accesslevel&token=null或者nss.php?do=accesslevel），那么就视为游客
+    // 假如token无效，或是没有定义 token（比如 nss.php?do=accesslevel&token=null 或者nss.php?do=accesslevel），那么就视为游客
     'username': '当前登录的人的名称（假如不是游客的话）'
 }
 
@@ -48,7 +48,7 @@ GET /nss.php?do=getJudgers 【后端已实现】【前端已实现】
 POST /nss.php?do=setJudger 【后端已实现】【前端已实现】 // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
 <- POST数据：
 {
-    'token': '管理员自己的token',
+    'token': '管理员自己的 token',
     'username': '鉴定员名称',
     'password': '鉴定员的密码',
     'accessLevel': '鉴定员的权限级别',
@@ -56,8 +56,20 @@ POST /nss.php?do=setJudger 【后端已实现】【前端已实现】 // 这个�
 }
 -> 返回：
 {
-    'result': true, // 设置鉴定员的结果，true或者false
+    'result': true, // 设置鉴定员的结果，true 或者 false
     'message': '消息提示，比如说“设置成功”'
+}
+
+POST /nss.php?do=removeJudger 【后端已实现】
+<- POST数据：
+{
+    'token': '管理员的 token',
+    'username': '鉴定员名称'
+}
+-> 返回：
+{
+    'result': true, // 删除玩家的结果，true 或者 false
+    'message': '消息提示，比如说“删除成功”'
 }
 
 GET /nss.php?do=getPlayers 【后端已实现】【前端已实现】
@@ -66,14 +78,15 @@ GET /nss.php?do=getPlayers 【后端已实现】【前端已实现】
     'players': // players 是一个数组
     [
         {
+            'id': 1, // 玩家 ID（数字）
             'name': '玩家名称',
             'nickname': '玩家称呼（可选）', // 你可以用 if(data[0].nickname) { (有) } else { (没有) } 来检测到底有没有称呼
             'level': 7 // 级别，使用数字
             'qq': 'QQ号',
-            'judgeDate': 1564863390, //鉴定时间，使用UNIX时间戳，比如你可以这样在javascript里获取日期： date = new Date(data[0].judgedate * 1000)
+            'judgeDate': 1564863390, //鉴定时间，使用 UNIX 时间戳，比如你可以这样在javascript里获取日期： date = new Date(data[0].judgedate * 1000)
             'judger': '鉴定员用户名',
             'faction': '主阵营',
-            'replays': ['鉴定录像1的ID'，'鉴定录像2的ID（假如有的话）', ...],
+            'replays': ['鉴定录像1的 ID'，'鉴定录像2的 ID（假如有的话）', ...],
             'description': '说明（假如有的话）'
         },
         {
@@ -85,55 +98,70 @@ GET /nss.php?do=getPlayers 【后端已实现】【前端已实现】
 POST /nss.php?do=judgePlayer 【后端已实现】
 <- POST数据：
 {
-    'token': '鉴定员或管理员的token',
+    'token': '鉴定员或管理员的 token',
     'name': '玩家名称',
     'nickname': '玩家称呼（可选，假如没有称呼则为空字符串或者null）',
     'level': 7. // 级别，使用数字
     'qq': 'QQ号',
-    'judgeDate': 1564863390, //鉴定时间，使用UNIX时间戳，你可以把默认值设为当前时间，即 Math.floor(Date.now() / 1000)
+    'judgeDate': 1564863390, //鉴定时间，使用 UNIX 时间戳，你可以把默认值设为当前时间，即 Math.floor(Date.now() / 1000)
     'faction': '主阵营',
-    'replays': ['鉴定录像1的ID'，'鉴定录像2的ID（假如有的话）', ...],
+    'replays': ['鉴定录像1的 ID'，'鉴定录像2的 ID（假如有的话）', ...],
     'description': '说明（假如有的话）'
 }
 -> 返回：
 {
-    'result': true, // 设置玩家的结果，true或者false
+    'id': 1, // 玩家 ID，假如设置失败则为 null
     'message': '消息提示，比如说“设置成功”'
 }
 
 POST /nss.php?do=removePlayer 【后端已实现】
 <- POST数据：
 {
-    'token': '鉴定员或管理员的token',
-    'name': '玩家名称'
+    'token': '鉴定员或管理员的 token',
+    'id': 1 // 玩家 ID
 }
 -> 返回：
 {
-    'result': true, // 删除玩家的结果，true或者false
+    'result': true, // 删除玩家的结果，true 或者 false
     'message': '消息提示，比如说“删除成功”'
+}
+
+GET /nss.php?do=getReplayInformation&id=REPLAY_ID
+-> 返回：
+{
+    'replay': // 假如 ID 无效则为 null
+    {
+        'url': '录像下载地址',
+        'fileName': '录像文件名'
+        'fileSize': 5000, // 文件大小
+        'mapName': '无限岛', // 地图名称（可能根据当时保存录像时 RA3 语言的不同而变化）
+        'mapPath': 'data/maps/official/infinity_isle', // 游戏里的地图路径（将来可以用来获取地图的标准名称以及小地图的地址）
+        'timeStamp': 1564863390, // 录像时间戳
+        'players': [ 'RC', ...] // 玩家列表
+    }
 }
 
 POST /nss.php?do=uploadReplay 【后端已实现】
 <- POST数据：
 {
     'fileName': '录像文件名',
-    'data': '录像数据，用btoa()函数把录像文件数据编码为Base64字符串'
+    'data': '录像数据，可以在 javascript 里用 btoa() 函数把录像文件数据编码为 Base64 字符串'
     // 关于如何读取文件，可以参考https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications
 }
 -> 返回：
 {
-    'id': '被上传的录像的ID，假如上传失败则为null'
+    'id': '被上传的录像的 ID，假如上传失败则为 null'
     'message': '消息提示，比如说“上传成功”'
 }
 
 POST /nss.php?do=removeReplay 【后端已实现】
 <- POST数据：
 {
-    'token': '鉴定员或管理员的token',
-    'id': '要删除的录像ID',
+    'token': '鉴定员或管理员的 token',
+    'id': '要删除的录像 ID',
 }
 -> 返回：
 {
-    'result': true // 删除录像的结果，true或者false
+    'result': true // 删除录像的结果，true 或者 false
     'message': '消息提示，比如说“删除成功”'
 }
