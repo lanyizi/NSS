@@ -95,7 +95,7 @@ GET /nss.php?do=getPlayers 【后端已实现】【前端已实现】
     ]
 }
 
-POST /nss.php?do=judgePlayer 【后端已实现】
+POST /nss.php?do=judgePlayer 【后端已实现】【前端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的 token',
@@ -114,7 +114,7 @@ POST /nss.php?do=judgePlayer 【后端已实现】
     'message': '消息提示，比如说“设置成功”'
 }
 
-POST /nss.php?do=removePlayer 【后端已实现】
+POST /nss.php?do=removePlayer 【后端已实现】【前端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的 token',

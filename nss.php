@@ -120,7 +120,6 @@ class NSS {
     public function getPlayers() {
         // 从数据库获取玩家信息
         $playerData = $this->database->select('nss-players', [
-            'id',
             'name',
             'nickname',
             'level',

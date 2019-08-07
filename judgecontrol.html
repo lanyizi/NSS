@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script src="nss.js?v=1"></script>
+<script src="nss.js?v=3"></script>
 
 <head>
 </head>
@@ -16,8 +16,6 @@
         <input type="text" name="level" value="" id="setLevel">
         <br> Set QQ:<br>
         <input type="text" name="QQ" value="" id="setQQ">
-        <br> Set Judge Name:<br>
-        <input type="text" name="judegName" value="" id="setJudgerName">
         <br> Set Faction:<br> Allied：
         <input type="radio" checked="checked" name="Faction" value="Allied" id="setFaction">
         <br> Empire：
@@ -27,12 +25,23 @@
         <br> Random：
         <input type="radio" name="Faction" value="Random" id="setFaction">
         <br> Set replays:<br>
-        <input type="text" name="replays" value="" id="setReplays">
+        <input type="text" name="replays" value="还没做" id="setReplays">
         <br> Set description:<br>
         <input type="text" name="description" value="" id="setDescription">
         <br>
         <br>
         <button onclick="judgePlayer()">确认</button>
+    </div>
+
+    <br>
+    <br>
+
+    <div id="removePlayer">
+        Remove Player's Name:<br>
+        <input type="text" name="name" value="" id="removeName">
+        <br>
+        <br>
+        <button onclick="removePlayer()">确认</button>
     </div>
 </body>
 

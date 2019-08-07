@@ -66,8 +66,8 @@
                 <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
                 <!-- judgers 就是 vue data 里面的那个judgers数组 -->
                 <tr v-for="row in players">
-                    <td>{{ row.id }}</td>
                     <td>{{ row.name }}</td>
+                    <td>{{ row.nickname }}</td>
                     <td>{{ row.level }}</td>
                     <td>{{ row.qq }}</td>
                     <td>{{ row.judgeDate }}</td>
@@ -87,7 +87,7 @@
 
         <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
         <div id="setJudger" v-if="accessLevel > 0">
-            <a href="judgecontrol.html">鉴定玩家</a>
+            <a href="judgecontrol.html">编辑玩家</a>
         </div>
     </div>
 
@@ -145,6 +145,9 @@
                         .then(response => {
                             // 设置数据
                             self.players = response.players;
+                            for (var i = 0; i < self.players.length; i++) {
+                                self.players[i].judgeDate = new Date(response.players[i].judgeDate * 1000);
+                            }
                         });
                 },
                 showReplayList: function(replays) {
