@@ -120,6 +120,7 @@ class NSS {
     public function getPlayers() {
         // 从数据库获取玩家信息
         $playerData = $this->database->select('nss-players', [
+            'id',
             'name',
             'nickname',
             'level',
@@ -210,7 +211,7 @@ class NSS {
         try {
             // 删除玩家
             $result = $this->database->delete('nss-players', [
-                'name' => $this->input['name']
+                'id' => $this->input['id']
             ]);
 
             if($result->rowCount() == 0) {
