@@ -114,7 +114,7 @@ class NSS {
     }
 
     public function removeJudger() {
-        $this->auth->removeUser($this->input['token'], $this->input['username']);
+        return $this->auth->removeUser($this->input['token'], $this->input['username']);
     }
 
     public function getPlayers() {
