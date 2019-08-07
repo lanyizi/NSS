@@ -76,7 +76,7 @@ function setJudgers() {
         .then(feedback => {
             if (feedback.result) {
                 alert(feedback.message);
-                window.location.href = "admincontrol.html";
+                window.location.href = "index.html";
                 return "Set success";
             }
             alert(feedback.message);
@@ -104,7 +104,7 @@ function removeJudger() {
         .then(feedback => {
             if (feedback.result) {
                 alert(feedback.message)
-                window.location.href = "admincontrol.html";
+                window.location.href = "index.html";
                 return "Remove success";
             }
             alert(feedback.message);
@@ -140,7 +140,7 @@ function judgePlayer() {
         .then(feedback => {
             if (feedback.id != null) {
                 alert(feedback.message)
-                window.location.href = "judgecontrol.html";
+                window.location.href = "index.html";
                 return "Judge success";
             }
             alert(feedback.message);
@@ -168,7 +168,7 @@ function removePlayer() {
         .then(feedback => {
             if (feedback.result) {
                 alert(feedback.message)
-                window.location.href = "judgecontrol.html";
+                window.location.href = "index.html";
                 return "Remove success";
             }
             alert(feedback.message);
