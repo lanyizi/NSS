@@ -31,7 +31,7 @@ function login() {
         })
         .then(feedback => {
             if (feedback.token == '0') {
-                alert("Wrong username or password")
+                alert("Wrong username or password");
                 window.location.href = "login.html";
                 return "Login Fail";
             }
@@ -103,7 +103,7 @@ function removeJudger() {
         })
         .then(feedback => {
             if (feedback.result) {
-                alert(feedback.message)
+                alert(feedback.message);
                 window.location.href = "index.html";
                 return "Remove success";
             }
@@ -139,7 +139,7 @@ function judgePlayer() {
         })
         .then(feedback => {
             if (feedback.id != null) {
-                alert(feedback.message)
+                alert(feedback.message);
                 window.location.href = "index.html";
                 return "Judge success";
             }
@@ -167,7 +167,7 @@ function removePlayer() {
         })
         .then(feedback => {
             if (feedback.result) {
-                alert(feedback.message)
+                alert(feedback.message);
                 window.location.href = "index.html";
                 return "Remove success";
             }
