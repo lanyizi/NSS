@@ -60,7 +60,7 @@ POST /nss.php?do=setJudger 【后端已实现】【前端已实现】 // 这个�
     'message': '消息提示，比如说“设置成功”'
 }
 
-POST /nss.php?do=removeJudger 【后端已实现】
+POST /nss.php?do=removeJudger 【后端已实现】【前端已实现】
 <- POST数据：
 {
     'token': '管理员的 token',
