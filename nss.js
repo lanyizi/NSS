@@ -85,6 +85,34 @@ function setJudgers() {
         });
 }
 
+function removeJudger() {
+    transdata = {
+        'token': getLocalToken(),
+        'uername': document.getElementById("removeUsername").value
+    }
+
+    fetch("nss.php?do=removeJudger", {
+            method: 'post',
+            body: JSON.stringify(transdata),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            return res.json();
+        })
+        .then(feedback => {
+            if (feedback.result) {
+                alert(feedback.message)
+                window.location.href = "admincontrol.html";
+                return "Remove success";
+            }
+            alert(feedback.message);
+            window.location.href = "admincontrol.html";
+            return "Remove failed";
+        });
+}
+
 function judgePlayer() {
     //Set json
     transdata = {
