@@ -52,6 +52,7 @@
         <div id="playersInfo">
             <table id="playersInfoTable">
                 <thead>
+                    <th>ID</th>
                     <th>玩家名称</th>
                     <th>昵称</th>
                     <th>级别</th>
@@ -66,6 +67,7 @@
                 <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
                 <!-- judgers 就是 vue data 里面的那个judgers数组 -->
                 <tr v-for="row in players">
+                    <td>{{ row.id }}</td>
                     <td>{{ row.name }}</td>
                     <td>{{ row.nickname }}</td>
                     <td>{{ row.level }}</td>

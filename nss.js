@@ -124,7 +124,7 @@ function judgePlayer() {
 function removePlayer() {
     transdata = {
         'token': getLocalToken(),
-        'name': document.getElementById("removeName").value
+        'id': document.getElementById("removeId").value
     }
 
     fetch("nss.php?do=removePlayer", {

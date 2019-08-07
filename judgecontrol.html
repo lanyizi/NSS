@@ -11,7 +11,7 @@
         Set Name:<br>
         <input type="text" name="name" value="" id="setName">
         <br> Set Nickname:<br>
-        <input type="text" name="nickname" value="" id="setNickname">
+        <input type="number" name="nickname" value="" id="setNickname">
         <br> Set Level(0-9):<br>
         <input type="text" name="level" value="" id="setLevel">
         <br> Set QQ:<br>
@@ -37,8 +37,8 @@
     <br>
 
     <div id="removePlayer">
-        Remove Player's Name:<br>
-        <input type="text" name="name" value="" id="removeName">
+        Remove Player's ID:<br>
+        <input type="number" min="0" step="1" name="id" value="" id="removeId">
         <br>
         <br>
         <button onclick="removePlayer()">确认</button>
