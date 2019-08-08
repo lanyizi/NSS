@@ -116,15 +116,15 @@ function removeJudger() {
 function judgePlayer() {
     //Get faction
     setFaction = "Random";
-    if (document.getElementById("setFactionA").checked = true) {
+    if (document.getElementById("setFactionA").checked) {
         setFaction = "Allied";
     }
 
-    if (document.getElementById("setFactionE").checked = true) {
+    if (document.getElementById("setFactionE").checked) {
         setFaction = "Allied";
     }
 
-    if (document.getElementById("setFactionS").checked = true) {
+    if (document.getElementById("setFactionS").checked) {
         setFaction = "Allied";
     }
     //Set json
