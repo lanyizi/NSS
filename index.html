@@ -150,6 +150,7 @@
                             for (var i = 0; i < self.players.length; i++) {
                                 tempDate = new Date(response.players[i].judgeDate * 1000);
                                 self.players[i].judgeDate = tempDate.toLocaleDateString();
+                                self.players[i].level = int(response.players[i].level)
                             }
                         });
                 },
