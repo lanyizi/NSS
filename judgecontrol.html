@@ -25,7 +25,7 @@
         <br> Random：
         <input type="radio" name="Faction" value="Random" id="setFactionR" checked="checked">
         <br> Set Date:<br>
-        <input type="date" name="judgeDate" value="" id="setDate">
+        <input type="date" name="judgeDate" value="" id="setDate" defaultValue="100000000">
         <br> Set replays:<br>
         <input type="file" name="replays" value="还没做！" id="setReplays">
         <br> Set description:<br>
@@ -45,10 +45,6 @@
         <br>
         <button onclick="removePlayer()">确认</button>
     </div>
-
-    <script>
-        document.getElementById("setDate").defaultValue = 100000000;
-    </script>
 </body>
 
 </html>
