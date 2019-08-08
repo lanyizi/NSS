@@ -6,7 +6,7 @@
 <head>
 </head>
 
-<body>
+<body onload="loadDate()">
     <div id="judgePlayer">
         Set Name:<br>
         <input type="text" name="name" value="" id="setName">
@@ -25,7 +25,7 @@
         <br> Random：
         <input type="radio" name="Faction" value="Random" id="setFactionR" checked="checked">
         <br> Set Date:<br>
-        <input type="date" name="judgeDate" value="" id="setDate">
+        <input type="date" name="judgeDate" value="" id="setDate" defaultValue="">
         <br> Set replays:<br>
         <input type="file" name="replays" value="还没做！" id="setReplays">
         <br> Set description:<br>
@@ -47,13 +47,12 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            var time = new Date();
-            var day = ("0" + time.getDate()).slice(-2);
-            var month = ("0" + (time.getMonth() + 1)).slice(-2);
-            var today = time.getFullYear() + "-" + (month) + "-" + (day);
-            $('setDate').val(today);
-        })
+        function loadDate() {
+            var dateInput = document.getElementById("setDate");
+            var date = new Date();
+            var dateString = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+            dateInput.value = dateString;
+        }
     </script>
 </body>
 
