@@ -121,11 +121,11 @@ function judgePlayer() {
     }
 
     if (document.getElementById("setFactionE").checked) {
-        setFaction = "Allied";
+        setFaction = "Empire";
     }
 
     if (document.getElementById("setFactionS").checked) {
-        setFaction = "Allied";
+        setFaction = "Soviet";
     }
     //Set json
     transdata = {
