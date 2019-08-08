@@ -133,7 +133,7 @@ function judgePlayer() {
     if (tempDate[0] == "") {
         setDate = Math.floor(Date.now() / 1000);
     } else {
-        setDate = new Date(tempDate[0], tempDate[1], tempDate[2], 0, 0, 0, 0);
+        setDate = Math.floor(Date(tempDate[0], tempDate[1], tempDate[2], 0, 0, 0, 0) / 1000);
     }
 
     //Set json
