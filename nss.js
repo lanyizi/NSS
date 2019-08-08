@@ -144,7 +144,7 @@ function judgePlayer() {
     //Upload replay
     replaysId = Array();
     for (var i = 0; i < document.getElementById("setReplays").files.length; i++) {
-        oneId = uploadReplay(document.getElementById("setReplays").files[i].name, window.btoa(document.getElementById("setReplays").files[i]));
+        oneId = uploadReplay(document.getElementById("setReplays").files[i].name, document.getElementById("setReplays").files[i]);
         if (oneId == -1) {
             alert("Replays Error")
             return "Judge failed";
