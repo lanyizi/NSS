@@ -127,6 +127,7 @@ function judgePlayer() {
     if (document.getElementById("setFactionS").checked) {
         setFaction = "Soviet";
     }
+
     //Set json
     transdata = {
         'token': getLocalToken(),
@@ -134,7 +135,7 @@ function judgePlayer() {
         'nickname': document.getElementById("setNickname").value,
         'level': document.getElementById("setLevel").value,
         'qq': document.getElementById("setQQ").value,
-        'judgeDate': Math.floor(Date.now() / 1000),
+        'judgeDate': document.getElementById("setDate").value,
         'faction': setFaction,
         'replays': document.getElementById("setReplays").value,
         'description': document.getElementById("setDescription").value
