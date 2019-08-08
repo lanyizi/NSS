@@ -129,9 +129,11 @@ function judgePlayer() {
     }
 
     //Set default date
-    setDate = document.getElementById("setDate").value;
-    if (setDate == "") {
+    tempDate = document.getElementById("setDate").value.split('-');
+    if (tempDate[0] == "") {
         setDate = Math.floor(Date.now() / 1000);
+    } else {
+        setDate = new Date(tempDate[0], tempDate[1], tempDate[2], 0, 0, 0, 0);
     }
 
     //Set json
