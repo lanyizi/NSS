@@ -170,11 +170,13 @@ function judgePlayer() {
 }
 
 function removePlayer() {
+    //Set Json
     transdata = {
         'token': getLocalToken(),
         'id': document.getElementById("removeId").value
     }
 
+    //Fetch
     fetch("nss.php?do=removePlayer", {
             method: 'post',
             body: JSON.stringify(transdata),
