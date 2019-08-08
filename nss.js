@@ -142,10 +142,9 @@ function removeJudger() {
 
 function judgePlayer() {
     //Upload replay
-    allFile = document.getElementById("setReplays").value;
     replaysId = Array();
-    for (var i = 0; i < allFile.length; i++) {
-        oneId = uploadReplay(allFile.files[i].name, window.btoa(allFile.files[i]));
+    for (var i = 0; i < document.getElementById("setReplays").length; i++) {
+        oneId = uploadReplay(document.getElementById("setReplays").files[i].name, window.btoa(document.getElementById("setReplays").files[i]));
         if (oneId == -1) {
             alert("Replays Error")
             return "Judge failed";
