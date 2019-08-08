@@ -114,6 +114,19 @@ function removeJudger() {
 }
 
 function judgePlayer() {
+    //Get faction
+    setFaction = "Random";
+    if (document.getElementById("setFactionA").checked = true) {
+        setFaction = "Allied";
+    }
+
+    if (document.getElementById("setFactionE").checked = true) {
+        setFaction = "Allied";
+    }
+
+    if (document.getElementById("setFactionS").checked = true) {
+        setFaction = "Allied";
+    }
     //Set json
     transdata = {
         'token': getLocalToken(),
@@ -122,7 +135,7 @@ function judgePlayer() {
         'level': document.getElementById("setLevel").value,
         'qq': document.getElementById("setQQ").value,
         'judgeDate': Math.floor(Date.now() / 1000),
-        'faction': document.getElementById("setFaction").value,
+        'faction': setFaction,
         'replays': document.getElementById("setReplays").value,
         'description': document.getElementById("setDescription").value
     }
