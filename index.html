@@ -147,10 +147,10 @@
                         .then(response => {
                             // 设置数据
                             self.players = response.players;
-                            // for (var i = 0; i < self.players.length; i++) {
-                            //     tempDate = new Date(response.players[i].judgeDate * 1000);
-                            //     self.players[i].judgeDate = tempDate.toLocaleDateString();
-                            // }
+                            for (var i = 0; i < self.players.length; i++) {
+                                tempDate = new Date(response.players[i].judgeDate * 1000);
+                                self.players[i].judgeDate = tempDate.toLocaleDateString();
+                            }
                         });
                 },
                 showReplayList: function(replays) {
