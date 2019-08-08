@@ -11,6 +11,33 @@ function getLocalToken() {
     return (cookies.get('token') || "0");
 }
 
+function uploadReplay(fileName, data) {
+    //Set json
+    transdata = {
+        'fileName': fileName,
+        'data': data
+    }
+
+    fetch("nss.php?do=uploadReplay", {
+            method: 'post',
+            body: JSON.stringify(transdata),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            return res.json()
+        })
+        .then(feedback => {
+            if (feedback.id == null) {
+                alert(feedback.message);
+                return -1;
+            }
+            alert(feedback.message);
+            return feedback.id;
+        });
+}
+
 function login() {
     //Set json
     var transdata = {
@@ -114,6 +141,18 @@ function removeJudger() {
 }
 
 function judgePlayer() {
+    //Upload replay
+    allFile = document.getElementById("setReplays").value;
+    replaysId = Array();
+    for (var i = 0; i < allFile.length; i++) {
+        oneId = uploadReplay(allFile.files[i].name, window.btoa(allFile.files[i]));
+        if (oneId == -1) {
+            alert("Replays Error")
+            return "Judge failed";
+        }
+        replaysId.push(oneId);
+    }
+
     //Get faction
     setFaction = "Random";
     if (document.getElementById("setFactionA").checked) {
@@ -146,7 +185,7 @@ function judgePlayer() {
         'qq': document.getElementById("setQQ").value,
         'judgeDate': setDate,
         'faction': setFaction,
-        'replays': document.getElementById("setReplays").value,
+        'replays': replaysId,
         'description': document.getElementById("setDescription").value
     }
 
