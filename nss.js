@@ -133,7 +133,7 @@ function judgePlayer() {
     if (tempDate[0] == "") {
         setDate = Math.floor(Date.now() / 1000);
     } else {
-        convertedDate = new Date(parseInt(tempDate[0]), parseInt(tempDate[1]), parseInt(tempDate[2]), 0, 0, 0, 0);
+        convertedDate = new Date(parseInt(tempDate[0]), parseInt(tempDate[1]) - 1, parseInt(tempDate[2]), 0, 0, 0, 0);
         setDate = Math.floor(convertedDate / 1000);
     }
 
