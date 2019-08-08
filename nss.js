@@ -128,7 +128,12 @@ function judgePlayer() {
         setFaction = "Soviet";
     }
 
-    alert(document.getElementById("setDate").value);
+    //Set default date
+    setDate = document.getElementById("setDate").value;
+    if (setDate == "") {
+        setDate = Math.floor(Date.now() / 1000);
+    }
+
     //Set json
     transdata = {
         'token': getLocalToken(),
@@ -136,7 +141,7 @@ function judgePlayer() {
         'nickname': document.getElementById("setNickname").value,
         'level': document.getElementById("setLevel").value,
         'qq': document.getElementById("setQQ").value,
-        'judgeDate': document.getElementById("setDate").value,
+        'judgeDate': setDate,
         'faction': setFaction,
         'replays': document.getElementById("setReplays").value,
         'description': document.getElementById("setDescription").value
