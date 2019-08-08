@@ -128,6 +128,7 @@ function judgePlayer() {
         setFaction = "Soviet";
     }
 
+    alert(document.getElementById("setDate").value);
     //Set json
     transdata = {
         'token': getLocalToken(),
