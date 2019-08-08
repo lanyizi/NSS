@@ -25,7 +25,7 @@
         <br> Random：
         <input type="radio" name="Faction" value="Random" id="setFactionR" checked="checked">
         <br> Set Date:<br>
-        <input type="date" name="judgeDate" value="" id="setDate" defaultValue="">
+        <input type="date" name="judgeDate" value="" id="setDate">
         <br> Set replays:<br>
         <input type="file" name="replays" value="还没做！" id="setReplays">
         <br> Set description:<br>
@@ -48,10 +48,9 @@
 
     <script>
         function loadDate() {
-            var dateInput = document.getElementById("setDate");
             var date = new Date();
             var dateString = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
-            dateInput.value = dateString;
+            document.getElementById("setDate") = dateString;
         }
     </script>
 </body>
