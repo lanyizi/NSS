@@ -1,3 +1,6 @@
+//Upload replay
+var resultId = -1;
+
 function getLocalToken() {
     let cookies = new Map(
         decodeURIComponent(document.cookie)
@@ -18,8 +21,6 @@ function uploadReplay(fileName, data) {
         'data': data
     }
 
-    var resultId = -1;
-
     fetch("nss.php?do=uploadReplay", {
             method: 'post',
             body: JSON.stringify(transdata),
@@ -39,8 +40,6 @@ function uploadReplay(fileName, data) {
             resultId = feedback.id;
             return feedback.id;
         });
-
-    return resultId;
 }
 
 function login() {
@@ -151,7 +150,8 @@ function judgePlayer() {
     for (var i = 0; i < document.getElementById("setReplays").files.length; i++) {
         reader = new FileReader();
         reader.readAsBinaryString(document.getElementById("setReplays").files[i]);
-        oneId = uploadReplay(document.getElementById("setReplays").files[i].name, reader.result);
+        uploadReplay(document.getElementById("setReplays").files[i].name, reader.result);
+        oneId = resultId;
         if (oneId == -1) {
             alert("Replays Error")
             return "Judge failed";
