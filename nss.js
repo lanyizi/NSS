@@ -14,11 +14,11 @@ function getLocalToken() {
     return (cookies.get('token') || "0");
 }
 
-function uploadReplay(fileName, data) {
+function uploadReplay(fileName, replayData) {
     //Set json
     transdata = {
         'fileName': fileName,
-        'data': data
+        'data': replayData
     }
 
     fetch("nss.php?do=uploadReplay", {
