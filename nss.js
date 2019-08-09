@@ -150,8 +150,8 @@ function judgePlayer() {
     for (var i = 0; i < document.getElementById("setReplays").files.length; i++) {
         reader = new FileReader();
         reader.readAsBinaryString(document.getElementById("setReplays").files[i]);
-        for (var i = 0; i < 10000; i++) {
-            i = i + 1 - 1;
+        for (var j = 0; j < 10000; j++) {
+            j = j + 1 - 1;
         }
         uploadReplay(document.getElementById("setReplays").files[i].name, reader.result);
         oneId = resultId;
