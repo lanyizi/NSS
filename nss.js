@@ -18,6 +18,8 @@ function uploadReplay(fileName, data) {
         'data': data
     }
 
+    var resultId = -1;
+
     fetch("nss.php?do=uploadReplay", {
             method: 'post',
             body: JSON.stringify(transdata),
@@ -29,13 +31,16 @@ function uploadReplay(fileName, data) {
             return res.json()
         })
         .then(feedback => {
-            if (feedback.id == "") {
+            if (feedback.id == null) {
                 alert(feedback.message);
                 return -1;
             }
             alert(feedback.message);
+            resultId = feedback.id;
             return feedback.id;
         });
+
+    return resultId;
 }
 
 function login() {
@@ -144,7 +149,7 @@ function judgePlayer() {
     //Upload replay
     replaysId = Array();
     for (var i = 0; i < document.getElementById("setReplays").files.length; i++) {
-        oneId = uploadReplay(document.getElementById("setReplays").files[i].name, window.btoa(document.getElementById("setReplays").files[i]));
+        oneId = uploadReplay(document.getElementById("setReplays").files[i].name, FileReader.readAsBinaryString(document.getElementById("setReplays").files[i]));
         if (oneId == -1) {
             alert("Replays Error")
             return "Judge failed";
