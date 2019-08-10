@@ -7,6 +7,17 @@
 </head>
 
 <body>
+    <div id="uploadReplay">
+        Select replays (一次一个):<br>
+        <input type="file" name="replays" value="" id="setReplays">
+        <br>
+        <br>
+        <button onclick="removePlayer()">确认</button>
+    </div>
+
+    <br>
+    <br>
+
     <div id="judgePlayer">
         Set Name:<br>
         <input type="text" name="name" value="" id="setName">
@@ -26,8 +37,8 @@
         <input type="radio" name="Faction" value="Random" id="setFactionR" checked="checked">
         <br> Set Date:<br>
         <input type="date" name="judgeDate" value="" id="setDate">
-        <br> Set replays:<br>
-        <input type="file" name="replays" value="" id="setReplays">
+        <br> Set replays' ID (逗号分隔多个录像):<br>
+        <input type="text" name="replaysId" value="" id="setReplaysId">
         <br> Set description:<br>
         <input type="text" name="description" value="" id="setDescription">
         <br>

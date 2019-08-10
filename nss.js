@@ -14,31 +14,34 @@ function getLocalToken() {
     return (cookies.get('token') || "0");
 }
 
-function uploadReplay(fileName, replayData) {
-    //Set json
-    transdata = {
-        'fileName': fileName,
-        'data': replayData
-    }
+function uploadReplay() {
+    var reader = new FileReader();
+    reader.readAsBinaryString(document.getElementById("setReplays").files[0])
+        .then(whenFinished => {
+            transdata = {
+                'fileName': document.getElementById("setReplays").files[0].name,
+                'data': reader.result
+            }
 
-    fetch("nss.php?do=uploadReplay", {
-            method: 'post',
-            body: JSON.stringify(transdata),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => {
-            return res.json()
-        })
-        .then(feedback => {
-            if (feedback.id == null) {
-                alert(feedback.message);
-                return -1;
-            }
-            alert(feedback.message);
-            resultId = feedback.id;
-            return feedback.id;
+            fetch("nss.php?do=uploadReplay", {
+                    method: 'post',
+                    body: JSON.stringify(transdata),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => {
+                    return res.json()
+                })
+                .then(feedback => {
+                    if (feedback.id == null) {
+                        alert(feedback.message);
+                        return -1;
+                    }
+                    alert(feedback.message);
+                    resultId = feedback.id;
+                    return feedback.id;
+                });
         });
 }
 
@@ -145,20 +148,6 @@ function removeJudger() {
 }
 
 function judgePlayer() {
-    //Upload replay
-    replaysId = Array();
-    for (var i = 0; i < document.getElementById("setReplays").files.length; i++) {
-        reader = new FileReader();
-        reader.readAsBinaryString(document.getElementById("setReplays").files[i]);
-        uploadReplay(document.getElementById("setReplays").files[i].name, reader.result);
-        oneId = resultId;
-        if (oneId == -1) {
-            alert("Replays Error")
-            return "Judge failed";
-        }
-        replaysId.push(oneId);
-    }
-
     //Get faction
     setFaction = "Random";
     if (document.getElementById("setFactionA").checked) {
@@ -191,7 +180,7 @@ function judgePlayer() {
         'qq': document.getElementById("setQQ").value,
         'judgeDate': setDate,
         'faction': setFaction,
-        'replays': replaysId,
+        'replays': document.getElementById("setReplaysId").value.split(','),
         'description': document.getElementById("setDescription").value
     }
 
