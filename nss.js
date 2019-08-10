@@ -15,7 +15,7 @@ function getLocalToken() {
 }
 
 function uploadReplay() {
-    var reader = new FileReader();
+    reader = new FileReader();
     reader.readAsBinaryString(document.getElementById("setReplays").files[0])
         .then(whenFinished => {
             transdata = {
