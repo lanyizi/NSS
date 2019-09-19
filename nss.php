@@ -237,7 +237,7 @@ class NSS {
 
     public function getReplayInformation() {
         $id = $_GET['id'];
-        $replayInformation = $this->database->get('nss-replays', [
+        $replayInformation = $this->database->get('new-replays', [
             'fileName',
             'fileSize',
             'mapName',
@@ -276,7 +276,7 @@ class NSS {
                 $replayData['fileName'] = $this->input['fileName'];
 
                 // 把录像信息加到数据库里
-                $this->database->insert('nss-replays', $replayData);
+                $this->database->insert('new-replays', $replayData);
                 $result['id'] = $this->database->id();
                 // 保存录像文件
                 $finalFileName = $this->getFinalReplayName($result['id']);
