@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <!-- 引用Vue.js -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="nss.js?v=2"></script>
+    <script src="nss.js?v=19"></script>
     <!--
             这两个函数调用，我们也移到vue里调用吧
             <script>
@@ -46,7 +46,7 @@
 
         <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
         <div id="setJudger" v-if="accessLevel > 0">
-            <a href="admincontrol.html">设置鉴定员</a>
+            <a href="admincontrol.html">编辑鉴定员</a>
         </div>
 
         <div id="playersInfo">
@@ -148,7 +148,9 @@
                             // 设置数据
                             self.players = response.players;
                             for (var i = 0; i < self.players.length; i++) {
-                                self.players[i].judgeDate = new Date(response.players[i].judgeDate * 1000);
+                                tempDate = new Date(response.players[i].judgeDate * 1000);
+                                self.players[i].judgeDate = tempDate.toLocaleDateString();
+                                self.players[i].level = parseInt(response.players[i].level)
                             }
                         });
                 },

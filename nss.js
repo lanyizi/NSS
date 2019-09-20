@@ -1,3 +1,6 @@
+//Upload replay
+var resultId = -1;
+
 function getLocalToken() {
     let cookies = new Map(
         decodeURIComponent(document.cookie)
@@ -9,6 +12,37 @@ function getLocalToken() {
 
     // 从 cookies 获取 token 的值，假如没有的话就用"0"作为 token 的值
     return (cookies.get('token') || "0");
+}
+
+function uploadReplay() {
+    var reader = new FileReader();
+    reader.readAsBinaryString(document.getElementById("setReplays").files[0])
+        .then(whenFinished => {
+            transdata = {
+                'fileName': document.getElementById("setReplays").files[0].name,
+                'data': reader.result
+            }
+
+            fetch("nss.php?do=uploadReplay", {
+                    method: 'post',
+                    body: JSON.stringify(transdata),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => {
+                    return res.json()
+                })
+                .then(feedback => {
+                    if (feedback.id == null) {
+                        alert(feedback.message);
+                        return -1;
+                    }
+                    alert(feedback.message);
+                    resultId = feedback.id;
+                    return feedback.id;
+                });
+        });
 }
 
 function login() {
@@ -31,7 +65,7 @@ function login() {
         })
         .then(feedback => {
             if (feedback.token == '0') {
-                alert("Wrong username or password")
+                alert("Wrong username or password");
                 window.location.href = "login.html";
                 return "Login Fail";
             }
@@ -76,7 +110,7 @@ function setJudgers() {
         .then(feedback => {
             if (feedback.result) {
                 alert(feedback.message);
-                window.location.href = "admincontrol.html";
+                window.location.href = "index.html";
                 return "Set success";
             }
             alert(feedback.message);
@@ -85,7 +119,58 @@ function setJudgers() {
         });
 }
 
+function removeJudger() {
+    transdata = {
+        'token': getLocalToken(),
+        'username': document.getElementById("removeUsername").value
+    }
+
+    fetch("nss.php?do=removeJudger", {
+            method: 'post',
+            body: JSON.stringify(transdata),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            return res.json();
+        })
+        .then(feedback => {
+            if (feedback.result) {
+                alert(feedback.message);
+                window.location.href = "index.html";
+                return "Remove success";
+            }
+            alert(feedback.message);
+            window.location.href = "admincontrol.html";
+            return "Remove failed";
+        });
+}
+
 function judgePlayer() {
+    //Get faction
+    setFaction = "Random";
+    if (document.getElementById("setFactionA").checked) {
+        setFaction = "Allied";
+    }
+
+    if (document.getElementById("setFactionE").checked) {
+        setFaction = "Empire";
+    }
+
+    if (document.getElementById("setFactionS").checked) {
+        setFaction = "Soviet";
+    }
+
+    //Set default date
+    tempDate = document.getElementById("setDate").value.split('-');
+    if (tempDate[0] == "") {
+        setDate = Math.floor(Date.now() / 1000);
+    } else {
+        convertedDate = new Date(parseInt(tempDate[0]), parseInt(tempDate[1]) - 1, parseInt(tempDate[2]), 0, 0, 0, 0);
+        setDate = Math.floor(convertedDate / 1000);
+    }
+
     //Set json
     transdata = {
         'token': getLocalToken(),
@@ -93,9 +178,9 @@ function judgePlayer() {
         'nickname': document.getElementById("setNickname").value,
         'level': document.getElementById("setLevel").value,
         'qq': document.getElementById("setQQ").value,
-        'judgeDate': Math.floor(Date.now() / 1000),
-        'faction': document.getElementById("setFaction").value,
-        'replays': document.getElementById("setReplays").value,
+        'judgeDate': setDate,
+        'faction': setFaction,
+        'replays': document.getElementById("setReplaysId").value.split(','),
         'description': document.getElementById("setDescription").value
     }
 
@@ -111,8 +196,8 @@ function judgePlayer() {
         })
         .then(feedback => {
             if (feedback.id != null) {
-                alert(feedback.message)
-                window.location.href = "judgecontrol.html";
+                alert(feedback.message);
+                window.location.href = "index.html";
                 return "Judge success";
             }
             alert(feedback.message);
@@ -122,11 +207,13 @@ function judgePlayer() {
 }
 
 function removePlayer() {
+    //Set Json
     transdata = {
         'token': getLocalToken(),
         'id': document.getElementById("removeId").value
     }
 
+    //Fetch
     fetch("nss.php?do=removePlayer", {
             method: 'post',
             body: JSON.stringify(transdata),
@@ -139,8 +226,8 @@ function removePlayer() {
         })
         .then(feedback => {
             if (feedback.result) {
-                alert(feedback.message)
-                window.location.href = "judgecontrol.html";
+                alert(feedback.message);
+                window.location.href = "index.html";
                 return "Remove success";
             }
             alert(feedback.message);
