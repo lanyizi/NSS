@@ -72,13 +72,13 @@ POST /nss.php?do=removeJudger 【后端已实现】
     'message': '消息提示，比如说“删除成功”'
 }
 
-GET /nss.php?do=getPlayers 【后端已实现】【前端已实现】
+GET /nss.php?do=getPlayers 【后端已实现】【X前端已实现】
 -> 返回被鉴定的玩家列表
 {
     'players': // players 是一个数组
     [
         {
-            'id': 1, // 玩家 ID（数字）
+            'id': 1, // 玩家信息记录 ID（数字）
             'name': '玩家名称',
             'nickname': '玩家称呼（可选）', // 你可以用 if(data[0].nickname) { (有) } else { (没有) } 来检测到底有没有称呼
             'level': 7 // 级别，使用数字
@@ -95,14 +95,38 @@ GET /nss.php?do=getPlayers 【后端已实现】【前端已实现】
     ]
 }
 
-POST /nss.php?do=judgePlayer 【后端已实现】【前端已实现】
+GET /nss.php?do=getPlayerHistory&qq=12345678 【后端已实现】
+-> 按照 QQ 号返回某个玩家的历史
+{
+    'history': // history 是一个数组，包含同一个 QQ 号按照时间顺序排列的记录
+    [
+        {
+            'id': 1, // 玩家信息记录 ID（数字）
+            'name': '玩家名称',
+            'nickname': '玩家称呼（可选）', // 你可以用 if(data[0].nickname) { (有) } else { (没有) } 来检测到底有没有称呼
+            'level': 7 // 级别，使用数字
+            'judgeDate': 1564863390, //鉴定时间，使用 UNIX 时间戳
+            'judger': '鉴定员用户名',
+            'faction': '主阵营',
+            'replays': ['鉴定录像1的 ID'，'鉴定录像2的 ID（假如有的话）', ...],
+            'description': '说明（假如有的话）',
+            'deletedBy': '删除该条记录的鉴定员，假如没被删除则为 null'
+            'deletedDate': 1564863390, // 该记录的时间，使用 UNIX 时间戳，假如没被删除则为 null
+        },
+        {
+            ...
+        }
+    ]
+}
+
+POST /nss.php?do=judgePlayer 【后端已实现】【X前端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的 token',
     'name': '玩家名称',
     'nickname': '玩家称呼（可选，假如没有称呼则为空字符串或者null）',
     'level': 7. // 级别，使用数字
-    'qq': 'QQ号',
+    'qq': '玩家 QQ 号',
     'judgeDate': 1564863390, //鉴定时间，使用 UNIX 时间戳，你可以把默认值设为当前时间，即 Math.floor(Date.now() / 1000)
     'faction': '主阵营',
     'replays': ['鉴定录像1的 ID'，'鉴定录像2的 ID（假如有的话）', ...],
@@ -110,15 +134,15 @@ POST /nss.php?do=judgePlayer 【后端已实现】【前端已实现】
 }
 -> 返回：
 {
-    'id': 1, // 玩家 ID，假如设置失败则为 null
+    'result': true, // 设置玩家的结果，假如设置失败则为 false
     'message': '消息提示，比如说“设置成功”'
 }
 
-POST /nss.php?do=removePlayer 【后端已实现】【前端已实现】
+POST /nss.php?do=removePlayer 【后端已实现】【X前端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的 token',
-    'id': 1 // 玩家 ID
+    'qq': '玩家 QQ 号'
 }
 -> 返回：
 {

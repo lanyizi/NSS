@@ -1,11 +1,14 @@
 <?php
+
+use Medoo\Medoo;
+
 require_once('util.php');
 
 class Auth {
 
     private $database;
 
-    public function __construct($database) {
+    public function __construct(Medoo $database) {
         $this->database = $database;
     }
 
@@ -22,7 +25,10 @@ class Auth {
 
         // 在数据库里查找当前用户名$username对应的密码
         $passHash = $this->database->get('nss-admins', 'passHash', [
-            'username' => $username,
+            'AND' => [
+                'deletedDate' => null,
+                'username' => $username
+            ]
         ]);
 
         // 假如找不到用户，那么返回默认 token
@@ -68,7 +74,10 @@ class Auth {
         $userdata = $this->database->get('nss-admins', [
             'passhash', 'accesslevel'
         ], [
-            'username' => $username,
+            'AND' => [
+                'deletedDate' => null,
+                'username' => $username
+            ]
         ]);
     
         // 假如找不到用户，那么返回默认 token
@@ -91,6 +100,27 @@ class Auth {
         ];
     }
 
+    private function disableUser($targetUser, $disabledBy, $additionalAction) {
+        $action = function (Medoo $database) use ($targetUser, $disabledBy, $additionalAction) {
+            // 开始一次事务（transaction）
+            $database->update('nss-admins', [
+                'deletedBy' => $disabledBy,
+                '#deletedDate' => 'CURRENT_TIMESTAMP'
+            ], [
+                'AND' => [
+                    'deletedDate' => null,
+                    'username' => $targetUser
+                ]
+            ]);
+
+            // 假如有额外的东西要执行的话，就执行它
+            if (is_callable($additionalAction)) {
+                $additionalAction($database);
+            }
+        };
+        $this->database->action($action);
+    }
+
     public function setUser($token, $username, $password, $accessLevel, $description) {
         $noPrivilegeResult = [
             'result' => false,
@@ -111,31 +141,36 @@ class Auth {
         if(($adminName == $username) && ($accessLevel != $adminLevel)) {
             return $noPrivilegeResult;
         }
-    
-        $newData = [
-            'username' => $username,
-            'passhash' => password_hash($password, PASSWORD_DEFAULT),
-            'accessLevel' => $accessLevel,
-            'description' => $description,
-            'updated-by' => $adminName,
-            'updated-date' => time()
-        ];
-    
-        if($this->database->has('nss-admins', [
-            'username' => $username
-        ])) {
-            $this->database->replace('nss-admins', $newData, [
-                'username' => $username
-            ]);
+
+        try {
+            $newData = [
+                'username' => $username,
+                'passhash' => password_hash($password, PASSWORD_DEFAULT),
+                'accessLevel' => $accessLevel,
+                'description' => $description,
+                'updated-by' => $adminName,
+                'updated-date' => time()
+            ];
+     
+            $insertNewData = function ($database) use ($newData) {
+                $database->insert('nss-admins', $newData);
+            };
+
+            // 禁用以前的用户，并加入新的信息
+            $this->disableUser($username, $adminName, $insertNewData);
+
+            return [
+                'result' => true,
+                'message' => '操作成功'
+            ];
         }
-        else {
-            $this->database->insert('nss-admins', $newData);
+        catch(Exception $exception) {
+            $errorMessage = $exception->getMessage();
+            return [
+                'result' => false,
+                'message' => "遇到了内部错误：$errorMessage"
+            ];
         }
-    
-        return [
-            'result' => true,
-            'message' => '操作成功'
-        ];
     }
 
     public function removeUser($token, $username) {
@@ -149,16 +184,7 @@ class Auth {
 
         try {
             // 删除鉴定员
-            $result = $this->database->delete('nss-admins', [
-                'username' => $username
-            ]);
-
-            if($result->rowCount() == 0) {
-                return [
-                    'result' => false,
-                    'message' => '没有找到这个鉴定员'
-                ];
-            }
+            $this->disableUser($username, $access['username'], null);
 
             return [
                 'result' => true,

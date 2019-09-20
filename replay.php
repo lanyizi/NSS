@@ -48,11 +48,12 @@ class RA3Replay {
         $chunks = array_chunk(preg_split('/(=|;)/', $header, -1, PREG_SPLIT_NO_EMPTY), 2);
         $array = array_combine(array_column($chunks, 0), array_column($chunks, 1));
         $mapPath = substr($array['M'], 3); // 地图路径
+        $seed = (int)($array['SD']);
         $playerArray = explode(':', $array['S']);
         $players = [];
         foreach($playerArray as $playerString) {
             $playerName = explode(',', $playerString)[0];
-            if($playerName[0] == 'H' || $player[0] == 'C') {
+            if($playerName[0] == 'H' || $playerName[0] == 'C') {
                 $realPlayerName = substr($playerName, 1);
                 if($realPlayerName != 'post Commentator') {
                     array_push($players, $realPlayerName);
@@ -64,15 +65,16 @@ class RA3Replay {
             'fileSize' => strlen($replayData),
             'mapName' => $mapName,
             'mapPath' => $mapPath,
-            'timeStamp' => $timeStamp,
             'players' => $players,
+            'seed' => $seed,
+            'timeStamp' => $timeStamp
         ];
     }
 
     // 返回：['string' => '读取的字符串', 'newIndex' => 读取到的位置]
     private static function readUTF16String($data, $index) {
 
-        $string == '';
+        $string = '';
         while(true) {
             $first = $data[$index];
             $second = $data[$index + 1];
