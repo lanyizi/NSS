@@ -455,7 +455,7 @@
                         return match;
                     }).map(playerData => {
                         let newData = {};
-                        Object.assign(newData, playerDate);
+                        Object.assign(newData, playerData);
                         newData.judgeDate = this.unixTimeStampToVueDate(newData.judgeDate);
                         return newData;
                     });
