@@ -391,7 +391,7 @@
                 },
                 loadAllReplays: function() {
                     // 获取所有录像的列表
-                    fetch('replay.php?do=getReplayList')
+                    fetch('/replays/replay.php?do=getReplayList')
                     .then(response => response.json())
                     .then(json => { 
                         this.replayList.allReplays = json.replays || [];
