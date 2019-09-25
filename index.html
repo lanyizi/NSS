@@ -398,10 +398,17 @@
             computed: {
                 computedInputDate: {
                     get: function() {
+                        if(!this.input.judgeDate) {
+                            return null;
+                        }
                         let date = (new Date(this.input.judgeDate * 1000));
                         return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
                     },
                     set: function(value) {
+                        if(!value) {
+                            this.input.judgeDate = null;
+                            return;
+                        }
                         let [year, month, day] = value.split('-').map(x => parseInt(x));
                         this.input.judgeDate = parseInt((new Date(year, month - 1, day)).getTime() / 1000);
                     }
