@@ -85,7 +85,7 @@
                     <td><input type="text" v-model="input.name" /></td>
                     <td><input type="text" placeholder="（非必填）" v-model="input.nickname" /></td>
                     <td><input type="number" v-model="input.level" /></td>
-                    <td><input type="date" v-model="input.inputDate" /></td>
+                    <td><input type="date" v-model="computeInputDate" /></td>
                     <td><input type="text" v-model="input.judger" /></td>
                     <td>
                         <select v-model="input.faction">
@@ -225,7 +225,7 @@
                     name: '',
                     nickname: '',
                     level: null,
-                    inputDate: null, // 输入的日期，之后需要处理才能发到服务器
+                    judgeDate: null, // 输入的日期
                     judger: '',
                     faction: [],
                     replays: [],
@@ -259,7 +259,7 @@
                         name: '',
                         nickname: '',
                         level: null,
-                        inputDate: null,
+                        judgeDate: null,
                         judger: '',
                         faction: [],
                         replays: [],
@@ -309,6 +309,7 @@
                 judgePlayer: function() {
                     let data = this.input;
                     data.token = getLocalToken();
+                    data.judgeDate = data.judgeDate || parseInt(Date.now() / 1000)
                     fetch('nss.php?do=judgePlayer', {
                         method: 'post',
                         body: JSON.stringify(data),
