@@ -438,7 +438,7 @@
                 },
                 isInputInvalidForUpload: function() {
                     let input = this.input;
-                    return !(input.qq && input.name && input.level && input.judger && (input.faction.length == 0));
+                    return !(input.qq && input.name && input.level && input.judger && (input.faction.length > 0));
                 },
                 isInputInvalidForDelete: function() {
                     return this.isInputInvalidForUpload || 
