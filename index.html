@@ -183,7 +183,7 @@
                         所有录像
                         <ul>
                             <li v-for="replay in replayList.allReplays">
-                                <replay replayid="replay.id" v-bind:key="replay.id"></replay>
+                                <replay v-bind:replayid="replay.id" v-bind:key="replay.id"></replay>
                             </li>
                         </ul>
                     </td>
