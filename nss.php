@@ -2,7 +2,6 @@
 require_once('Medoo-master/src/Medoo.php');
 require_once('auth.php');
 require_once('util.php');
-require_once('replay.php');
 
 use Medoo\Medoo;
 
@@ -57,22 +56,10 @@ class NSS {
      */
     private $auth;
 
-    /**
-     * @var string
-     */
-    private $replayDirectory;
-
     public function __construct($input, Medoo $database) {
         $this->input = $input;
         $this->database = $database;
         $this->auth = new Auth($this->database);
-        $this->replayDirectory = 'uploadedReplays';
-
-        // 假如不存在录像文件夹，那就创建一个
-        if(!is_dir($this->replayDirectory)) {
-            mkdir($this->replayDirectory, 0777, true);
-        }
-        
     }
 
     // 根据 what 的值，调用不同的方法
@@ -289,96 +276,6 @@ class NSS {
         }
     }
 
-    public function getReplayInformation() {
-        $id = $_GET['id'];
-        $replayData = $this->database->get('new-replays', [
-            'fileName',
-            'fileSize',
-            'mapName',
-            'mapPath',
-            'timeStamp',
-            'players'
-        ], [
-            'AND' => [
-                'deletedDate' => null,
-                'id' => $id
-            ]
-        ]);
-
-        if(empty($replayData)) {
-            $replayData = null;
-        }
-        else {
-            $replayData['players'] = json_decode($replayData['players'], true);
-            $replayData['url'] = $this->getFinalReplayName($id);
-        }
-
-        return [
-            'replay' => $replayData
-        ];
-    }
-
-    public function uploadReplay() {
-        try {
-            $id = null;
-
-            $this->database->action(function(Medoo $database) use (&$id) {
-                $replayFile = base64_decode($this->input['data']);
-                // 解析录像信息
-                $replayData = RA3Replay::parseRA3Replay($replayFile);
-                // 用JSON来存储玩家数组
-                $replayData['players'] = json_encode($replayData['players']);
-                $replayData['fileName'] = $this->input['fileName'];
-
-                // 检查是否有已经存在的录像
-                $existing = $database->get('new-replays', [
-                    'id'
-                ], [
-                    'AND' => [
-                        'deletedDate' => null,
-                        'mapPath' => $replayData['mapPath'],
-                        'players' => $replayData['players'],
-                        'seed' => $replayData['seed'],
-                        'timeStamp' => $replayData['timeStamp']
-                    ]
-                ]);
-                if(!empty($existing)) {
-                    $oldId = $existing['id'];
-                    throw new NSSException("这个录像已经存在，ID $oldId");
-                }
-
-                // 把录像信息加到数据库里
-                $database->insert('new-replays', $replayData);
-                $id = $database->id();
-                // 保存录像文件
-                $finalFileName = $this->getFinalReplayName($id);
-                $writeResult = file_put_contents($finalFileName, $replayFile, LOCK_EX);
-                if(!$writeResult) {
-                    // 抛出异常或返回 false 会导致事务回滚，之前添加到数据库里的数据也会回滚
-                    throw new NSSException('保存录像文件失败');
-                }
-            });
-
-            return [
-                'id' => $id,
-                'message' => '上传成功'
-            ];
-        }
-        catch(NSSException $exception) {
-            return [
-                'id' => null,
-                'message' => $exception->getMessage()
-            ];
-        }
-        catch(Exception $exception) {
-            $errorMessage = $exception->getMessage();
-            return [
-                'id' => null,
-                'message' => "遇到了内部错误：$errorMessage"
-            ];
-        }
-    }
-
     public function removeReplay() {
         try {
             $this->database->action(function(Medoo $database) {
@@ -423,11 +320,6 @@ class NSS {
             ];
         }
     }
-
-    private function getFinalReplayName($id) {
-        return $this->replayDirectory . '/' . $id . '.RA3Replay';
-    }
-
 }
 
 echo json_encode(main());

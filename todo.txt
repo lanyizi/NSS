@@ -9,7 +9,7 @@
 
 【注：以下任何 API 在内部出错的情况下都会返回 null，并把状态码设为500】
 
-POST /nss.php?do=login 【后端已实现】【前端已实现】
+POST nss.php?do=login 【后端已实现】【前端已实现】
 <- POST数据：
 {
     'username': 'USERNAME',
@@ -21,7 +21,7 @@ POST /nss.php?do=login 【后端已实现】【前端已实现】
     //token 还可以由 javascript 保存到 cookie 里，这样一旦记住，就不需要再登录，见 https://stackoverflow.com/a/4825695/4399840
 }
 
-GET /nss.php?do=getAccessLevel&token=TOKEN 【后端已实现】【前端已实现】
+GET nss.php?do=getAccessLevel&token=TOKEN 【后端已实现】【前端已实现】
 -> 返回：
 {
     'level': 0, //目前token的权限（2管理员，1鉴定员，0游客），假如返回的是0，那么在网页上显示登录界面，否则显示已登录
@@ -29,7 +29,7 @@ GET /nss.php?do=getAccessLevel&token=TOKEN 【后端已实现】【前端已实�
     'username': '当前登录的人的名称（假如不是游客的话）'
 }
 
-GET /nss.php?do=getJudgers 【后端已实现】【前端已实现】
+GET nss.php?do=getJudgers 【后端已实现】【前端已实现】
 -> 返回：
 {
     'judgers' : // judgers 是一个数组
@@ -45,7 +45,7 @@ GET /nss.php?do=getJudgers 【后端已实现】【前端已实现】
 }
 
 
-POST /nss.php?do=setJudger 【后端已实现】【前端已实现】 // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
+POST nss.php?do=setJudger 【后端已实现】【前端已实现】 // 这个主要是用来让管理员设置鉴定员的，但也可以被鉴定员用来修改自己的密码
 <- POST数据：
 {
     'token': '管理员自己的 token',
@@ -72,7 +72,7 @@ POST /nss.php?do=removeJudger 【后端已实现】【前端已实现】
     'message': '消息提示，比如说“删除成功”'
 }
 
-GET /nss.php?do=getPlayers 【后端已实现】【X前端已实现】
+GET nss.php?do=getPlayers 【后端已实现】【前端已实现】
 -> 返回被鉴定的玩家列表
 {
     'players': // players 是一个数组
@@ -95,7 +95,7 @@ GET /nss.php?do=getPlayers 【后端已实现】【X前端已实现】
     ]
 }
 
-GET /nss.php?do=getPlayerHistory&qq=12345678 【后端已实现】
+GET nss.php?do=getPlayerHistory&qq=12345678 【后端已实现】
 -> 按照 QQ 号返回某个玩家的历史
 {
     'history': // history 是一个数组，包含同一个 QQ 号按照时间顺序排列的记录
@@ -119,7 +119,7 @@ GET /nss.php?do=getPlayerHistory&qq=12345678 【后端已实现】
     ]
 }
 
-POST /nss.php?do=judgePlayer 【后端已实现】【X前端已实现】
+POST nss.php?do=judgePlayer 【后端已实现】【前端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的 token',
@@ -138,7 +138,7 @@ POST /nss.php?do=judgePlayer 【后端已实现】【X前端已实现】
     'message': '消息提示，比如说“设置成功”'
 }
 
-POST /nss.php?do=removePlayer 【后端已实现】【X前端已实现】
+POST nss.php?do=removePlayer 【后端已实现】【前端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的 token',
@@ -150,35 +150,65 @@ POST /nss.php?do=removePlayer 【后端已实现】【X前端已实现】
     'message': '消息提示，比如说“删除成功”'
 }
 
-GET /nss.php?do=getReplayInformation&id=REPLAY_ID 【后端已实现】
+// 录像相关（移至 lanyi.altervista.org/replays）
+
+GET /replays/replays.php?do=getReplayList 【后端已实现】
+-> 返回：
+{
+    'replays': // 录像 ID
+    [
+        { id: 4 }, { id: 3 }, { id: 2 }...
+    ]
+}
+
+GET /replays/replays.php?do=getReplayInformation&id=REPLAY_ID 【后端已实现】【前端已实现】
 -> 返回：
 {
     'replay': // 假如 ID 无效则为 null
     {
-        'url': '录像下载地址',
+        'url': '录像下载地址，可能是 null',
+        'description': '说明',
         'fileName': '录像文件名'
-        'fileSize': 5000, // 文件大小
+        'fileSize': 5000, // 文件大小，可能是 null
         'mapName': '无限岛', // 地图名称（可能根据当时保存录像时 RA3 语言的不同而变化）
         'mapPath': 'data/maps/official/infinity_isle', // 游戏里的地图路径（将来可以用来获取地图的标准名称以及小地图的地址）
+        'isPartial': false, // 是否目前只被上传了一部分
+        'players': [ // 玩家列表
+            [ // 队伍1
+                { // 队伍里的玩家
+                    'name': 'RC'
+                    'faction': 1 // 阵营ID
+                },
+                ...
+            ], 
+            [
+                ...
+            ],
+            ...
+        ],
         'timeStamp': 1564863390, // 录像时间戳
-        'players': [ 'RC', ...] // 玩家列表
     }
 }
 
-POST /nss.php?do=uploadReplay 【后端已实现】
+POST /replays/replays.php?do=uploadReplay 【后端已实现】【前端已实现】
 <- POST数据：
 {
     'fileName': '录像文件名',
     'data': '录像数据，可以在 javascript 里用 btoa() 函数把录像文件数据编码为 Base64 字符串'
     // 关于如何读取文件，可以参考https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications
+    'description': '说明（可选）',
+    'isPartial': false // 是否只上传了录像的一部分，此属性可选，只要没设置就默认为 false
 }
 -> 返回：
 {
-    'id': '被上传的录像的 ID，假如上传失败则为 null'
+    'id': '被上传的录像的 ID，假如上传失败则为 null',
+    'isDuplicate': false, // 录像是否已经存在，假如已经存在则 id 实际上是之前已经存在的录像的ID
     'message': '消息提示，比如说“上传成功”'
 }
 
-POST /nss.php?do=removeReplay 【后端已实现】
+// 删除录像这个问题有点麻烦，毕竟否则还要设置一套录像管理员的系统，因此目前仍然是在 NSS 这边删除录像
+
+POST nss.php?do=removeReplay 【后端已实现】
 <- POST数据：
 {
     'token': '鉴定员或管理员的 token',

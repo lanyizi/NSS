@@ -6,6 +6,7 @@
     <!-- 引用Vue.js -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="nss.js?v=19"></script>
+    <script src="/replays/replay.js"></script>
     <!--
             这两个函数调用，我们也移到vue里调用吧
             <script>
@@ -13,6 +14,20 @@
                 listJudgers();
             </script>
         -->
+    
+    <style>
+        #replayListContainer {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: #00000080;
+            z-index: 100;
+        }
+
+        #replayList {
+            background-color: white;
+        }
+    </style>
 </head>
 
 <body>
@@ -53,36 +68,73 @@
             <table id="playersInfoTable">
                 <thead>
                     <th>ID</th>
+                    <th>QQ号</th>
                     <th>玩家名称</th>
                     <th>昵称</th>
                     <th>级别</th>
-                    <th>QQ号</th>
                     <th>鉴定日期</th>
                     <th>鉴定员</th>
                     <th>主阵营</th>
                     <th>录像</th>
                     <th>说明</th>
+                    <th>操作</th>
                 </thead>
+                <tr>
+                    <td>{{ (accessLevel > 0) ? '查询 / 编辑信息' : '查询信息' }}</td>
+                    <td><input type="text" v-model="input.qq" /></td>
+                    <td><input type="text" v-model="input.name" /></td>
+                    <td><input type="text" placeholder="（非必填）" v-model="input.nickname" /></td>
+                    <td><input type="number" v-model="input.level" /></td>
+                    <td><input type="date" v-model="input.inputDate" /></td>
+                    <td><input type="text" v-model="input.judger" /></td>
+                    <td>
+                        <select v-model="input.faction">
+                            <option disabled selected>鉴定玩家时建议只选择一项</option>
+                            <option v-for="(factionId, factionName) in inputFactionNames" v-bind:value="factionId">
+                                {{ factionName }}
+                            </option>
+                        </select>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0);" v-if="accessLevel > 0" v-on:click="showReplayList(input.name, true)">
+                            {{ (input.replays.length > 0 ? '查看 / ' : '') + '设置录像' }}
+                        </a>
+                        <a href="javascript:void(0);" v-else-if="input.replays.length > 0" v-on:click="showReplayList(input.name, false)">
+                            查看录像
+                        </a>
+                    </td>
+                    <td><input type="text" v-model="input.description" /></td>
+                    <td v-if="accessLevel > 0">
+                        <button v-bind:disable="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
+                            {{ players.includes(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
+                        </button>
+                        <button v-bind:disable="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
+                            {{ 删除 }}
+                        </button>
+                    </td>
+                    <td v-else></td>
+                </tr>
                 <!-- Vue 可以让数据很容易地与html元素绑定 -->
                 <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
                 <!-- judgers 就是 vue data 里面的那个judgers数组 -->
-                <tr v-for="row in players">
+                <tr v-for="row in filteredPlayerArray">
                     <td>{{ row.id }}</td>
+                    <td>{{ row.qq }}</td>
                     <td>{{ row.name }}</td>
                     <td>{{ row.nickname }}</td>
                     <td>{{ row.level }}</td>
-                    <td>{{ row.qq }}</td>
                     <td>{{ row.judgeDate }}</td>
                     <td>{{ row.judger }}</td>
                     <td>{{ row.faction }}</td>
+                    <td>{{ row.description }}</td>
                     <td>
                         <!-- 使用v-on:click（而不是onclick），
-                                因为这样可以使用 Vue 里的变量，比如说目前的这个 row -->
-                        <a href="#" v-if='row.replays.length > 0' v-on:click='showReplayList(row.replays)'>
-                                查看录像
-                            </a>
+                            因为这样可以使用 Vue 里的变量，比如说目前的这个 row -->
+                        <a href="#" v-if="row.replays.length > 0" v-on:click="showReplayList(row.name, false)">
+                            查看录像
+                        </a>
                     </td>
-                    <td>{{ row.description }}</td>
+                    <td colspan="2">{{ row.description }}</td>
                 </tr>
             </table>
         </div>
@@ -90,6 +142,68 @@
         <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
         <div id="setJudger" v-if="accessLevel > 0">
             <a href="judgecontrol.html">编辑玩家</a>
+        </div>
+
+        <!-- 只有在 showingReplayList=true 的情况下，才显示这个 div -->
+        <div id="replayListContainer" v-if="showingReplayList == true" v-on:click="showingReplayList = false;">
+            <table id="replayList">
+                <!-- 只有在编辑录像的情况下，才显示这一行 -->
+                <tr v-if="replayList.editingReplays">
+                    <td>
+                        <label for="replayIDInput">
+                            添加鉴定录像
+                        </label>
+                        <input id="replayIDInput" type="text" v-model="replayList.replayIDInput" placeholder="录像ID" />
+                        <!-- 一旦点击这个按钮，就把录像 ID 加入列表 -->
+                        <!-- 假如输入的录像 ID 无效，就禁用按钮，也就是 v-bind:disabled="replayList.allReplays.indexOf(parseInt(replayList.replayIDInput)) == -1" -->
+                        <button v-on:click="input.replays.push(parseInt(replayList.replayIDInput))" v-bind:disabled="replayList.allReplays.indexOf(parseInt(replayList.replayIDInput)) == -1">
+                            添加
+                        </button>
+                        <br />
+
+                    </td>
+                    <td rowspan="2">
+                        <label for="replayFileInput">
+                            上传录像
+                        </label>
+                        <input id="replayFileInput" type="file" ref="replayFileInput" v-bind:disabled="replayList.uploadingReplay" />
+                        <!-- Javascript 代码里的 $refs.replayFileInput 指的就是上面这个文件的 <input> -->
+                        <!-- 假如正在上传录像或者没有选择文件，就禁用按钮，也就是 v-bind:disabled 里写的 -->
+                        <button v-on:click="uploadReplay" v-bind:disabled="replayList.uploadingReplay || ($refs.replayFileInput.files.length > 0)">
+                            上传
+                        </button>
+                        <p>
+                            {{ replayList.uploadingReplay ? '正在上传录像，请稍候' : '' }}
+                        </p>
+                        <br />
+                        所有录像
+                        <ul>
+                            <li v-for="replay in replayList.allReplays">
+                                <replay replayid="replay.id" v-bind:key="replay.id"></replay>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ replayList.player }}的鉴定录像列表
+                        <br />
+                        <ul>
+                            <!-- 假如不在编辑玩家，那么单纯显示玩家的鉴定录像 -->
+                            <li v-if="!replayList.editingReplays" v-for="replay in replayList.playerReplays">
+                                <replay replayid="replay.id" v-bind:key="replay.id"></replay>
+                            </li>
+                            <!-- 否则还显示一个删除按钮-->
+                            <li v-else v-for="replay in input.replays">
+                                <button v-on:click="input.replays.splice(input.replays.indexOf(replay), 1)">
+                                    移除
+                                </button>
+                                <replay replayid="replay" v-bind:key="replay"></replay>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -100,62 +214,236 @@
             data: { // 数据
                 accessLevel: 0,
                 username: '',
+                inputFactionNames: { // 阵营列表
+                    Allied: '盟军',
+                    Soviet: '苏联', 
+                    Empire: '帝国',
+                    Random: '随机'
+                },
+                input: { // 查询、设置玩家时使用的数据
+                    qq: '',
+                    name: '',
+                    nickname: '',
+                    level: null,
+                    inputDate: null, // 输入的日期，之后需要处理才能发到服务器
+                    judger: '',
+                    faction: [],
+                    replays: [],
+                    uploading: false, // 是否正在上传数据
+                }, 
+                replayList: {
+                    id: null,
+                    player: '',
+                    playerReplays: [],
+                    editingReplays: false, // 是否正在编辑录像
+                    replayIDInput: '',
+                    showingReplayList: false, // 是否显示录像列表
+                    allReplays: [], // 网站上保存的所有录像
+                    uploadingReplay: false, // 录像是否正在上传
+                },
                 judgers: [], // 一开始，鉴定员列表是个空数组
                 players: [], // 一开始，玩家列表是个空数组
+                previouslyFiltered: [], // 符合查询条件的玩家列表，一开始也是空的
+                
             },
-            mounted: function() { // mounted 会在vue实例被挂载后被调用
+            mounted: function() {
                 this.getAccessLevel();
                 this.listJudgers();
-                this.listPlayers();
+                this.listPlayers(false);
             },
-            methods: { // 在这里放你的Vue实例的所有的方法，
-                // 注意Vue的methods只能是
-                // xxx: function () { ... } 这样子的，
-                // 而不能是 xxx => { ... }，
-                // 因为与前者不同，后者的 'this' 将不会是 Vue 实例
-                // （见 https://vuejs.org/v2/api/#methods ）
+            methods: {
+                getEmptyInput: function() {
+                    return {
+                        id: null,
+                        qq: '',
+                        name: '',
+                        nickname: '',
+                        level: null,
+                        inputDate: null,
+                        judger: '',
+                        faction: [],
+                        replays: [],
+                        uploading: false,
+                    };
+                },
                 getAccessLevel: function() {
                     let token = getLocalToken();
-                    // 每个回调函数都有自己的 this
-                    // 在 then 里面的这些函数里再使用 this 就不能再指向
-                    // Vue 实例了，所以我们先把当前的 this 保存为另一个变量
-                    // 以供在回调函数里使用
-                    let self = this;
                     fetch("nss.php?do=getAccessLevel&token=" + token)
                         .then(response => response.json())
                         .then(response => {
                             // 设置数据
-                            self.username = response.username;
-                            self.accessLevel = response.accessLevel;
+                            this.username = response.username;
+                            this.accessLevel = response.accessLevel;
                         });
                 },
                 listJudgers: function() {
-                    let self = this;
                     fetch("nss.php?do=getJudgers")
                         .then(response => {
                             return response.json();
                         })
                         .then(response => {
                             // 设置数据
-                            self.judgers = response.judgers;
+                            this.judgers = response.judgers;
                         });
                 },
-                listPlayers: function() {
-                    let self = this;
+                listPlayers: function(uploading) {
                     fetch("nss.php?do=getPlayers")
                         .then(response => response.json())
                         .then(response => {
-                            // 设置数据
-                            self.players = response.players;
-                            for (var i = 0; i < self.players.length; i++) {
-                                tempDate = new Date(response.players[i].judgeDate * 1000);
-                                self.players[i].judgeDate = tempDate.toLocaleDateString();
-                                self.players[i].level = parseInt(response.players[i].level)
+                            if(!uploading && this.input.uploading) {
+                                return;
                             }
+                            // 设置数据
+                            this.players = response.players;
+                            if(input.id != null) {
+                                let matched = this.players.find(x => x.id == input.id);
+                                if(!matched) {
+                                    let newData = this.plaers.find(x => x.qq == input.qq) || this.getEmptyInput();
+                                    Object.assign(this.input, newData);
+                                }
+                            }
+
+                            setTimeout(this.listPlayers, 10000, false);
                         });
                 },
-                showReplayList: function(replays) {
-                    alert('还没做');
+                judgePlayer: function() {
+                    let data = input;
+                    data.token = getLocalToken();
+                    fetch('nss.php?do=judgePlayer', {
+                        method: 'post',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(parsed => {
+                        this.listPlayers(true);
+                        alert(parsed.message);
+                    });
+                },
+                deletePlayer: function() {
+                    let data = {
+                        token: getLocalToken(),
+                        qq: input.qq
+                    };
+                    fetch('nss.php?do=removePlayer', {
+                        method: 'post',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(parsed => {
+                        this.listPlayers(true);
+                        alert(parsed.message);
+                    });
+                },
+                showReplayList: function(player, showInputList) {
+                    // 开始显示录像列表：初始化与 replayList 相关的数据
+                    this.replayList.player = player;
+                    this.replayList.editingReplays = showInputList;
+                    if (!this.replayList.editingReplays) {
+                        let playerData = this.players.find(data => data.name == player);
+                        this.replayList.playerReplays = playerData.replays;
+                    }
+                    this.loadAllReplays();
+                    this.replayList.showingReplayList = true;
+                },
+                uploadReplay: function() {
+                    let file = this.$refs.replayFileInput.files.item(0);
+                    this.replayList.uploadingReplay = true;
+                    let reader = new FileReader();
+                    reader.onloadend = () => {
+                        // 把录像文件读取为 base64 并上传至服务器
+                        let base64 = reader.result.split(',')[1];
+                        fetch('/replays/replay.php?do=uploadReplay', {
+                            method: 'post',
+                            body: JSON.stringify({
+                                fileName: file.name,
+                                data: base64
+                            }),
+                            headers: {
+                                'content-type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(json => {
+                            if(!(json.id)) {
+                                alert("录像上传失败：" + json.message)
+                            }
+                            else if(json.isDuplicate) {
+                                alert("录像上传被取消：这个录像已经被上传过了，ID 是 " + json.id);
+                            }
+                            this.replayList.uploadingReplay = false;  
+                            this.loadAllReplays();
+                        });
+                    };
+                    reader.readAsDataURL(file);        
+                },
+                loadAllReplays: function() {
+                    // 获取所有录像的列表
+                    fetch('replay.php?do=getReplayList')
+                    .then(response => response.json())
+                    .then(json => { 
+                        this.replayList.allReplays = json.replays || [];
+                        if(this.replayList.showingReplayList) {
+                            setTimeout(this.loadAllReplays, 10000);
+                        }
+                    });
+                }
+            },
+            computed: {
+                computedInputDate: {
+                    get: function() {
+                        let date = (new Date(this.input.judgeDate * 1000));
+                        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                    },
+                    set: function(value) {
+                        let [year, month, day] = value.split('-').map(x => parseInt(x));
+                        this.input.judgeDate = parseInt((new Date(year, month - 1, day)).getTime() / 1000);
+                    }
+                },
+                isInputInvalidForUpload: function() {
+                    return !(input.qq && input.name && input.level && input.judger && (input.faction.length > 1));
+                },
+                isInputInvalidForDelete: function() {
+                    return isInputInvalidForUpload || (filteredPlayerArray.length != 1) || (filteredPlayerArray[0].id != input.id)  || (input.id == null);
+                },
+                filteredPlayerArray: function() {
+                    let filtered = this.players.filter(playerData => {
+                        let match = true;
+                        match = match && (input.qq ? playerData.qq.startsWith(input.qq) : true);
+                        match = match && (input.name ? (playerData.name.includes(input.name) || (playerData.nickname || '').includes(input.name)) : true);
+                        match = match && (input.nickname ? (playerData.name.includes(input.nickname) || playerData.nickname.includes(input.nickname)) : true);
+                        match = match && (input.level ? playerData.level == input.level : true);
+                        match = match && (input.judgeDate ? playerData.judgeDate == input.judgeDate : true);
+                        match = match && (input.judger ? playerData.judger.includes(input.judger) : true);
+                        match = match && ((input.faction && input.faction.length != 0) ? playerData.faction.split(',').every(x => input.faction.includes(x)) : true);
+                        match = match && (input.description ? playerData.description.includes(input.description) : true);
+                        return match;
+                    }).map(playerData => {
+                        let date = new Date(playerData.judgeDate * 1000);
+                        playerData.judgeDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                        return playerData;
+                    });
+
+                    let currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(y => y.id == x.id));
+                    let previousContainsCurrent = filtered.every(x => this.previouslyFiltered.find(y => y.id == x.id));
+                    let notChanged = (currentContainsPrevious == previousContainsCurrent);
+                    if (notChanged) {
+                        return this.previouslyFiltered;
+                    }
+                    this.previouslyFiltered = filtered;
+
+                    if(filtered.length == 1) {
+                        let matched = this.players.find(x => x.id == filtered[0].id);
+                        matched.faction = matched.faction.split(',');
+                        Object.assign(this.input, matched);
+                    }
+
+                    return filtered;
                 }
             }
         });
