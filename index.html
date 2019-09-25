@@ -295,7 +295,7 @@
                             }
                             // 设置数据
                             this.players = response.players;
-                            if(input.id != null) {
+                            if(this.input.id != null) {
                                 let matched = this.players.find(x => x.id == input.id);
                                 if(!matched) {
                                     let newData = this.plaers.find(x => x.qq == input.qq) || this.getEmptyInput();
