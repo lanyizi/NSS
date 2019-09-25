@@ -88,7 +88,7 @@
                     <td><input type="date" v-model="computedInputDate" /></td>
                     <td><input type="text" v-model="input.judger" /></td>
                     <td>
-                        <select v-model="input.faction">
+                        <select multiple="true" v-model="input.faction">
                             <option disabled selected>鉴定玩家时建议只选择一项</option>
                             <option v-for="(factionId, factionName) in inputFactionNames" v-bind:value="factionId">
                                 {{ factionName }}
@@ -296,7 +296,7 @@
                                     return;
                                 }
                             }
-                            
+
                             // 设置数据
                             this.players = response.players;
                             if(this.input.id != null) {
@@ -399,19 +399,27 @@
                             setTimeout(this.loadAllReplays, 10000);
                         }
                     });
+                },
+                unixTimeStampToVueDate: function(unixTimeStamp) {
+                    if(unixTimeStamp == null) {
+                        return null;
+                    }
+
+                    let date = (new Date(this.input.judgeDate * 1000));
+                    let methods = ['getFullYear', 'getMonth', 'getDate'];
+                    let offsets = [0, 1, 0];
+                    let padding = [4, 2, 2];
+                    return methods
+                        .map(fn => data[fn]())
+                        .map((value, index) => (value + offsets[index]).toString())
+                        .map((string, index) => '0'.repeat(Math.max(string.length - padding[index], 0)) + string)
+                        .join('-');
                 }
             },
             computed: {
                 computedInputDate: {
                     get: function() {
-                        if(!this.input.judgeDate) {
-                            return null;
-                        }
-                        let date = (new Date(this.input.judgeDate * 1000));
-                        let [year, month, day] = ['getFullYear', 'getMonth', 'getDate'].map(fn => date[fn]());
-                        month += 1;
-                        [month, day] = [month, day].map(n => ('0' + n).slice(-2));
-                        return year + '-' + month + '-' + day;
+                        return this.unixTimeStampToVueDate(this.input.judgeDate);
                     },
                     set: function(value) {
                         if(!value) {
@@ -446,9 +454,10 @@
                         match = match && (input.description ? playerData.description.includes(input.description) : true);
                         return match;
                     }).map(playerData => {
-                        let date = new Date(playerData.judgeDate * 1000);
-                        playerData.judgeDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-                        return playerData;
+                        let newData = {};
+                        Object.assign(newData, playerDate);
+                        newData.judgeDate = this.unixTimeStampToVueDate(newData.judgeDate);
+                        return newData;
                     });
 
                     let currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(y => y.id == x.id));
