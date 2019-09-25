@@ -468,7 +468,7 @@
                     this.previouslyFiltered = filtered;
 
                     if(filtered.length == 1) {
-                        let matched = JSON.parse(JSON.stringify(players.find(x => x.id == filtered[0].id)));
+                        let matched = JSON.parse(JSON.stringify(this.players.find(x => x.id == filtered[0].id)));
                         matched.faction = matched.faction.split(',');
                         Object.assign(this.input, matched);
                     }
