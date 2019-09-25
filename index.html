@@ -110,7 +110,7 @@
                     <td><input type="text" v-model="input.description" /></td>
                     <td v-if="accessLevel > 0">
                         <button v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
-                            {{ !!players.includes(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
+                            {{ !!players.find(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
                         </button>
                         <button v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
                             删除
@@ -192,8 +192,8 @@
                         <br />
                         <!-- 假如不在编辑玩家，那么单纯显示玩家的鉴定录像 -->
                         <ul v-if="!replayList.editingReplays">
-                            <li v-for="replay in replayList.playerReplays" v-bind:key="replay.id">
-                                <replay v-bind:replayid="replay.id"></replay>
+                            <li v-for="replay in replayList.playerReplays" v-bind:key="replay">
+                                <replay v-bind:replayid="replay"></replay>
                             </li>
                         </ul>
                         <!-- 否则还显示一个删除按钮-->
@@ -307,7 +307,7 @@
                             if(this.input.id != null) {
                                 let matched = this.players.find(x => x.id == this.input.id);
                                 if(!matched) {
-                                    let newData = this.plaers.find(x => x.qq == this.input.qq) || this.getEmptyInput();
+                                    let newData = this.players.find(x => x.qq == this.input.qq) || this.getEmptyInput();
                                     Object.assign(this.input, newData);
                                 }
                             }
