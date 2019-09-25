@@ -109,7 +109,7 @@
                             {{ players.includes(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
                         </button>
                         <button v-bind:disable="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
-                            {{ 删除 }}
+                            删除
                         </button>
                     </td>
                     <td v-else></td>
@@ -322,7 +322,7 @@
                         alert(parsed.message);
                     });
                 },
-                deletePlayer: function() {
+                removePlayer: function() {
                     let data = {
                         token: getLocalToken(),
                         qq: input.qq
