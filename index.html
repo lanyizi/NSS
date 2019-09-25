@@ -454,10 +454,9 @@
                         match = match && (input.description ? playerData.description.includes(input.description) : true);
                         return match;
                     }).map(playerData => {
-                        let newData = {};
-                        Object.assign(newData, playerData);
-                        newData.judgeDate = this.unixTimeStampToVueDate(newData.judgeDate);
-                        return newData;
+                        let data = JSON.parse(JSON.stringify(playerData));
+                        data.judgeDate = this.unixTimeStampToVueDate(data.judgeDate);
+                        return data;
                     });
 
                     let currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(y => y.id == x.id));
@@ -469,7 +468,7 @@
                     this.previouslyFiltered = filtered;
 
                     if(filtered.length == 1) {
-                        let matched = this.players.find(x => x.id == filtered[0].id);
+                        let matched = JSON.parse(JSON.stringify(players.find(x => x.id == filtered[0].id)));
                         matched.faction = matched.faction.split(',');
                         Object.assign(this.input, matched);
                     }
