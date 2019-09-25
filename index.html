@@ -300,9 +300,9 @@
                             // 设置数据
                             this.players = response.players;
                             if(this.input.id != null) {
-                                let matched = this.players.find(x => x.id == input.id);
+                                let matched = this.players.find(x => x.id == this.input.id);
                                 if(!matched) {
-                                    let newData = this.plaers.find(x => x.qq == input.qq) || this.getEmptyInput();
+                                    let newData = this.plaers.find(x => x.qq == this.input.qq) || this.getEmptyInput();
                                     Object.assign(this.input, newData);
                                 }
                             }
@@ -405,14 +405,14 @@
                         return null;
                     }
 
-                    let date = (new Date(this.input.judgeDate * 1000));
+                    let date = (new Date(unixTimeStamp * 1000));
                     let methods = ['getFullYear', 'getMonth', 'getDate'];
                     let offsets = [0, 1, 0];
                     let padding = [4, 2, 2];
                     return methods
                         .map(fn => date[fn]())
                         .map((value, index) => (value + offsets[index]).toString())
-                        .map((string, index) => '0'.repeat(Math.max(string.length - padding[index], 0)) + string)
+                        .map((string, index) => '0'.repeat(Math.max(padding[index] - string.length, 0)) + string)
                         .join('-');
                 }
             },
