@@ -410,10 +410,14 @@
                     return !(input.qq && input.name && input.level && input.judger && (input.faction.length > 1));
                 },
                 isInputInvalidForDelete: function() {
-                    return isInputInvalidForUpload || (filteredPlayerArray.length != 1) || (filteredPlayerArray[0].id != input.id)  || (input.id == null);
+                    return this.isInputInvalidForUpload || 
+                        (this.filteredPlayerArray.length != 1) || 
+                        (this.filteredPlayerArray[0].id != this.input.id)  || 
+                        (this.input.id == null);
                 },
                 filteredPlayerArray: function() {
                     let filtered = this.players.filter(playerData => {
+                        let input = this.input;
                         let match = true;
                         match = match && (input.qq ? playerData.qq.startsWith(input.qq) : true);
                         match = match && (input.name ? (playerData.name.includes(input.name) || (playerData.nickname || '').includes(input.name)) : true);
