@@ -110,7 +110,7 @@
                     <td><input type="text" v-model="input.description" /></td>
                     <td v-if="accessLevel > 0">
                         <button v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
-                            {{ players.includes(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
+                            {{ !!players.includes(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
                         </button>
                         <button v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
                             删除
