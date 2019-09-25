@@ -307,7 +307,7 @@
                         });
                 },
                 judgePlayer: function() {
-                    let data = input;
+                    let data = this.input;
                     data.token = getLocalToken();
                     fetch('nss.php?do=judgePlayer', {
                         method: 'post',
@@ -325,7 +325,7 @@
                 removePlayer: function() {
                     let data = {
                         token: getLocalToken(),
-                        qq: input.qq
+                        qq: this.input.qq
                     };
                     fetch('nss.php?do=removePlayer', {
                         method: 'post',
