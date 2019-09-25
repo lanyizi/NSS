@@ -105,10 +105,10 @@
                     </td>
                     <td><input type="text" v-model="input.description" /></td>
                     <td v-if="accessLevel > 0">
-                        <button v-bind:disable="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
+                        <button v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
                             {{ players.includes(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
                         </button>
-                        <button v-bind:disable="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
+                        <button v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
                             删除
                         </button>
                     </td>
@@ -290,9 +290,13 @@
                     fetch("nss.php?do=getPlayers")
                         .then(response => response.json())
                         .then(response => {
-                            if(!uploading && this.input.uploading) {
-                                return;
+                            if(!uploading) {
+                                setTimeout(this.listPlayers, 10000, false);
+                                if(this.input.uploading) {
+                                    return;
+                                }
                             }
+                            
                             // 设置数据
                             this.players = response.players;
                             if(this.input.id != null) {
@@ -303,10 +307,11 @@
                                 }
                             }
 
-                            setTimeout(this.listPlayers, 10000, false);
+                            
                         });
                 },
                 judgePlayer: function() {
+                    this.input.uploading = true;
                     let data = this.input;
                     data.token = getLocalToken();
                     data.judgeDate = data.judgeDate || parseInt(Date.now() / 1000)
@@ -324,6 +329,7 @@
                     });
                 },
                 removePlayer: function() {
+                    this.input.uploading = true;
                     let data = {
                         token: getLocalToken(),
                         qq: this.input.qq
@@ -402,7 +408,10 @@
                             return null;
                         }
                         let date = (new Date(this.input.judgeDate * 1000));
-                        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                        let [year, month, day] = ['getFullYear', 'getMonth', 'getDate'].map(fn => date[fn]());
+                        month += 1;
+                        [month, day] = [month, day].map(n => ('0' + n).slice(-2));
+                        return year + '-' + month + '-' + day;
                     },
                     set: function(value) {
                         if(!value) {
