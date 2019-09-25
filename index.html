@@ -150,7 +150,7 @@
 
         <!-- 只有在 replayList.showingReplayList=true 的情况下，才显示这个 div -->
         <div id="replayListContainer" v-if="replayList.showingReplayList" v-on:click="replayList.showingReplayList = false">
-            <table id="replayList" onclick="(e) => e.stopPropagation();">
+            <table id="replayList" v-on:click.stop>
                 <!-- 只有在编辑录像的情况下，才显示这一行 -->
                 <tr v-if="replayList.editingReplays">
                     <td>
