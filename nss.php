@@ -184,7 +184,7 @@ class NSS {
         $this->database->action(function(Medoo $database) use ($qq, $judger, $additionalAction) {
             $database->update('nss-players', [
                 'deletedBy' => $judger,
-                '#deletedDate' => 'CURRENT_TIMESTAMP'
+                'deletedDate' => Medoo::raw('UNIX_TIMESTAMP()')
             ], [
                 'AND' => [
                     'deletedDate' => null,
@@ -287,7 +287,7 @@ class NSS {
                 $id = $this->input['id'];
                 $result = $database->update('new-replays', [
                     'deletedBy' => $access['username'],
-                    '#deletedDate' => 'CURRENT_TIMESTAMP'
+                    'deletedDate' => Medoo::raw('UNIX_TIMESTAMP()')
                 ], [
                     'AND' => [
                         'deletedDate' => null,

@@ -105,7 +105,7 @@ class Auth {
             // 开始一次事务（transaction）
             $database->update('nss-admins', [
                 'deletedBy' => $disabledBy,
-                '#deletedDate' => 'CURRENT_TIMESTAMP'
+                'deletedDate' => Medoo::raw('UNIX_TIMESTAMP()')
             ], [
                 'AND' => [
                     'deletedDate' => null,
