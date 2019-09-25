@@ -155,12 +155,12 @@
                 <tr v-if="replayList.editingReplays">
                     <td>
                         <label for="replayIDInput">
-                            添加鉴定录像
+                            添加鉴定录像（ID）
                         </label>
-                        <input id="replayIDInput" type="text" v-model="replayList.replayIDInput" placeholder="录像ID" />
+                        <input id="replayIDInput" type="number" v-model="replayList.replayIDInput" />
                         <!-- 一旦点击这个按钮，就把录像 ID 加入列表 -->
-                        <!-- 假如输入的录像 ID 无效，就禁用按钮，也就是 v-bind:disabled="replayList.allReplays.indexOf(parseInt(replayList.replayIDInput)) == -1" -->
-                        <button v-on:click="input.replays.push(parseInt(replayList.replayIDInput))" v-bind:disabled="replayList.allReplays.indexOf(parseInt(replayList.replayIDInput)) == -1">
+                        <!-- 假如输入的录像 ID 无效，就禁用按钮 -->
+                        <button v-on:click="input.replays.push(parseInt(replayList.replayIDInput))" v-bind:disabled="isReplayIDInvalid">
                             添加
                         </button>
                         <br />
@@ -240,7 +240,7 @@
                     player: '',
                     playerReplays: [],
                     editingReplays: false, // 是否正在编辑录像
-                    replayIDInput: '',
+                    replayIDInput: null, // 目前输入的录像 ID
                     showingReplayList: false, // 是否显示录像列表
                     allReplays: [], // 网站上保存的所有录像
                     uploadingReplay: false, // 录像是否正在上传
@@ -484,6 +484,11 @@
                         return true;
                     }
                     return this.$refs.replayFileInput.files.length != 1;
+                },
+                isReplayIDInvalid: function() {
+                    return this.replayList.allReplays
+                        .find(replay => replay.id == parseInt(this.replayList.replayIDInput)) 
+                            == null;
                 }
             }
         });
