@@ -182,8 +182,8 @@
                         <br />
                         所有录像
                         <ul>
-                            <li v-for="replay in replayList.allReplays">
-                                <replay v-bind:replayid="replay.id" v-bind:key="replay.id"></replay>
+                            <li v-for="replay in replayList.allReplays" v-bind:key="replay.id">
+                                <replay v-bind:replayid="replay.id"></replay>
                             </li>
                         </ul>
                     </td>
@@ -194,15 +194,15 @@
                         <br />
                         <ul>
                             <!-- 假如不在编辑玩家，那么单纯显示玩家的鉴定录像 -->
-                            <li v-if="!replayList.editingReplays" v-for="replay in replayList.playerReplays">
-                                <replay replayid="replay.id" v-bind:key="replay.id"></replay>
+                            <li v-if="!replayList.editingReplays" v-for="replay in replayList.playerReplays" v-bind:key="replay.id">
+                                <replay v-bind:replayid="replay.id"></replay>
                             </li>
                             <!-- 否则还显示一个删除按钮-->
-                            <li v-else v-for="replay in input.replays">
+                            <li v-else v-for="replay in input.replays" v-bind:key="replay">
                                 <button v-on:click="input.replays.splice(input.replays.indexOf(replay), 1)">
                                     移除
                                 </button>
-                                <replay replayid="replay" v-bind:key="replay"></replay>
+                                <replay v-bind:replayid="replay"></replay>
                             </li>
                         </ul>
                     </td>
