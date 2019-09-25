@@ -169,8 +169,7 @@
                         <label for="replayFileInput">
                             上传录像
                         </label>
-                        <input id="replayFileInput" type="file" ref="replayFileInput" v-bind:disabled="replayList.uploadingReplay" />
-                        <!-- Javascript 代码里的 $refs.replayFileInput 指的就是上面这个文件的 <input> -->
+                        <input id="replayFileInput" type="file" ref="replayFileInput" v-on:change="replayList.fileToBeUploaded = $refs.replayFileInput.files.item(0)" v-bind:disabled="replayList.uploadingReplay" />
                         <!-- 假如正在上传录像或者没有选择文件，就禁用按钮，也就是 v-bind:disabled 里写的 -->
                         <button v-on:click="uploadReplay" v-bind:disabled="isReplayInvalidForUpload || replayList.uploadingReplay">
                             上传
@@ -244,6 +243,7 @@
                     replayIDInput: null, // 目前输入的录像 ID
                     showingReplayList: false, // 是否显示录像列表
                     allReplays: [], // 网站上保存的所有录像
+                    fileToBeUploaded: null, // 准备上传的录像
                     uploadingReplay: false, // 录像是否正在上传
                 },
                 judgers: [], // 一开始，鉴定员列表是个空数组
@@ -365,7 +365,8 @@
                     this.replayList.showingReplayList = true;
                 },
                 uploadReplay: function() {
-                    let file = this.$refs.replayFileInput.files.item(0);
+                    let file = this.replayList.fileToBeUploaded;
+                    this.$refs.replayFileInput.value = null;
                     this.replayList.uploadingReplay = true;
                     let reader = new FileReader();
                     reader.onloadend = () => {
@@ -482,10 +483,7 @@
                     return filtered;
                 },
                 isReplayInvalidForUpload: function() {
-                    if(!this.$refs.replayFileInput) {
-                        return true;
-                    }
-                    return this.$refs.replayFileInput.files.length != 1;
+                    return this.replayList.fileToBeUploaded == null;
                 },
                 isReplayIDInvalid: function() {
                     return this.replayList.allReplays
