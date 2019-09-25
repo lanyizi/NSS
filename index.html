@@ -144,8 +144,8 @@
             <a href="judgecontrol.html">编辑玩家</a>
         </div>
 
-        <!-- 只有在 showingReplayList=true 的情况下，才显示这个 div -->
-        <div id="replayListContainer" v-if="showingReplayList == true" v-on:click="showingReplayList = false;">
+        <!-- 只有在 replayList.showingReplayList=true 的情况下，才显示这个 div -->
+        <div id="replayListContainer" v-if="replayList.showingReplayList" v-on:click="replayList.showingReplayList = false">
             <table id="replayList">
                 <!-- 只有在编辑录像的情况下，才显示这一行 -->
                 <tr v-if="replayList.editingReplays">
@@ -406,6 +406,7 @@
                     }
                 },
                 isInputInvalidForUpload: function() {
+                    let input = this.input;
                     return !(input.qq && input.name && input.level && input.judger && (input.faction.length > 1));
                 },
                 isInputInvalidForDelete: function() {
