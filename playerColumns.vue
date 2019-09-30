@@ -153,6 +153,7 @@ module.exports = {
             
             let updated = JSON.parse(JSON.stringify(this.value));
             updated[this.type] = value;
+            console.log('emitting: <' + this.value + '>');
             this.$emit('input', this.value);
         },
         toggleFaction: function(data) {
