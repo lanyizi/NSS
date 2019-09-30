@@ -143,6 +143,7 @@ module.exports = {
             const names = {
                 name: '玩家名称',
                 nickname: '昵称（可选）', 
+                nameAndNickname: '玩家名称/昵称',
                 level: '级别',
                 qq: 'QQ号',
                 judger: '鉴定员',
