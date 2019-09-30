@@ -122,7 +122,7 @@ class NSS {
     }
 
     public function getPlayers() {
-        $access = $this->auth->verifyToken($this->input['token']);
+        $access = $this->auth->verifyToken($_GET['token']);
 
         $keys = [
             'id',
