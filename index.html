@@ -271,7 +271,7 @@
                             }
 
                             if(guestUseQQ) {
-                                response = response
+                                response.players = response.history
                                     .slice(0, 1)
                                     .find(player => player.deletedDate == null);
                                 this.guestQueryStatus = '';
