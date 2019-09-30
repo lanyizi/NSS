@@ -5,7 +5,7 @@
             {{ computedNameAndNickname }}
         </span>
         <!-- 头像 -->
-        <img v-else-if="computedType == 'avatar'" v-bind:src="data.avatar" />
+        <img v-else-if="computedType == 'avatar'" v-bind:src="value.avatar" />
         <!-- 查看 / 设置录像 -->
         <div v-else-if="computedType == 'replay'" >
             <button v-if="computedLabel != null" v-on:click.stop="$emit('replay-click')">
@@ -15,7 +15,7 @@
         <!-- 不可修改的阵营图标 -->
         <ul v-else-if="computedType == 'faction'">
             <li v-for="(path, index) in computedSelectedFactionIconPath" v-bind:key="index">
-                <img v-bind:src="path" v-bind:alt="value.faction[index]"/>
+                <img v-bind:src="path" v-bind:alt="factionMapper[index].faction"/>
             </li>
         </ul>
         <!-- 不可修改的鉴定日期 -->
@@ -33,12 +33,12 @@
         <!-- 可修改的鉴定日期 -->
         <input v-else-if="computedType == 'input-date'" type="date" v-model="computedDate" />
         <!-- 可修改的鉴定级别 -->
-        <input v-else-if="computedType == 'input-level'" type="number" step="1" v-model="data.level" v-bind:placeholder="computedLabel" />
+        <input v-else-if="computedType == 'input-level'" type="number" step="1" v-model="value.level" v-bind:placeholder="computedLabel" />
         <!-- 可修改的普通文本 -->
-        <input v-else-if="editable" type="text" v-model="data[type]" v-bind:placeholder="computedLabel"/>
+        <input v-else-if="editable" type="text" v-model="value[type]" v-bind:placeholder="computedLabel"/>
         <!-- 不可修改的普通文本 -->
         <span v-if="canOutputAsText">
-            {{ data[type] }}
+            {{ value[type] }}
         </span>
     </div>
 </template>
