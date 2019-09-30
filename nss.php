@@ -184,7 +184,7 @@ class NSS {
         }
 
         return [
-            'players' => $history
+            'history' => $history
         ];      
     }
 
