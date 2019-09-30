@@ -116,8 +116,8 @@ module.exports = {
             }
         },
         computedLevelText: function() {
-            const decimalPart = computedLevel % 1;
-            const integerLevel = Math.round(computedLevel - decimalPart);
+            const decimalPart = this.computedLevel % 1;
+            const integerLevel = Math.round(this.computedLevel - decimalPart);
             return integerLevel + (decimalPart == 0 ? '' : '+');
         },
         computedDate: {
