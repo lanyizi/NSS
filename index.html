@@ -76,7 +76,7 @@
                         <player-column
                             v-bind:type="column" 
                             v-model="input"
-                            v-bind:editable="accessLevel > 0 || column != 'replay'"
+                            v-bind:editable="accessLevel > 0 || column != 'replays'"
                             v-on:replay-click="showReplayList(input.name, true)">
                         </player-column>
                     </td>
