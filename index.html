@@ -411,9 +411,9 @@
                 },
                 filteredColumns: function() {
                     if (this.accessLevel != 0) {
-                        return ['qq', 'name', 'nickname', 'level', 'faction', 'judger', 'date', 'replays', 'description'];
+                        return ['qq', 'name', 'nickname', 'level', 'faction', 'judger', 'judgeDate', 'replays', 'description'];
                     }
-                    return ['level', 'faction', 'nameAndNickname', 'judger', 'date', 'replays', 'description'];
+                    return ['level', 'faction', 'nameAndNickname', 'judger', 'judgeDate', 'replays', 'description'];
                 },
                 isReplayInvalidForUpload: function() {
                     return this.replayList.fileToBeUploaded == null;

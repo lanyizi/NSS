@@ -19,7 +19,7 @@
             </li>
         </ul>
         <!-- 不可修改的鉴定日期 -->
-        <span v-else-if="computedType == 'date'">
+        <span v-else-if="computedType == 'judgeDate'">
             {{ computedDate }}
         </span>
         <!-- 可修改的阵营图标 -->
@@ -31,7 +31,7 @@
             </li>
         </ul>
         <!-- 可修改的鉴定日期 -->
-        <input v-else-if="computedType == 'input-date'" type="date" v-model="computedDate" />
+        <input v-else-if="computedType == 'input-judgeDate'" type="date" v-model="computedDate" />
         <!-- 可修改的鉴定级别 -->
         <input v-else-if="computedType == 'input-level'" type="number" step="1" v-bind:value="value.level" v-on:input="update($event.target.value)" v-bind:placeholder="computedLabel" />
         <!-- 可修改的普通文本 -->
@@ -108,6 +108,7 @@ module.exports = {
             set: function(value) {
                 if(!value) {
                     this.update(null);
+                    return;
                 }
                 const [year, month, day] = value.split('-').map(x => parseInt(x));
                 const judgeDate = parseInt((new Date(year, month - 1, day)).getTime() / 1000);
