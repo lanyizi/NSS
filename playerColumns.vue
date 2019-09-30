@@ -14,7 +14,7 @@
         </div>
         <!-- 不可修改的阵营图标 -->
         <ul v-else-if="computedType == 'faction'">
-            <li v-for="data in computedActiveFactions" v-bind:key="data.faction">
+            <li v-for="data in computedActiveFactions" v-bind:key="data.faction" v-bind:class="data.class">
                 <img v-bind:src="data.iconSrc" v-bind:alt="data.faction"/>
             </li>
         </ul>
@@ -117,6 +117,7 @@ module.exports = {
         computedFactionData: function() {
             return this.factionMapper.map(data => {
                 data.active = this.value.faction.includes(data.faction);
+                data.class = data.active ? "active-faction" : "inactive-faction";
                 data.iconSrc = this.factionIconFormat.replace('*', data.id);
                 return data;
             });
