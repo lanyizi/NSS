@@ -129,7 +129,6 @@ class NSS {
             'name',
             'nickname',
             'level',
-            'qq',
             'judgeDate',
             'judger',
             'faction',
