@@ -122,8 +122,9 @@ class NSS {
     }
 
     public function getPlayers() {
-        // 从数据库获取玩家信息
-        $playerData = $this->database->select('nss-players', [
+        $access = $this->auth->verifyToken($this->input['token']);
+
+        $keys = [
             'id',
             'name',
             'nickname',
@@ -134,7 +135,14 @@ class NSS {
             'faction',
             'description',
             'replays'
-        ], [
+        ];
+
+        if($access['accessLevel'] > 0) {
+            array_splice($keys, 1, 0, ['qq']);
+        }
+
+        // 从数据库获取玩家信息
+        $playerData = $this->database->select('nss-players', $keys, [
             'deletedDate' => null
         ]);
 
