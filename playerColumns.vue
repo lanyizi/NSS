@@ -22,6 +22,8 @@
         <span v-else-if="computedType == 'judgeDate'">
             {{ computedDate }}
         </span>
+        <!-- 可修改的名称/昵称查询器（修改名称） -->
+        <input v-else-if="computedType == 'input-nameAndNickname'" v-model="computedNameAndNickname" v-bind:placeholder="computedLabel"/>
         <!-- 可修改的阵营图标 -->
         <ul v-else-if="computedType == 'input-faction'">
             <li v-for="data in computedFactionData" v-bind:key="data.faction">
@@ -76,17 +78,22 @@ module.exports = {
             return [ 'player-column', 'player-column-' + this.type ];
         },
         computedType: function() {
-            const specials = ['avatar', 'replays', 'nameAndNickname'];
+            const specials = ['avatar', 'replays'];
             if(this.editable && specials.every(type => this.type != type)) {
                 return 'input-' + this.type;
             }
             return this.type;
         },
-        computedNameAndNickname: function() {
-            if(!this.value.nickname) {
-                return this.value.name;
+        computedNameAndNickname: {
+            get: function() {
+                if(!this.value.nickname) {
+                    return this.value.name;
+                }
+                return this.value.name + ' (' + this.value.nickname + ')';
+            },
+            set: function(value) {
+                this.updateNameAndNicknameField(value);
             }
-            return this.value.name + ' (' + this.value.nickname + ')';
         },
         computedDate: {
             get: function() {
@@ -153,6 +160,12 @@ module.exports = {
             
             let updated = JSON.parse(JSON.stringify(this.value));
             updated[this.type] = value;
+            this.$emit('input', updated);
+        },
+        updateNameAndNicknameField: function(value) {
+            let updated = JSON.parse(JSON.stringify(this.value));
+            updated.nickname = '';
+            updated.name = value;
             this.$emit('input', updated);
         },
         toggleFaction: function(data) {
