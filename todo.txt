@@ -72,7 +72,7 @@ POST /nss.php?do=removeJudger 【后端已实现】【前端已实现】
     'message': '消息提示，比如说“删除成功”'
 }
 
-GET nss.php?do=getPlayers 【后端已实现】【前端已实现】
+GET nss.php?do=getPlayers&token=【可选token】 【后端已实现】【前端已实现】
 -> 返回被鉴定的玩家列表
 {
     'players': // players 是一个数组
@@ -82,7 +82,8 @@ GET nss.php?do=getPlayers 【后端已实现】【前端已实现】
             'name': '玩家名称',
             'nickname': '玩家称呼（可选）', // 你可以用 if(data[0].nickname) { (有) } else { (没有) } 来检测到底有没有称呼
             'level': 7 // 级别，使用数字
-            'qq': 'QQ号',
+            'qq': 'QQ号', // 仅在 token 的 accessLevel > 0 时出现
+            'avatar': '头像地址',
             'judgeDate': 1564863390, //鉴定时间，使用 UNIX 时间戳，比如你可以这样在javascript里获取日期： date = new Date(data[0].judgedate * 1000)
             'judger': '鉴定员用户名',
             'faction': '主阵营',

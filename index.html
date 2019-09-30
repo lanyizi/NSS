@@ -5,7 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <!-- 引用Vue.js -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/http-vue-loader/src/httpVueLoader.min.js"></script>
     <script src="nss.js?v=19"></script>
+    <script src="playerColumns.js"></script>
     <script src="/replays/replay.js"></script>
     <!--
             这两个函数调用，我们也移到vue里调用吧
@@ -70,44 +72,16 @@
 
         <div id="playersInfo">
             <table id="playersInfoTable">
-                <thead>
-                    <th>ID</th>
-                    <th>QQ号</th>
-                    <th>玩家名称</th>
-                    <th>昵称</th>
-                    <th>级别</th>
-                    <th>鉴定日期</th>
-                    <th>鉴定员</th>
-                    <th>主阵营</th>
-                    <th>录像</th>
-                    <th>说明</th>
-                    <th>操作</th>
-                </thead>
                 <tr>
-                    <td>{{ (accessLevel > 0) ? '查询 / 编辑信息' : '查询信息' }}</td>
-                    <td><input type="text" v-model="input.qq" /></td>
-                    <td><input type="text" v-model="input.name" /></td>
-                    <td><input type="text" placeholder="（非必填）" v-model="input.nickname" /></td>
-                    <td><input type="number" v-model="input.level" /></td>
-                    <td><input type="date" v-model="computedInputDate" /></td>
-                    <td><input type="text" v-model="input.judger" /></td>
-                    <td>
-                        <select multiple="true" v-model="input.faction">
-                            <option disabled selected>鉴定玩家时建议只选择一项</option>
-                            <option v-for="(factionId, factionName) in inputFactionNames" v-bind:value="factionId">
-                                {{ factionName }}
-                            </option>
-                        </select>
+                    <td v-for="column in filteredColumns">
+                        <player-column
+                            v-bind:type="column" 
+                            v-model="input"
+                            v-bind:editable="accessLevel > 0 || column != 'replay'"
+                            v-on:replay-click="showReplayList(input.name, true)">
+                        </player-column>
                     </td>
-                    <td>
-                        <a href="javascript:void(0);" v-if="accessLevel > 0" v-on:click="showReplayList(input.name, true)">
-                            {{ (input.replays.length > 0 ? '查看 / ' : '') + '设置录像' }}
-                        </a>
-                        <a href="javascript:void(0);" v-else-if="input.replays.length > 0" v-on:click="showReplayList(input.name, false)">
-                            查看录像
-                        </a>
-                    </td>
-                    <td><input type="text" v-model="input.description" /></td>
+                    <!--
                     <td v-if="accessLevel > 0">
                         <button v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
                             {{ !!players.find(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
@@ -117,34 +91,22 @@
                         </button>
                     </td>
                     <td v-else></td>
+                    -->
                 </tr>
                 <!-- Vue 可以让数据很容易地与html元素绑定 -->
                 <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
                 <!-- judgers 就是 vue data 里面的那个judgers数组 -->
                 <tr v-for="row in filteredPlayerArray">
-                    <td>{{ row.id }}</td>
-                    <td>{{ row.qq }}</td>
-                    <td>{{ row.name }}</td>
-                    <td>{{ row.nickname }}</td>
-                    <td>{{ row.level }}</td>
-                    <td>{{ row.judgeDate }}</td>
-                    <td>{{ row.judger }}</td>
-                    <td>{{ row.faction }}</td>
-                    <td>
-                        <!-- 使用v-on:click（而不是onclick），
-                            因为这样可以使用 Vue 里的变量，比如说目前的这个 row -->
-                        <a href="#" v-if="row.replays.length > 0" v-on:click="showReplayList(row.name, false)">
-                            查看录像
-                        </a>
+                    <td v-for="column in filteredColumns">
+                        <player-column
+                            v-bind:type="column" 
+                            v-bind:value="row"
+                            v-bind:editable="false"
+                            v-on:replay-click="showReplayList(row.name, false)">
+                        </player-column>
                     </td>
-                    <td colspan="2">{{ row.description }}</td>
                 </tr>
             </table>
-        </div>
-
-        <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
-        <div id="setJudger" v-if="accessLevel > 0">
-            <a href="judgecontrol.html">编辑玩家</a>
         </div>
 
         <!-- 只有在 replayList.showingReplayList=true 的情况下，才显示这个 div -->
@@ -215,6 +177,9 @@
         // 创建一个vue实例
         let nss = new Vue({
             el: '#nss', // 与vue关联的元素是html里id为nss的那个div
+            components: {
+                'player-column': httpVueLoader('playerColumns.vue'),
+            },
             data: { // 数据
                 accessLevel: 0,
                 username: '',
@@ -273,7 +238,7 @@
                 },
                 getAccessLevel: function() {
                     let token = getLocalToken();
-                    fetch("nss.php?do=getAccessLevel&token=" + token)
+                    fetch('nss.php?do=getAccessLevel&token=' + token)
                         .then(response => response.json())
                         .then(response => {
                             // 设置数据
@@ -282,7 +247,7 @@
                         });
                 },
                 listJudgers: function() {
-                    fetch("nss.php?do=getJudgers")
+                    fetch('nss.php?do=getJudgers')
                         .then(response => {
                             return response.json();
                         })
@@ -292,7 +257,7 @@
                         });
                 },
                 listPlayers: function(uploading) {
-                    fetch("nss.php?do=getPlayers")
+                    fetch('nss.php?do=getPlayers&token=' + getLocalToken())
                         .then(response => response.json())
                         .then(response => {
                             if(!uploading) {
@@ -407,36 +372,8 @@
                         }
                     });
                 },
-                unixTimeStampToVueDate: function(unixTimeStamp) {
-                    if(unixTimeStamp == null) {
-                        return null;
-                    }
-
-                    let date = (new Date(unixTimeStamp * 1000));
-                    let methods = ['getFullYear', 'getMonth', 'getDate'];
-                    let offsets = [0, 1, 0];
-                    let padding = [4, 2, 2];
-                    return methods
-                        .map(fn => date[fn]())
-                        .map((value, index) => (value + offsets[index]).toString())
-                        .map((string, index) => '0'.repeat(Math.max(padding[index] - string.length, 0)) + string)
-                        .join('-');
-                }
             },
             computed: {
-                computedInputDate: {
-                    get: function() {
-                        return this.unixTimeStampToVueDate(this.input.judgeDate);
-                    },
-                    set: function(value) {
-                        if(!value) {
-                            this.input.judgeDate = null;
-                            return;
-                        }
-                        let [year, month, day] = value.split('-').map(x => parseInt(x));
-                        this.input.judgeDate = parseInt((new Date(year, month - 1, day)).getTime() / 1000);
-                    }
-                },
                 isInputInvalidForUpload: function() {
                     let input = this.input;
                     return !(input.qq && input.name && input.level && input.judger && (input.faction.length > 0));
@@ -481,6 +418,12 @@
                     }
 
                     return filtered;
+                },
+                filteredColumns: function() {
+                    if (this.accessLevel != 0) {
+                        return ['qq', 'name', 'nickname', 'level', 'faction', 'judger', 'date', 'replays', 'description'];
+                    }
+                    return ['level', 'faction', 'nameAndNickname', 'judger', 'date', 'replays', 'description'];
                 },
                 isReplayInvalidForUpload: function() {
                     return this.replayList.fileToBeUploaded == null;
