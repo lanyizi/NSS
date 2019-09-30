@@ -37,7 +37,7 @@
         <!-- 可修改的普通文本 -->
         <input v-else-if="editable" type="text" v-model="value[type]" v-bind:placeholder="computedLabel"/>
         <!-- 不可修改的普通文本 -->
-        <span v-if="canOutputAsText">
+        <span v-else>
             {{ value[type] }}
         </span>
     </div>
@@ -68,7 +68,7 @@ module.exports = {
         },
         factionIconFormat: {
             type: String,
-            defaut: ''
+            default: ''
         }
     },
     computed: {
@@ -83,10 +83,10 @@ module.exports = {
             return this.type;
         },
         computedNameAndNickname: function() {
-            if(!this.data.nickname) {
-                return this.data.name;
+            if(!this.value.nickname) {
+                return this.value.name;
             }
-            return this.data.name + ' (' + this.data.nickname + ')';
+            return this.value.name + ' (' + this.value.nickname + ')';
         },
         computedDate: {
             get: function() {
@@ -122,13 +122,13 @@ module.exports = {
             });
         },
         computedSelectedFactionIconPath: function() {
-            return this.computedFactionIconPaths
+            return this.computedFactionData
                 .filter(data => data.active)
                 .map(data => data.iconSrc);
         },
         computedLabel: function() {
             if(this.type == 'replays') {
-                if(this.data.replays.length == 0) {
+                if(this.value.replays.length == 0) {
                     return this.editable ? '添加录像' : null; 
                 }
                 return this.editable ? '编辑录像' : '查看录像'
