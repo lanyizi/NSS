@@ -83,6 +83,11 @@
                             v-on:replay-click="showReplayList(input.name, true)">
                         </player-column>
                     </td>
+                    <td>
+                        <button v-on:click="this.input = getEmptyInput()">
+                            清空数据
+                        </button>
+                    </td>
                     <!--
                     <td v-if="accessLevel > 0">
                         <button v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
@@ -96,7 +101,7 @@
                     -->
                 </tr>
                 <tr v-for="row in filteredPlayerArray">
-                    <td v-for="column in filteredColumns">
+                    <td v-for="column in filteredColumns" v-bind:colspan="column == filteredColumns.slice(-1)[0] ? 2 : 1">
                         <player-column
                             v-bind:type="column" 
                             v-bind:value="row"
@@ -393,7 +398,7 @@
                     },
                     set: function(value) {
                         this.qqTypedByGuest = value;
-                        this.guestQueryStatus = '正在查询...';
+                        this.guestQueryStatus = value ? '正在查询...' : '';
                         this.listPlayers(true);
                     }
                 },
