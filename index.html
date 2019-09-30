@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/http-vue-loader/src/httpVueLoader.min.js"></script>
     <script src="nss.js?v=19"></script>
-    <script src="playerColumns.js"></script>
     <script src="/replays/replay.js"></script>
     <!--
             这两个函数调用，我们也移到vue里调用吧
@@ -397,10 +396,6 @@
                         match = match && ((input.faction && input.faction.length != 0) ? playerData.faction.split(',').every(x => input.faction.includes(x)) : true);
                         match = match && (input.description ? playerData.description.includes(input.description) : true);
                         return match;
-                    }).map(playerData => {
-                        let data = JSON.parse(JSON.stringify(playerData));
-                        data.judgeDate = this.unixTimeStampToVueDate(data.judgeDate);
-                        return data;
                     });
 
                     let currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(y => y.id == x.id));
