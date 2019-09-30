@@ -171,7 +171,10 @@ class NSS {
             'deletedBy',
             'deletedDate'
         ], [
-            'qq' => $_GET['qq']
+            'qq' => $_GET['qq'],
+            'ORDER' => [
+                'id' => 'DESC'
+            ]
         ]);
 
         foreach($history as $index => $playerRecord) {

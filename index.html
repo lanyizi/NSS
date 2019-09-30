@@ -47,28 +47,30 @@
             <a href="login.html" id="toLoginPage" v-if="accessLevel == 0">登录</a>
         </div>
 
-
         <div id="judgersInfo">
             <table id="judgersInfoTable">
                 <thead>
                     <th>鉴定员名称</th>
                     <th>个人信息</th>
+                    <th>
+                        <div id="setJudger" v-if="accessLevel > 0">
+                            <a href="admincontrol.html">编辑鉴定员</a>
+                        </div>
+                    </th>
                 </thead>
-                <!-- Vue 可以让数据很容易地与html元素绑定 -->
-                <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
-                <!-- judgers 就是 vue data 里面的那个judgers数组 -->
-                <tr v-for="row in judgers">
-                    <td>{{ row.username }}</td>
-                    <td>{{ row.description }}</td>
-                </tr>
+                <tbody>
+                    <tr v-for="row in judgers">
+                        <td>{{ row.username }}</td>
+                        <td colspan="2">{{ row.description }}</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
 
-        <!-- 只有在 accessLevel 大于0的情况下，才显示这个 div -->
-        <div id="setJudger" v-if="accessLevel > 0">
-            <a href="admincontrol.html">编辑鉴定员</a>
+        <!-- 访客模式下也可以在输入完整正确 QQ 号的情况下进行查找 -->
+        <div v-if="accessLevel == 0">
+            <input type="text" v-model="guestQQInput" placeholder="完整QQ号" />
         </div>
-
         <div id="playersInfo">
             <table id="playersInfoTable">
                 <tr>
@@ -92,9 +94,6 @@
                     <td v-else></td>
                     -->
                 </tr>
-                <!-- Vue 可以让数据很容易地与html元素绑定 -->
-                <!-- 你可以理解为for(row in judgers) { <tr>...</tr> } -->
-                <!-- judgers 就是 vue data 里面的那个judgers数组 -->
                 <tr v-for="row in filteredPlayerArray">
                     <td v-for="column in filteredColumns">
                         <player-column
@@ -193,6 +192,7 @@
                     replays: [],
                     uploading: false, // 是否正在上传数据
                 }, 
+                guestQQInput: '', // 访客模式下的按 QQ 号查询
                 replayList: {
                     id: null,
                     player: '',
@@ -250,7 +250,12 @@
                         });
                 },
                 listPlayers: function(uploading) {
-                    fetch('nss.php?do=getPlayers&token=' + getLocalToken())
+                    const guestUseQQ = (this.accessLevel == 0 && this.guestQQInput);
+                    const what = guestUseQQ ? 
+                        ('getPlayerHistory&qq=' + this.guestQQInput) :
+                        ('getPlayers&token=' + getLocalToken())
+
+                    fetch('nss.php?do=' + what)
                         .then(response => response.json())
                         .then(response => {
                             if(!uploading) {
@@ -258,6 +263,12 @@
                                 if(this.input.uploading) {
                                     return;
                                 }
+                            }
+
+                            if(guestUseQQ) {
+                                response = response
+                                    .slice(0, 1)
+                                    .find(player => player.deletedDate == null);
                             }
 
                             // 设置数据

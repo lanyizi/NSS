@@ -99,7 +99,7 @@ GET nss.php?do=getPlayers&token=【可选token】 【后端已实现】【前端
 GET nss.php?do=getPlayerHistory&qq=12345678 【后端已实现】
 -> 按照 QQ 号返回某个玩家的历史
 {
-    'history': // history 是一个数组，包含同一个 QQ 号按照时间顺序排列的记录
+    'history': // history 是一个数组，包含同一个 QQ 号按照时间倒序排列的记录
     [
         {
             'id': 1, // 玩家信息记录 ID（数字）
