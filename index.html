@@ -70,6 +70,7 @@
         <!-- 访客模式下也可以在输入完整正确 QQ 号的情况下进行查找 -->
         <div v-if="accessLevel == 0">
             <input type="text" v-model="guestQQInput" placeholder="完整QQ号" />
+            <div>{{ guestQueryStatus }}</div>
         </div>
         <div id="playersInfo">
             <table id="playersInfoTable">
@@ -192,7 +193,8 @@
                     replays: [],
                     uploading: false, // 是否正在上传数据
                 }, 
-                guestQQInput: '', // 访客模式下的按 QQ 号查询
+                qqTypedByGuest: '', // 访客模式下的按 QQ 号查询
+                guestQueryStatus: '', // 查询进度
                 replayList: {
                     id: null,
                     player: '',
@@ -249,8 +251,8 @@
                             this.judgers = response.judgers;
                         });
                 },
-                listPlayers: function(uploading) {
-                    const guestUseQQ = (this.accessLevel == 0 && this.guestQQInput);
+                listPlayers: function(dontRepeat) {
+                    const guestUseQQ = (this.accessLevel == 0 && this.qqTypedByGuest);
                     const what = guestUseQQ ? 
                         ('getPlayerHistory&qq=' + this.guestQQInput) :
                         ('getPlayers&token=' + getLocalToken())
@@ -258,8 +260,11 @@
                     fetch('nss.php?do=' + what)
                         .then(response => response.json())
                         .then(response => {
-                            if(!uploading) {
+                            // 假如没有阻止，就自动在 10 秒后启动下一次请求
+                            if(!dontRepeat) {
                                 setTimeout(this.listPlayers, 10000, false);
+                                // 但假如现在正在上传，就放弃更新当前的结果
+                                // 实际上结合上面的代码就相当于过 10 秒再更新
                                 if(this.input.uploading) {
                                     return;
                                 }
@@ -269,6 +274,7 @@
                                 response = response
                                     .slice(0, 1)
                                     .find(player => player.deletedDate == null);
+                                this.guestQueryStatus = '';
                             }
 
                             // 设置数据
@@ -300,6 +306,7 @@
                     })
                     .then(response => response.json())
                     .then(parsed => {
+                        // 上传成功之后，立即更新一次数据
                         this.listPlayers(true);
                         alert(parsed.message);
                     });
@@ -319,6 +326,7 @@
                     })
                     .then(response => response.json())
                     .then(parsed => {
+                        // 上传成功之后，立即更新一次数据
                         this.listPlayers(true);
                         alert(parsed.message);
                     });
@@ -379,6 +387,16 @@
                 },
             },
             computed: {
+                guestQQInput: {
+                    get: function() {
+                        return this.qqTypedByGuest;
+                    },
+                    set: function(value) {
+                        this.qqTypedByGuest = value;
+                        this.guestQueryStatus = '正在查询...';
+                        this.listPlayers(true);
+                    }
+                },
                 isInputInvalidForUpload: function() {
                     let input = this.input;
                     return !(input.qq && input.name && input.level && input.judger && (input.faction.length > 0));
