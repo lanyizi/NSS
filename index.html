@@ -406,14 +406,19 @@
                         matched.faction = matched.faction.split(',');
                         Object.assign(this.input, matched);
                     }
+                    else {
+                        this.input.id = null;
+                        this.input.avatar = null;
+                        this.input.replays = [];
+                    }
 
                     return filtered;
                 },
                 filteredColumns: function() {
                     if (this.accessLevel != 0) {
-                        return ['qq', 'name', 'nickname', 'level', 'faction', 'judger', 'judgeDate', 'replays', 'description'];
+                        return ['qq', 'avatar', 'name', 'nickname', 'level', 'faction', 'judger', 'judgeDate', 'replays', 'description'];
                     }
-                    return ['level', 'faction', 'nameAndNickname', 'judger', 'judgeDate', 'replays', 'description'];
+                    return ['level', 'faction', 'nameAndNickname', 'avatar', 'judger', 'judgeDate', 'replays', 'description'];
                 },
                 isReplayInvalidForUpload: function() {
                     return this.replayList.fileToBeUploaded == null;
