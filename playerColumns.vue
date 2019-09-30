@@ -33,9 +33,9 @@
         <!-- 可修改的鉴定日期 -->
         <input v-else-if="computedType == 'input-date'" type="date" v-model="computedDate" />
         <!-- 可修改的鉴定级别 -->
-        <input v-else-if="computedType == 'input-level'" type="number" step="1" v-model="value.level" v-bind:placeholder="computedLabel" />
+        <input v-else-if="computedType == 'input-level'" type="number" step="1" v-bind:value="value.level" v-on:input="update(type)" v-bind:placeholder="computedLabel" />
         <!-- 可修改的普通文本 -->
-        <input v-else-if="editable" type="text" v-model="value[type]" v-bind:placeholder="computedLabel"/>
+        <input v-else-if="editable" type="text" v-bind:value="value.level" v-on:input="update(type)" v-bind:placeholder="computedLabel"/>
         <!-- 不可修改的普通文本 -->
         <span v-else>
             {{ value[type] }}
@@ -153,8 +153,7 @@ module.exports = {
             
             let updated = JSON.parse(JSON.stringify(this.value));
             updated[this.type] = value;
-            this.value = updated;
-            this.$emit('input', this.value);
+            this.$emit('input', updated);
         },
         toggleFaction: function(data) {
             let newFactions = this.value.faction
