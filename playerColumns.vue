@@ -22,6 +22,10 @@
         <span v-else-if="computedType == 'judgeDate'">
             {{ computedDate }}
         </span>
+        <!-- 不可修改的鉴定级别 -->
+        <span v-else-if="computedType == 'level'">
+            {{ computedLevelText }}
+        </span>
         <!-- 可修改的名称/昵称查询器（修改名称） -->
         <input v-else-if="computedType == 'input-nameAndNickname'" v-model="computedNameAndNickname" v-bind:placeholder="computedLabel"/>
         <!-- 可修改的阵营图标 -->
@@ -35,7 +39,7 @@
         <!-- 可修改的鉴定日期 -->
         <input v-else-if="computedType == 'input-judgeDate'" type="date" v-model="computedDate" />
         <!-- 可修改的鉴定级别 -->
-        <input v-else-if="computedType == 'input-level'" type="number" step="1" v-bind:value="value.level" v-on:input="update($event.target.value)" v-bind:placeholder="computedLabel" />
+        <input v-else-if="computedType == 'input-level'" type="number" step="0.5" v-model="computedLevel" v-bind:placeholder="computedLabel" />
         <!-- 可修改的普通文本 -->
         <input v-else-if="editable" type="text" v-bind:value="value[type]" v-on:input="update($event.target.value)" v-bind:placeholder="computedLabel"/>
         <!-- 不可修改的普通文本 -->
@@ -94,6 +98,27 @@ module.exports = {
             set: function(value) {
                 this.updateNameAndNicknameField(value);
             }
+        },
+        computedLevel: {
+            get: function() {
+                return this.input.level;
+            },
+            set: function(value) {
+                if((value >= 4) && ((value % 1) != 0)) {
+                    return;
+                }
+
+                if((value % 0.5) != 0) {
+                    return;
+                }
+
+                this.update(value);
+            }
+        },
+        computedLevelText: function() {
+            const decimalPart = computedLevel % 1;
+            const integerLevel = Math.round(computedLevel - decimalPart);
+            return integerLevel + (decimalPart == 0 ? '' : '+');
         },
         computedDate: {
             get: function() {
