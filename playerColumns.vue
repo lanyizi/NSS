@@ -7,7 +7,7 @@
         <!-- 头像 -->
         <img v-else-if="computedType == 'avatar'" v-bind:src="value.avatar" />
         <!-- 查看 / 设置录像 -->
-        <div v-else-if="computedType == 'replay'" >
+        <div v-else-if="computedType == 'replays'" >
             <button v-if="computedLabel != null" v-on:click.stop="$emit('replay-click')">
                 {{ computedLabel }}
             </button>
@@ -165,8 +165,7 @@ module.exports = {
                 newFactions = newFactions.concat(data.faction);
             }
 
-            sort(newFactions);
-            this.update(newFactions);
+            this.update(newFactions.sort());
         }
     }
 }
