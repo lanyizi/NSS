@@ -35,7 +35,7 @@
         <!-- 可修改的鉴定级别 -->
         <input v-else-if="computedType == 'input-level'" type="number" step="1" v-bind:value="value.level" v-on:input="update($event.target.value)" v-bind:placeholder="computedLabel" />
         <!-- 可修改的普通文本 -->
-        <input v-else-if="editable" type="text" v-bind:value="value.level" v-on:input="update($event.target.value)" v-bind:placeholder="computedLabel"/>
+        <input v-else-if="editable" type="text" v-bind:value="value[type]" v-on:input="update($event.target.value)" v-bind:placeholder="computedLabel"/>
         <!-- 不可修改的普通文本 -->
         <span v-else>
             {{ value[type] }}
@@ -91,8 +91,8 @@ module.exports = {
         computedDate: {
             get: function() {
                 const unixTimeStamp = this.value.judgeDate
-                if(unixTimeStamp == null) {
-                    return null;
+                if(!unixTimeStamp) {
+                    return '';
                 }
 
                 const date = (new Date(unixTimeStamp * 1000));
