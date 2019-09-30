@@ -14,8 +14,8 @@
         </div>
         <!-- 不可修改的阵营图标 -->
         <ul v-else-if="computedType == 'faction'">
-            <li v-for="(path, index) in computedSelectedFactionIconPath" v-bind:key="index">
-                <img v-bind:src="path" v-bind:alt="factionMapper[index].faction"/>
+            <li v-for="data in computedActiveFactions" v-bind:key="data.faction">
+                <img v-bind:src="data.iconSrc" v-bind:alt="data.faction"/>
             </li>
         </ul>
         <!-- 不可修改的鉴定日期 -->
@@ -121,10 +121,8 @@ module.exports = {
                 return data;
             });
         },
-        computedSelectedFactionIconPath: function() {
-            return this.computedFactionData
-                .filter(data => data.active)
-                .map(data => data.iconSrc);
+        computedActiveFactions: function() {
+            return this.computedFactionData.filter(data => data.active);
         },
         computedLabel: function() {
             if(this.type == 'replays') {

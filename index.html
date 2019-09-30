@@ -182,12 +182,6 @@
             data: { // 数据
                 accessLevel: 0,
                 username: '',
-                inputFactionNames: { // 阵营列表
-                    Allied: '盟军',
-                    Soviet: '苏联', 
-                    Empire: '帝国',
-                    Random: '随机'
-                },
                 input: { // 查询、设置玩家时使用的数据
                     qq: '',
                     name: '',
@@ -268,6 +262,7 @@
 
                             // 设置数据
                             this.players = response.players;
+                            // 在需要的时候，重置输入/查找框
                             if(this.input.id != null) {
                                 let matched = this.players.find(x => x.id == this.input.id);
                                 if(!matched) {
@@ -393,7 +388,7 @@
                         match = match && (input.level ? playerData.level == input.level : true);
                         match = match && (input.judgeDate ? playerData.judgeDate == input.judgeDate : true);
                         match = match && (input.judger ? playerData.judger.includes(input.judger) : true);
-                        match = match && ((input.faction && input.faction.length != 0) ? playerData.faction.split(',').every(x => input.faction.includes(x)) : true);
+                        match = match && ((input.faction && input.faction.length != 0) ? playerData.faction.split(',').some(x => input.faction.includes(x)) : true);
                         match = match && (input.description ? playerData.description.includes(input.description) : true);
                         return match;
                     });
