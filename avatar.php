@@ -57,8 +57,8 @@ function main() {
             'GROUP' => 'nss-avatars.qq',
             'HAVING' => [
                 'OR' => [
-                    'nss-avatars.lastUpdate[<]' => Medoo::raw('(UNIX_TIMESTAMP() - 10800)'),
-                    'nss-avatars.lastUpdate' => null
+                    'lastUpdate[<]' => Medoo::raw('(UNIX_TIMESTAMP() - 10800)'),
+                    'lastUpdate' => null
                 ],
             ],
             'LIMIT' => $count
