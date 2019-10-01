@@ -49,7 +49,6 @@ function main() {
         $qqs = $database->query('
             SELECT `qq` from "nss-avatars" RIGHT JOIN "nss-players" USING(`qq`)
             GROUP BY "nss-avatars".`qq` 
-            HAVING (`nss-avatars.lastUpdate` < (UNIX_TIMESTAMP() - 10800) OR `nss-avatars.lastUpdate` IS NULL) 
             ORDER BY "nss-avatars".`lastUpdate` ASC 
             LIMIT 2
         ')->fetchAll();
