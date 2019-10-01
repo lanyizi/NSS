@@ -47,7 +47,7 @@ function main() {
         $count = min(max(0, $maxSucceeded * 2 - 1), max(0, $minFailed / 2 - 1)) + 1;
 
         $qqs = $database->query('
-            SELECT `qq` from "nss-avatars" RIGHT JOIN "nss-players" USING `qq`
+            SELECT `qq` from "nss-avatars" RIGHT JOIN "nss-players" USING(`qq`)
             GROUP BY "nss-avatars".`qq` 
             HAVING (`nss-avatars.lastUpdate` < (UNIX_TIMESTAMP() - 10800) OR `nss-avatars.lastUpdate` IS NULL) 
             ORDER BY "nss-avatars".`lastUpdate` ASC 
