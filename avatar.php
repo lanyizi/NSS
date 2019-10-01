@@ -46,16 +46,12 @@ function main() {
 
         $count = min(max(0, $maxSucceeded * 2 - 1), max(0, $minFailed / 2 - 1)) + 1;
 
-        $qqs = $database->query('
-            SELECT `qq` from "nss-avatars" RIGHT JOIN "nss-players" USING(`qq`)
-            WHERE ("nss-players".`deletedDate` IS NULL AND ("nss-avatars".`lastUpdate` IS NULL OR "nss-avatars".`lastUpdate` < (UNIX_TIMESTAMP() - 10800)))
-            ORDER BY "nss-avatars".`lastUpdate` ASC 
-            LIMIT 2
-        ')->fetchAll(PDO::FETCH_ASSOC);
-
-        echo "content: <br>\r\n";
-        print_r($qqs);
-        echo "\r\n";
+        $qqs = $database->query("
+            SELECT `qq` from \"nss-avatars\" RIGHT JOIN \"nss-players\" USING(`qq`)
+            WHERE (\"nss-players\".`deletedDate` IS NULL AND (\"nss-avatars\".`lastUpdate` IS NULL OR \"nss-avatars\".`lastUpdate` < (UNIX_TIMESTAMP() - 10800)))
+            ORDER BY \"nss-avatars\".`lastUpdate` ASC 
+            LIMIT $count
+        ")->fetchAll(PDO::FETCH_ASSOC);
 
         if(sizeof($qqs) == 0) {
             return 'Nothing to update';
