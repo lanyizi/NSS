@@ -46,16 +46,17 @@ function main() {
 
         $count = min(max(0, $maxSucceeded * 2 - 1), max(0, $minFailed / 2 - 1)) + 1;
 
-        $qqs = $database->select('nss-avatars', Medoo::raw(
-            'RIGHT JOIN `nss-players` USING (`qq`)'
-        ), [
-            'qq',
-        ], Medoo::raw(
-            'GROUP BY "nss-avatars".`qq` 
+        $qqs = $database->query('
+            SELECT `qq` from "nss-avatars" RIGHT JOIN "nss-players" USING `qq`
+            GROUP BY "nss-avatars".`qq` 
             HAVING (`nss-avatars.lastUpdate` < (UNIX_TIMESTAMP() - 10800) OR `nss-avatars.lastUpdate` IS NULL) 
             ORDER BY "nss-avatars".`lastUpdate` ASC 
-            LIMIT 2'
-        ));
+            LIMIT 2
+        ')->fetchAll();
+
+        echo "content: <br>\r\n";
+        print_r($qqs);
+        echo "\r\n";
 
         if(sizeof($qqs) == 0) {
             return 'Nothing to update';
