@@ -49,7 +49,7 @@ function main() {
         $qqs = $database->select('nss-avatars', [
             '[<]nss-players' => 'qq'
         ], [
-            'nss-avatars.qq',
+            'qq',
         ], [
             'ORDER' => [
                 'nss-avatars.lastUpdate' => 'ASC'
@@ -120,6 +120,10 @@ function main() {
                     $data['qq'] = $qq;
                     $database->insert('nss-avatars', $data);
                 }
+            }
+
+            if($succeededCount == 0) {
+                throw new Exception('Nothing succeeded');
             }
 
             $database->update('nss-avatar-fetch-history', [
