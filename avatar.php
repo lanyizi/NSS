@@ -52,6 +52,7 @@ function main() {
             ORDER BY "nss-avatars".`lastUpdate` ASC 
             LIMIT 2
         ')->fetchAll();
+        $qqs = $qqs[0];
 
         echo "content: <br>\r\n";
         print_r($qqs);
