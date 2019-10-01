@@ -51,8 +51,7 @@ function main() {
             WHERE ("nss-players".`deletedDate` IS NULL AND ("nss-avatars".`lastUpdate` IS NULL OR "nss-avatars".`lastUpdate` < (UNIX_TIMESTAMP() - 10800)))
             ORDER BY "nss-avatars".`lastUpdate` ASC 
             LIMIT 2
-        ')->fetchAll();
-        $qqs = $qqs[0];
+        ')->fetchAll(PDO::FETCH_ASSOC);
 
         echo "content: <br>\r\n";
         print_r($qqs);
