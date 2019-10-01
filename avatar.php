@@ -21,7 +21,7 @@ function main() {
         ]);
 
         $maxSucceeded = $database->get('nss-avatar-fetch-history', 'count', [
-            'timeStamp[>=]' => Medoo::raw('TIMESTAMP() - 86400'),
+            'timeStamp[>=]' => Medoo::raw('(UNIX_TIMESTAMP() - 86400)'),
             'succeeded' => true,
             'ORDER' => [
                 'timeStamp' => 'DESC'
@@ -29,7 +29,7 @@ function main() {
         ]);
 
         $minFailed = $database->get('nss-avatar-fetch-history', 'count', [
-            'timeStamp[>=]' => Medoo::raw('TIMESTAMP() - 86400'),
+            'timeStamp[>=]' => Medoo::raw('(UNIX_TIMESTAMP() - 86400)'),
             'succeeded' => false,
             'ORDER' => [
                 'timeStamp' => 'DESC'
@@ -71,7 +71,7 @@ function main() {
         $database->insert('nss-avatar-fetch-history', [
             'count' => $count,
             'succeeded' => false,
-            'timeStamp' => Medoo::raw('TIMESTAMP()')
+            'timeStamp' => Medoo::raw('UNIX_TIMESTAMP()')
         ]);
         $historyId = $database->id();
 
@@ -102,7 +102,7 @@ function main() {
             $succeededCount = 0;
             foreach($easyHandles as $qq => $easyHandle) {
                 $data = [
-                    'lastUpdate' => Medoo::raw('TIMESTAMP()'),
+                    'lastUpdate' => Medoo::raw('UNIX_TIMESTAMP()'),
                     'data' => curl_multi_getcontent($easyHandle)
                 ];
 
