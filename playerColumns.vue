@@ -110,7 +110,7 @@ module.exports = {
         },
         computedLevel: {
             get: function() {
-                return this.input.level;
+                return this.value.level;
             },
             set: function(value) {
                 if((value >= 4) && ((value % 1) != 0)) {
