@@ -134,7 +134,8 @@ class NSS {
             'judger',
             'faction',
             'description',
-            'replays'
+            'replays',
+            'data(avatar)'
         ];
 
         if($access['accessLevel'] > 0) {
