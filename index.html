@@ -192,6 +192,7 @@
                     faction: [],
                     replays: [],
                     uploading: false, // 是否正在上传数据
+                    matchedQQ: '', //最后一次匹配到的QQ
                 }, 
                 qqTypedByGuest: '', // 访客模式下的按 QQ 号查询
                 guestQueryStatus: '', // 查询进度
@@ -234,6 +235,7 @@
                         faction: [],
                         replays: [],
                         uploading: false,
+                        matchedQQ: '',
                     };
                 },
                 updateAvatars: function() {
@@ -435,23 +437,32 @@
                         return match;
                     });
 
-                    let currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(y => y.id == x.id));
-                    let previousContainsCurrent = filtered.every(x => this.previouslyFiltered.find(y => y.id == x.id));
-                    let notChanged = (currentContainsPrevious == previousContainsCurrent);
+                    const currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(y => y.id == x.id));
+                    const previousContainsCurrent = filtered.every(x => this.previouslyFiltered.find(y => y.id == x.id));
+                    const notChanged = (currentContainsPrevious == previousContainsCurrent);
                     if (notChanged) {
                         return this.previouslyFiltered;
                     }
                     this.previouslyFiltered = filtered;
 
-                    if(filtered.length == 1) {
+
+                    // 设置查询结果至输入框，但假如玩家是使用访客模式QQ查询的就不这么做
+                    const guestUseQQ = (this.accessLevel == 0 && this.qqTypedByGuest);
+                    if(filtered.length == 1 && (!guestUseQQ)) {
                         let matched = JSON.parse(JSON.stringify(this.players.find(x => x.id == filtered[0].id)));
-                        matched.faction = matched.faction.split(',');
-                        Object.assign(this.input, matched);
+                        if(this.input.qq != matched.qq) {
+                            matched.faction = matched.faction.split(',');
+                            Object.assign(this.input, matched);
+                            this.input.matchedQQ = this.input.qq;
+                        }
                     }
                     else {
                         this.input.id = null;
-                        this.input.avatar = null;
-                        this.input.replays = [];
+                        // 除非玩家修改了QQ号，否则下面这些就不改
+                        if(this.input.qq != this.matchedQQ) {
+                            this.input.avatar = null;
+                            this.input.replays = [];
+                        }
                     }
 
                     return filtered;
