@@ -83,7 +83,7 @@ GET nss.php?do=getPlayers&token=【可选token】 【后端已实现】【前端
             'nickname': '玩家称呼（可选）', // 你可以用 if(data[0].nickname) { (有) } else { (没有) } 来检测到底有没有称呼
             'level': 7 // 级别，使用数字
             'qq': 'QQ号', // 仅在 token 的 accessLevel > 0 时出现
-            'avatar': '头像地址',
+            'avatar': '头像',
             'judgeDate': 1564863390, //鉴定时间，使用 UNIX 时间戳，比如你可以这样在javascript里获取日期： date = new Date(data[0].judgedate * 1000)
             'judger': '鉴定员用户名',
             'faction': '主阵营',
@@ -131,7 +131,8 @@ POST nss.php?do=judgePlayer 【后端已实现】【前端已实现】
     'judgeDate': 1564863390, //鉴定时间，使用 UNIX 时间戳，你可以把默认值设为当前时间，即 Math.floor(Date.now() / 1000)
     'faction': '主阵营',
     'replays': ['鉴定录像1的 ID'，'鉴定录像2的 ID（假如有的话）', ...],
-    'description': '说明（假如有的话）'
+    'description': '说明（假如有的话）',
+    'avatar': '头像（可选，可为null）'
 }
 -> 返回：
 {
@@ -150,6 +151,8 @@ POST nss.php?do=removePlayer 【后端已实现】【前端已实现】
     'result': true, // 删除玩家的结果，true 或者 false
     'message': '消息提示，比如说“删除成功”'
 }
+
+GET nss.php?do=updateAvatars // 更新头像
 
 // 录像相关（移至 lanyi.altervista.org/replays）
 

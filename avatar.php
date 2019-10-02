@@ -2,23 +2,26 @@
 require_once('Medoo-master/src/Medoo.php');
 use Medoo\Medoo;
 
-function main() {
+function updateAvatar($database, $qq, $avatarData) {
+    $data = [
+        'lastUpdate' => Medoo::raw('UNIX_TIMESTAMP()'),
+        'data' => $avatarData
+    ];
+
+    if($database->has('nss-avatars', ['qq' => $qq])) {
+        $database->update('nss-avatars', $data, [
+            'qq' => $qq
+        ]);
+    }
+    else {
+        $data['qq'] = $qq;
+        $database->insert('nss-avatars', $data);
+    }
+}
+
+function autoUpdateAvatars($database) {
     try {
         $timeStart = microtime(true); 
-
-        $database = new Medoo([
-            // required
-            'database_type' => 'mysql',
-            'database_name' => 'my_lanyi',
-            'server' => 'localhost',
-            'username' => 'lanyi',
-            'password' => '',
-            'charset' => 'utf8mb4',
-	        'collation' => 'utf8mb4_general_ci',
-            'option' => [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            ],
-        ]);
 
         $maxSucceeded = $database->get('nss-avatar-fetch-history', 'count', [
             'timeStamp[>=]' => Medoo::raw('(UNIX_TIMESTAMP() - 86400)'),
@@ -48,7 +51,7 @@ function main() {
 
         $qqs = $database->query("
             SELECT `qq` from \"nss-avatars\" RIGHT JOIN \"nss-players\" USING(`qq`)
-            WHERE (\"nss-players\".`deletedDate` IS NULL AND (\"nss-avatars\".`lastUpdate` IS NULL OR \"nss-avatars\".`lastUpdate` < (UNIX_TIMESTAMP() - 10800)))
+            WHERE (\"nss-players\".`deletedDate` IS NULL AND (\"nss-avatars\".`lastUpdate` IS NULL OR \"nss-avatars\".`lastUpdate` < (UNIX_TIMESTAMP() - 7200)))
             ORDER BY \"nss-avatars\".`lastUpdate` ASC 
             LIMIT $count
         ")->fetchAll(PDO::FETCH_ASSOC);
@@ -90,25 +93,14 @@ function main() {
 
             $succeededCount = 0;
             foreach($easyHandles as $qq => $easyHandle) {
-                $data = [
-                    'lastUpdate' => Medoo::raw('UNIX_TIMESTAMP()'),
-                    'data' => curl_multi_getcontent($easyHandle)
-                ];
+                $data = curl_multi_getcontent($easyHandle);
 
-                if(!$data['data']) {
+                if(!$data) {
                     continue;
                 }
                 $succeededCount += 1;
 
-                if($database->has('nss-avatars', ['qq' => $qq])) {
-                    $database->update('nss-avatars', $data, [
-                        'qq' => $qq
-                    ]);
-                }
-                else {
-                    $data['qq'] = $qq;
-                    $database->insert('nss-avatars', $data);
-                }
+                updateAvatar($database, $qq, $data);
             }
 
             if($succeededCount == 0) {
@@ -123,7 +115,8 @@ function main() {
             ]);
 
             $totalTime = microtime(true) - $timeStart;
-            return "Successfully updated $succeededCount / $count items, total time = $totalTime";
+            $size = sizeof($items);
+            return "Successfully updated $succeededCount / $size items, total time = $totalTime";
         }
         finally {
             foreach($easyHandles as $qq => $easyHandle) {
@@ -135,9 +128,8 @@ function main() {
     }
     catch(Exception $exception) {
         http_response_code(500);
-        return $exception->getMessage();
+        $message = $exception->getMessage();
+        return "Exception: $message";
     }
 }
-
-echo main();
 ?>

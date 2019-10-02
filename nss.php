@@ -2,6 +2,7 @@
 require_once('Medoo-master/src/Medoo.php');
 require_once('auth.php');
 require_once('util.php');
+require_once('avatar.php');
 
 use Medoo\Medoo;
 
@@ -124,7 +125,7 @@ class NSS {
     public function getPlayers() {
         $access = $this->auth->verifyToken($_GET['token']);
 
-        $keys = [
+        $columns = [
             'id',
             'name',
             'nickname',
@@ -137,11 +138,13 @@ class NSS {
         ];
 
         if($access['accessLevel'] > 0) {
-            array_splice($keys, 1, 0, ['qq']);
+            array_splice($columns, 1, 0, ['qq']);
         }
 
         // 从数据库获取玩家信息
-        $playerData = $this->database->select('nss-players', $keys, [
+        $playerData = $this->database->select('nss-players', [
+            '[>]nss-avatars' => 'qq'
+        ], $columns, [
             'deletedDate' => null
         ]);
 
@@ -244,7 +247,13 @@ class NSS {
 
             // 禁用之前的玩家信息，并加入新的信息
             $this->disablePlayerRecord($qq, $judger, $addPlayerRecord);
-            
+        
+            // 假如提供了头像，就保存它
+            $avatar = $this->input['avatar'];
+            if(!isNullOrEmptyString($avatar)) {
+                updateAvatar($this->database, $qq, $avatar);
+            }
+
             return [
                 'result' => true,
                 'message' => "已保存玩家信息"
@@ -329,6 +338,10 @@ class NSS {
                 'message' => "遇到了内部错误：$errorMessage"
             ];
         }
+    }
+
+    public function updateAvatars() {
+        return autoUpdateAvatars($this->database);
     }
 }
 

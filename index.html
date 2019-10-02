@@ -87,18 +87,13 @@
                         <button v-on:click="guestQQInput = null; input = getEmptyInput()">
                             清空数据
                         </button>
-                    </td>
-                    <!--
-                    <td v-if="accessLevel > 0">
-                        <button v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
+                        <button v-if="accessLevel > 0" v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
                             {{ !!players.find(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
                         </button>
-                        <button v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
+                        <button v-if="accessLevel > 0" v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
                             删除
                         </button>
                     </td>
-                    <td v-else></td>
-                    -->
                 </tr>
                 <tr v-for="row in filteredPlayerArray">
                     <td v-for="column in filteredColumns" v-bind:colspan="column == filteredColumns.slice(-1)[0] ? 2 : 1">
@@ -220,6 +215,11 @@
                 this.getAccessLevel();
                 this.listJudgers();
                 this.listPlayers(false);
+
+                // 每 20 秒尝试更新一次头像
+                setInterval(() => {
+                    this.updateAvatars();
+                }, 20000);
             },
             methods: {
                 getEmptyInput: function() {
@@ -235,6 +235,12 @@
                         replays: [],
                         uploading: false,
                     };
+                },
+                updateAvatars: function() {
+                    fetch('nss.php?do=updateAvatars')
+                    .then(response => response.text())
+                    .then(text => console.log('Update avatar result: ' + text))
+                    .catch(reason => console.log('Avatar update failed: ' + reason));
                 },
                 getAccessLevel: function() {
                     let token = getLocalToken();
@@ -301,7 +307,7 @@
                     let data = JSON.parse(JSON.stringify(this.input));
                     data.token = getLocalToken();
                     data.faction = data.faction.join(',');
-                    data.judgeDate = data.judgeDate || parseInt(Date.now() / 1000)
+                    data.judgeDate = data.judgeDate || parseInt(Date.now() / 1000);
                     fetch('nss.php?do=judgePlayer', {
                         method: 'post',
                         body: JSON.stringify(data),
@@ -311,6 +317,8 @@
                     })
                     .then(response => response.json())
                     .then(parsed => {
+                        // 更新头像
+                        this.updateAvatars();
                         // 上传成功之后，立即更新一次数据
                         this.listPlayers(true);
                         alert(parsed.message);

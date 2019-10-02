@@ -5,7 +5,7 @@
             {{ computedNameAndNickname }}
         </span>
         <!-- 头像 -->
-        <img v-else-if="computedType == 'avatar'" v-bind:src="value.avatar" />
+        <img v-else-if="computedType == 'avatar'" v-bind:src="computedAvatar" />
         <!-- 查看 / 设置录像 -->
         <div v-else-if="computedType == 'replays'" >
             <button v-if="computedLabel != null" v-on:click.stop="$emit('replay-click')">
@@ -87,6 +87,15 @@ module.exports = {
                 return 'input-' + this.type;
             }
             return this.type;
+        },
+        computedAvatar: function() {
+            // default: transparent
+            const transparent = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+            if(typeof(this.value.avatar) != 'string') {
+                return transparent;
+            }
+            
+            return this.value.avatar.slice(13, -1)[this.value.qq] || transparent;
         },
         computedNameAndNickname: {
             get: function() {
