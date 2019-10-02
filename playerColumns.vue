@@ -95,7 +95,7 @@ module.exports = {
                 return transparent;
             }
             
-            return this.value.avatar.slice(13, -1)[this.value.qq] || transparent;
+            return Object.values(JSON.parse(this.value.avatar.slice(13, -1)))[0] || transparent;
         },
         computedNameAndNickname: {
             get: function() {
