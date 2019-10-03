@@ -132,6 +132,15 @@
             <input type="text" v-model="guestQQInput" placeholder="完整QQ号" />
             <div>{{ guestQueryStatus }}</div>
         </div>
+        <button v-on:click="guestQQInput = null; input = getEmptyInput()">
+            清空数据
+        </button>
+        <button v-if="accessLevel > 0" v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
+            {{ !!players.find(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
+        </button>
+        <button v-if="accessLevel > 0" v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
+            删除
+        </button>
         <div id="playersInfo">
             <table id="playersInfoTable">
                 <tr class="player-row">
@@ -143,23 +152,9 @@
                             v-on:replay-click="showReplayList(input.name, true)">
                         </player-column>
                     </td>
-                    <td class="player-row-control">
-                        <button v-on:click="guestQQInput = null; input = getEmptyInput()">
-                            清空数据
-                        </button>
-                        <button v-if="accessLevel > 0" v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
-                            {{ !!players.find(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
-                        </button>
-                        <button v-if="accessLevel > 0" v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
-                            删除
-                        </button>
-                    </td>
                 </tr>
                 <tr v-for="row in filteredPlayerArray" class="player-row">
-                    <td 
-                        v-for="column in filteredColumns" 
-                        v-bind:class="column.classes"
-                        v-bind:colspan="column.type == filteredColumns.slice(-1)[0] ? 2 : 1">
+                    <td v-for="column in filteredColumns" v-bind:class="column.classes">
                         <player-column
                             v-bind:type="column.type" 
                             v-bind:value="row"
