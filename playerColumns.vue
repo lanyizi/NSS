@@ -1,5 +1,8 @@
 <template>
     <div v-bind:class="playerColumnClasses">
+        <!-- 空白 -->
+        <span v-if="computedType == 'empty'">
+        </span>
         <!-- 名称和昵称 -->
         <span v-if="computedType == 'nameAndNickname'">
             {{ computedNameAndNickname }}
@@ -48,6 +51,25 @@
         </span>
     </div>
 </template>
+<style>
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .player-column-input-faction {
+        padding: 0;
+    }
+
+    .active-faction > button > img:hover {
+        filter: brightness(110%);
+    }
+
+    .inactive-faction > button > img {
+        filter: saturate(0%);
+    }
+</style>
 <script>
 module.exports = {
     data: function() {
@@ -79,7 +101,7 @@ module.exports = {
     },
     computed: {
         playerColumnClasses: function() {
-            return [ 'player-column', 'player-column-' + this.type ];
+            return [ 'player-column', 'player-column-' + this.computedType ];
         },
         computedType: function() {
             const specials = ['avatar', 'replays'];

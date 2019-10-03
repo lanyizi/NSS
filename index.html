@@ -32,6 +32,60 @@
             max-width: 90;
             background-color: white;
         }
+
+        .player-row {
+            position: relative;
+            padding-top: calc(100% / 36.0);
+        }
+
+        .player-row > td {
+            position: relative;
+            display: inline-block;
+            padding-top: calc(100% / 36.0);
+        }
+
+        .player-row > td > .player-column {
+            position: absolute;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .player-row > td.width-1 {
+            width: calc(100% / 36.0 * 1);
+        }
+
+        .player-row > td.width-2 {
+            width: calc(100% / 36.0 * 2);
+        }
+
+        .player-row > td.width-3 {
+            width: calc(100% / 36.0 * 3);
+        }
+
+        .player-row > td.width-4 {
+            width: calc(100% / 36.0 * 4);
+        }
+
+        .player-row > td.width-5 {
+            width: calc(100% / 36.0 * 5);
+        }
+
+        .player-row > td.width-6 {
+            width: calc(100% / 36.0 * 6);
+        }
+
+        .player-row > td.width-7 {
+            width: calc(100% / 36.0 * 7);
+        }
+
+        .player-row > td.width-8 {
+            width: calc(100% / 36.0 * 8);
+        }
+
+        .player-row > td.width-9 {
+            width: calc(100% / 36.0 * 9);
+        }
     </style>
 </head>
 
@@ -74,8 +128,8 @@
         </div>
         <div id="playersInfo">
             <table id="playersInfoTable">
-                <tr>
-                    <td v-for="column in filteredColumns">
+                <tr class="player-row">
+                    <td v-for="column in filteredColumns" v-bind:class="column.classes">
                         <player-column
                             v-bind:type="column" 
                             v-model="input"
@@ -95,10 +149,13 @@
                         </button>
                     </td>
                 </tr>
-                <tr v-for="row in filteredPlayerArray">
-                    <td v-for="column in filteredColumns" v-bind:colspan="column == filteredColumns.slice(-1)[0] ? 2 : 1">
+                <tr v-for="row in filteredPlayerArray" class="player-row">
+                    <td 
+                        v-for="column in filteredColumns" 
+                        v-bind:class="column.classes"
+                        v-bind:colspan="column.type == filteredColumns.slice(-1)[0] ? 2 : 1">
                         <player-column
-                            v-bind:type="column" 
+                            v-bind:type="column.type" 
                             v-bind:value="row"
                             v-bind:editable="false"
                             v-on:replay-click="showReplayList(row.name, false)">
@@ -468,10 +525,40 @@
                     return filtered;
                 },
                 filteredColumns: function() {
-                    if (this.accessLevel != 0) {
-                        return ['qq', 'avatar', 'name', 'nickname', 'level', 'faction', 'judger', 'judgeDate', 'replays', 'description'];
+                    if (this.accessLevel > 0) {
+                        //[, 'avatar', 'name', 'nickname', 'level', 'faction', 'judger', 'judgeDate', 'replays', 'description']
+                        return [
+                            { type: 'qq', classes: ['width-5'] },
+                            { type: 'avatar', classes: ['width-1'] },
+                            { type: 'name', classes: ['width-4'] },
+                            { type: 'nickname', classes: ['width-4', 'm-width-2'] },
+                            
+                            { type: 'empty', classes: ['width-hidden', 'm-width-2'] },
+                            { type: 'level', classes: ['width-1'] },
+                            { type: 'faction', classes: ['width-1'] },
+                            { type: 'judger', classes: ['width-4'] },
+                            { type: 'judgeDate', classes: ['width-4'] },
+                            
+                            { type: 'empty', classes: ['width-hidden', 'm-width-2'] },
+                            { type: 'replays', classes: ['width-4', 'm-width-3'] },
+                            { type: 'description', classes: ['width-8', 'm-width-7'] }
+                        ];
                     }
-                    return ['level', 'faction', 'nameAndNickname', 'avatar', 'judger', 'judgeDate', 'replays', 'description'];
+
+                    return [
+                        { type: 'level', classes: ['width-1'] },
+                        { type: 'faction', classes: ['width-1'] },
+                        { type: 'avatar', classes: ['width-1'] },
+                        { type: 'nameAndNickname', classes: ['width-9'] },
+                        
+                        { type: 'empty', classes: ['width-hidden', 'm-width-2'] },
+                        { type: 'judger', classes: ['width-5', 'm-width-4'] },
+                        { type: 'judgeDate', classes: ['width-4', 'm-width-3'] },
+                        { type: 'replays', classes: ['width-3'] },
+
+                        { type: 'empty', classes: ['width-hidden', 'm-width-2'] },
+                        { type: 'description', classes: ['width-8', 'm-width-7'] }
+                    ];
                 },
                 isReplayInvalidForUpload: function() {
                     return this.replayList.fileToBeUploaded == null;
