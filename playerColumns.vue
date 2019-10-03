@@ -17,7 +17,10 @@
         </div>
         <!-- 不可修改的阵营图标 -->
         <ul v-else-if="computedType == 'faction'">
-            <li v-for="data in computedActiveFactions" v-bind:key="data.faction" v-bind:class="data.class">
+            <li 
+                v-for="data in computedActiveFactions" 
+                v-bind:key="data.faction" 
+                v-bind:class="data.class">
                 <img v-bind:src="data.iconSrc" v-bind:alt="data.faction"/>
             </li>
         </ul>
@@ -58,8 +61,14 @@
         margin: 0;
     }
 
-    .player-column-input-faction {
-        padding: 0;
+    input {
+        width: 100%;
+    }
+
+    .player-column-faction > ul, .player-column-input-faction > ul {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
     .active-faction > button > img:hover {
