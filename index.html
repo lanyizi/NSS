@@ -35,7 +35,6 @@
 
         .player-row {
             position: relative;
-            padding-top: calc(100% / 36.0);
         }
 
         .player-row > td {
@@ -131,7 +130,7 @@
                 <tr class="player-row">
                     <td v-for="column in filteredColumns" v-bind:class="column.classes">
                         <player-column
-                            v-bind:type="column" 
+                            v-bind:type="column.type" 
                             v-model="input"
                             v-bind:editable="accessLevel > 0 || column != 'replays'"
                             v-on:replay-click="showReplayList(input.name, true)">
