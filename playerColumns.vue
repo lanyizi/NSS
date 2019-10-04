@@ -1,5 +1,10 @@
 <template>
     <div v-bind:class="playerColumnClasses">
+        <style scoped>
+            .player-column-faction-element {
+                height: {{computedFactionHeight}};
+            }
+        </style>
         <!-- 空白 -->
         <span v-if="computedType == 'empty'">
         </span>
@@ -12,7 +17,7 @@
             <img v-bind:src="computedAvatar" />
         </div>
         <!-- 查看 / 设置录像 -->
-        <div v-else-if="computedType == 'replays'" >
+        <div v-else-if="computedType == 'replays'" class="player-column-button-holder">
             <button v-if="computedLabel != null" v-on:click.stop="$emit('replay-click')">
                 {{ computedLabel }}
             </button>
@@ -22,7 +27,7 @@
             <li 
                 v-for="data in computedActiveFactions" 
                 v-bind:key="data.faction" 
-                v-bind:class="data.class.concat('player-column-image-holder')">
+                v-bind:class="data.classes.concat('player-column-image-holder')">
                 <img v-bind:src="data.iconSrc" v-bind:alt="data.faction"/>
             </li>
         </ul>
@@ -38,8 +43,10 @@
         <input v-else-if="computedType == 'input-nameAndNickname'" v-model="computedNameAndNickname" v-bind:placeholder="computedLabel"/>
         <!-- 可修改的阵营图标 -->
         <ul v-else-if="computedType == 'input-faction'">
-            <li v-for="data in computedFactionData" v-bind:key="data.faction">
-                <button v-on:click="toggleFaction(data)">
+            <li v-for="data in computedFactionData" 
+                v-bind:key="data.faction" 
+                v-bind:class="data.classes.concat('player-column-button-holder')">
+                <button v-on:click="toggleFaction(data)" class="player-column-image-holder">
                     <img v-bind:src="data.iconSrc" v-bind:alt="data.faction" />
                 </button>
             </li>
@@ -61,6 +68,11 @@
         list-style-type: none;
         padding: 0;
         margin: 0;
+    }
+
+    .player-column-button-holder,
+    li {
+        text-align: center;
     }
 
     input {
@@ -98,11 +110,11 @@
         transform: translateY(-50%);
     }*/
 
-    .active-faction > button > img:hover {
+    .player-column-faction-element > button > img:hover {
         filter: brightness(110%);
     }
 
-    .inactive-faction > button > img {
+    .player-column-faction-element-inactive > button > img {
         filter: saturate(0%);
     }
 </style>
@@ -215,9 +227,10 @@ module.exports = {
             }
         },
         computedFactionData: function() {
+            const className = 'player-column-faction-element';
             return this.factionMapper.map(data => {
                 data.active = this.value.faction.includes(data.faction);
-                data.class = data.active ? "active-faction" : "inactive-faction";
+                data.classes = [className, className + (data.active ? '-active' : '-inactive')];
                 data.iconSrc = this.factionIconFormat.replace('*', data.id);
                 return data;
             });
@@ -243,7 +256,12 @@ module.exports = {
                 description: '说明（可选）'
             };
             return names[this.type] || this.type;
-        }
+        },
+        computedFactionHeight: function() {
+            const count = this.editable ? this.computedFactionData.length : computedActiveFactions.length;
+            const f = x => 0.2 * x * x - 1.1 * x + 1.9;
+            return this.$el.clientWidth * f(Math.min(count, 3));
+        },
     },
     methods: {
         update: function(value) {

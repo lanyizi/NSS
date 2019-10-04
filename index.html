@@ -8,15 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/http-vue-loader/src/httpVueLoader.min.js"></script>
     <script src="nss.js?v=19"></script>
     <script src="/replays/replay.js"></script>
-    <!--
-            这两个函数调用，我们也移到vue里调用吧
-            <script>
-                accessLevel();
-                listJudgers();
-            </script>
-        -->
-    
     <style>
+        body {
+            font-family: 'Microsoft Yahei', '微软雅黑', Helvetica, Arial, sans-serif;
+        }
+
         #replayListContainer {
             position: fixed;
             left: 0;
@@ -33,7 +29,7 @@
             background-color: white;
         }
 
-        #playersInfoTable {
+        #nss {
             width: 90%;
             max-width: 1600px;
             margin-left: auto;
