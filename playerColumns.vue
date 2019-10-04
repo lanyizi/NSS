@@ -95,6 +95,15 @@
         object-position: center;
     }
 
+    .player-column-input-faction > ul,
+    .player-column-faction > ul {
+        position: absolute;
+        width: 100%;
+        height: initial;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
     .player-column-faction-element {
         position: relative;
         height: 0;

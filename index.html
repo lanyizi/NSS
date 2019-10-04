@@ -13,6 +13,10 @@
             font-family: 'Microsoft Yahei', '微软雅黑', Helvetica, Arial, sans-serif;
         }
 
+        body * {
+            box-sizing: border-box;
+        }
+
         #replayListContainer {
             position: fixed;
             left: 0;
@@ -41,14 +45,12 @@
 
         #judgersInfo {
             display: inline-block;
-            box-sizing: border-box;
             width: 20%;
             margin: 0;
         }
 
         #playersInfo {
             display: inline-block;
-            box-sizing: border-box;
             width: 78%;
             margin: 0;
         }
@@ -65,7 +67,6 @@
         .player-row > td {
             position: relative;
             padding-top: calc(100% / 36.0);
-            box-sizing: border-box;
             margin: 0;
         }
 
@@ -128,7 +129,6 @@
             .player-row > td {
                 position: relative;
                 padding-top: calc(100% / 12.0);
-                box-sizing: border-box;
                 margin: 0;
             }
 
@@ -596,7 +596,7 @@
                     const isEqual = (x, y) => x.qq == y.qq && x.id == y.id;
                     const currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(y => isEqual(x, y)));
                     const previousContainsCurrent = filtered.every(x => this.previouslyFiltered.find(y => isEqual(x, y)));
-                    const notChanged = (currentContainsPrevious == previousContainsCurrent);
+                    const notChanged = (currentContainsPrevious && previousContainsCurrent);
                     if (notChanged) {
                         return this.previouslyFiltered;
                     }
