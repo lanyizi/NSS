@@ -140,7 +140,7 @@ module.exports = {
             return [ 'player-column', 'player-column-' + this.computedType ];
         },
         computedType: function() {
-            const specials = ['avatar', 'replays'];
+            const specials = ['avatar', 'replays', 'empty'];
             if(this.editable && specials.every(type => this.type != type)) {
                 return 'input-' + this.type;
             }
