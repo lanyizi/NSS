@@ -1,10 +1,5 @@
 <template>
     <div v-bind:class="playerColumnClasses">
-        <style scoped>
-            .player-column-faction-element {
-                height: {{computedFactionHeight}};
-            }
-        </style>
         <!-- 空白 -->
         <span v-if="computedType == 'empty'">
         </span>
@@ -27,7 +22,8 @@
             <li 
                 v-for="data in computedActiveFactions" 
                 v-bind:key="data.faction" 
-                v-bind:class="data.classes.concat('player-column-image-holder')">
+                v-bind:class="data.classes.concat('player-column-image-holder')"
+                v-bind:style="computedFactionHeightStyle">
                 <img v-bind:src="data.iconSrc" v-bind:alt="data.faction"/>
             </li>
         </ul>
@@ -45,7 +41,8 @@
         <ul v-else-if="computedType == 'input-faction'">
             <li v-for="data in computedFactionData" 
                 v-bind:key="data.faction" 
-                v-bind:class="data.classes.concat('player-column-button-holder')">
+                v-bind:class="data.classes.concat('player-column-button-holder')"
+                v-bind:style="computedFactionHeightStyle">
                 <button v-on:click="toggleFaction(data)" class="player-column-image-holder">
                     <img v-bind:src="data.iconSrc" v-bind:alt="data.faction" />
                 </button>
@@ -257,10 +254,13 @@ module.exports = {
             };
             return names[this.type] || this.type;
         },
-        computedFactionHeight: function() {
+        computedFactionHeightStyle: function() {
             const count = this.editable ? this.computedFactionData.length : computedActiveFactions.length;
             const f = x => 0.2 * x * x - 1.1 * x + 1.9;
-            return this.$el.clientWidth * f(Math.min(count, 3));
+            const height = this.$el.clientWidth * f(Math.min(count, 3));
+            return {
+                'height': height + 'px'
+            }
         },
     },
     methods: {
