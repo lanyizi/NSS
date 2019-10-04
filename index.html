@@ -29,11 +29,16 @@
             background-color: white;
         }
 
-        #nss {
+        /*#nss {
             width: 90%;
             max-width: 1600px;
             margin-left: auto;
             margin-right: auto;
+        }*/
+
+        #judgersInfoTable,
+        #playerInfoTable {
+            width: 100%;
         }
 
         .player-row {
@@ -48,7 +53,6 @@
 
         .player-row > td > .player-column {
             display: inline-block;
-            vertical-align: middle;
             width: 100%;
         }
 
@@ -91,53 +95,30 @@
         .player-row > td.width-9 {
             width: calc(100% / 36.0 * 9);
         }
+
+        @media screen and (max-height: 1280px), screen and (max-aspect-ratio: 1/1) {
+            
+        }
     </style>
 </head>
 
 <body>
-    Hello, World!
     <div id="nss">
-
-        <div id="loginStatus">
-            <!-- {{username}} 就是 Vue 的 data 里的那个 username -->
-            <p id="showUsername">当前身份：{{username}}</p>
-            <!-- 在vue里，可以使用 v-if 来控制元素是否显示 -->
-            <!-- 比如说只在 accessLevel == 0 的情况下显示这个元素 -->
-            <a href="login.html" id="toLoginPage" v-if="accessLevel == 0">登录</a>
-        </div>
-
-        <div id="judgersInfo">
-            <table id="judgersInfoTable">
-                <thead>
-                    <th>鉴定员名称</th>
-                    <th>个人信息</th>
-                    <th>
-                        <div id="setJudger" v-if="accessLevel > 0">
-                            <a href="admincontrol.html">编辑鉴定员</a>
-                        </div>
-                    </th>
-                </thead>
-                <tbody>
-                    <tr v-for="row in judgers">
-                        <td>{{ row.username }}</td>
-                        <td colspan="2">{{ row.description }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <h1>NSS玩家列表</h1>
+        <judgers id="judgersInfo" v-model="access"></judgers>
 
         <!-- 访客模式下也可以在输入完整正确 QQ 号的情况下进行查找 -->
-        <div v-if="accessLevel == 0">
+        <div v-if="access.accessLevel == 0">
             <input type="text" v-model="guestQQInput" placeholder="完整QQ号" />
             <div>{{ guestQueryStatus }}</div>
         </div>
         <button v-on:click="guestQQInput = null; input = getEmptyInput()">
             清空数据
         </button>
-        <button v-if="accessLevel > 0" v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
+        <button v-if="access.accessLevel > 0" v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
             {{ !!players.find(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
         </button>
-        <button v-if="accessLevel > 0" v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
+        <button v-if="access.accessLevel > 0" v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
             删除
         </button>
         <div id="playersInfo">
@@ -147,7 +128,7 @@
                         <player-column
                             v-bind:type="column.type" 
                             v-model="input"
-                            v-bind:editable="accessLevel > 0 || column != 'replays'"
+                            v-bind:editable="access.accessLevel > 0 || column != 'replays'"
                             v-on:replay-click="showReplayList(input.name, true)"
                             faction-icon-format="/static/ra3factions/*.png">
                         </player-column>
@@ -237,10 +218,14 @@
             el: '#nss', // 与vue关联的元素是html里id为nss的那个div
             components: {
                 'player-column': httpVueLoader('playerColumns.vue'),
+                'judgers': httpVueLoader('judgers.vue'),
             },
             data: { // 数据
-                accessLevel: 0,
-                username: '',
+                access: {
+                    username: '',
+                    accessLevel: 0,
+                    token: '0'    
+                },
                 input: { // 查询、设置玩家时使用的数据
                     qq: '',
                     name: '',
@@ -272,8 +257,6 @@
                 
             },
             mounted: function() {
-                this.getAccessLevel();
-                this.listJudgers();
                 this.listPlayers(false);
 
                 // 每 20 秒尝试更新一次头像
@@ -303,31 +286,11 @@
                     .then(text => console.log('Update avatar result: ' + text))
                     .catch(reason => console.log('Avatar update failed: ' + reason));
                 },
-                getAccessLevel: function() {
-                    let token = getLocalToken();
-                    fetch('nss.php?do=getAccessLevel&token=' + token)
-                        .then(response => response.json())
-                        .then(response => {
-                            // 设置数据
-                            this.username = response.username;
-                            this.accessLevel = response.accessLevel;
-                        });
-                },
-                listJudgers: function() {
-                    fetch('nss.php?do=getJudgers')
-                        .then(response => {
-                            return response.json();
-                        })
-                        .then(response => {
-                            // 设置数据
-                            this.judgers = response.judgers;
-                        });
-                },
                 listPlayers: function(dontRepeat) {
-                    const guestUseQQ = (this.accessLevel == 0 && this.qqTypedByGuest);
+                    const guestUseQQ = (this.access.accessLevel == 0 && this.qqTypedByGuest);
                     const what = guestUseQQ ? 
                         ('getPlayerHistory&qq=' + this.guestQQInput) :
-                        ('getPlayers&token=' + getLocalToken())
+                        ('getPlayers&token=' + this.access.token)
 
                     fetch('nss.php?do=' + what)
                         .then(response => response.json())
@@ -359,14 +322,12 @@
                                     Object.assign(this.input, newData);
                                 }
                             }
-
-                            
                         });
                 },
                 judgePlayer: function() {
                     this.input.uploading = true;
                     let data = JSON.parse(JSON.stringify(this.input));
-                    data.token = getLocalToken();
+                    data.token = this.access.token;
                     data.faction = data.faction.join(',');
                     data.judgeDate = data.judgeDate || parseInt(Date.now() / 1000);
                     fetch('nss.php?do=judgePlayer', {
@@ -388,7 +349,7 @@
                 removePlayer: function() {
                     this.input.uploading = true;
                     let data = {
-                        token: getLocalToken(),
+                        token: this.access.token,
                         qq: this.input.qq
                     };
                     fetch('nss.php?do=removePlayer', {
@@ -506,7 +467,7 @@
 
 
                     // 设置查询结果至输入框，但假如玩家是使用访客模式QQ查询的就不这么做
-                    const guestUseQQ = (this.accessLevel == 0 && this.qqTypedByGuest);
+                    const guestUseQQ = (this.access.accessLevel == 0 && this.qqTypedByGuest);
                     if(filtered.length == 1 && (!guestUseQQ)) {
                         let matched = JSON.parse(JSON.stringify(this.players.find(x => x.id == filtered[0].id)));
                         if(this.input.qq != matched.qq) {
@@ -527,7 +488,7 @@
                     return filtered;
                 },
                 filteredColumns: function() {
-                    if (this.accessLevel > 0) {
+                    if (this.access.accessLevel > 0) {
                         //[, 'avatar', 'name', 'nickname', 'level', 'faction', 'judger', 'judgeDate', 'replays', 'description']
                         return [
                             { type: 'qq', classes: ['width-5'] },
