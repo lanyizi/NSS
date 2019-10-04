@@ -78,13 +78,9 @@
 
     .player-column-image-holder {
         position: relative;
-        width: 100%;
-    }
-
-    .player-column-image-holder:not(.player-column-faction-element):after {
-        content: "";
         display: block;
-        padding-bottom: 100%;
+        width: 100%;
+        padding-top: 100%;
     }
 
     /* from https://stackoverflow.com/questions/51447317/image-height-same-as-width */
@@ -265,6 +261,7 @@ module.exports = {
             const percent = 100 * f(Math.min(count, 3));
 
             return {
+                'display': 'block',
                 'padding-top': percent + '%'
             }
         },
