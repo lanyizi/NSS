@@ -29,12 +29,29 @@
             background-color: white;
         }
 
-        /*#nss {
-            width: 90%;
-            max-width: 1600px;
-            margin-left: auto;
-            margin-right: auto;
-        }*/
+        .replay-player-team img {
+            width: 32px;
+            height:32px;
+        }
+
+        #nss {
+            position: relative;
+            width: 100%;
+        }
+
+        #judgersInfo {
+            display: inline-block;
+            box-sizing: border-box;
+            width: 30%;
+            margin: 0;
+        }
+
+        #playersInfo {
+            display: inline-block;
+            box-sizing: border-box;
+            width: 70%;
+            margin: 0;
+        }
 
         #judgersInfoTable,
         #playerInfoTable {
@@ -49,6 +66,8 @@
             position: relative;
             display: inline-block;
             vertical-align: middle;
+            box-sizing: border-box;
+            margin: 0;
         }
 
         .player-row > td > .player-column {
@@ -96,8 +115,65 @@
             width: calc(100% / 36.0 * 9);
         }
 
-        @media screen and (max-height: 1280px), screen and (max-aspect-ratio: 1/1) {
-            
+        @media screen and (max-height: 1500px) {
+            .player-row > td.m-width-hidden {
+                display: none;
+            }
+
+            .player-row > td.m-width-1 {
+                display: initial;
+                width: calc(100% / 36.0 * 1);
+            }
+
+            .player-row > td.m-width-2 {
+                display: initial;
+                width: calc(100% / 36.0 * 2);
+            }
+
+            .player-row > td.m-width-3 {
+                display: initial;
+                width: calc(100% / 36.0 * 3);
+            }
+
+            .player-row > td.m-width-4 {
+                display: initial;
+                width: calc(100% / 36.0 * 4);
+            }
+
+            .player-row > td.m-width-5 {
+                display: initial;
+                width: calc(100% / 36.0 * 5);
+            }
+
+            .player-row > td.m-width-6 {
+                display: initial;
+                width: calc(100% / 36.0 * 6);
+            }
+
+            .player-row > td.m-width-7 {
+                display: initial;
+                width: calc(100% / 36.0 * 7);
+            }
+
+            .player-row > td.m-width-8 {
+                display: initial;
+                width: calc(100% / 36.0 * 8);
+            }
+
+            .player-row > td.m-width-9 {
+                display: initial;
+                width: calc(100% / 36.0 * 9);
+            }
+        }
+
+        @media screen and (max-height: 1500px), screen and (max-aspect-ratio: 1/1) {
+            #judgersInfo {
+                width: 100%;
+            }
+
+            #playersInfo {
+                width: 100%;
+            }
         }
     </style>
 </head>
