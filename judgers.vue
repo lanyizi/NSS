@@ -40,7 +40,8 @@ module.exports = {
                 username: '',
                 password: '',
             },
-            judgers: []
+            judgers: [],
+            tokenValue: '',
         };
     },
     props: {
@@ -52,24 +53,29 @@ module.exports = {
     computed: {
         localToken: {
             get: function() {
-                const cookies = new Map(
-                    decodeURIComponent(document.cookie)
-                    .split(';') // 按照';'把 cookie 分成一个数组
-                    .map(splitted => splitted.split('=', 2))
-                    // 然后按照'='把每个部分再分成两部分（key 和 value）
-                    // 并把这些 key 和 value 转换成一个 Map
-                );
-                return (cookies.get('token') || '0');
+                if(!this.tokenValue) {
+                    const cookies = new Map(
+                        decodeURIComponent(document.cookie)
+                        .split(';') // 按照';'把 cookie 分成一个数组
+                        .map(splitted => splitted.split('=', 2))
+                        // 然后按照'='把每个部分再分成两部分（key 和 value）
+                        // 并把这些 key 和 value 转换成一个 Map
+                    );
+                    this.tokenValue = (cookies.get('token') || '0');
+                }
+                return this.tokenValue;
             },
             set: function(value) {
                 if(!value || value == '0') {
                     document.cookie = 'token=0; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                    this.tokenValue = null;
                     return;
                 }
 
                 let date = new Date();
                 date.setDate(date.getDate() + 1);
                 document.cookie = 'token=' + value + '; expires=' + date.toUTCString();
+                this.tokenValue = value;
             }
         }, 
         validValue: function() {
