@@ -4,11 +4,13 @@
         <span v-if="computedType == 'empty'">
         </span>
         <!-- 名称和昵称 -->
-        <span v-if="computedType == 'nameAndNickname'">
+        <span v-else-if="computedType == 'nameAndNickname'">
             {{ computedNameAndNickname }}
         </span>
         <!-- 头像 -->
-        <img v-else-if="computedType == 'avatar'" v-bind:src="computedAvatar" />
+        <div v-else-if="computedType == 'avatar'" class="player-column-image-holder">
+            <img v-bind:src="computedAvatar" />
+        </div>
         <!-- 查看 / 设置录像 -->
         <div v-else-if="computedType == 'replays'" >
             <button v-if="computedLabel != null" v-on:click.stop="$emit('replay-click')">
@@ -20,7 +22,7 @@
             <li 
                 v-for="data in computedActiveFactions" 
                 v-bind:key="data.faction" 
-                v-bind:class="data.class">
+                v-bind:class="data.class.concat('player-column-image-holder')">
                 <img v-bind:src="data.iconSrc" v-bind:alt="data.faction"/>
             </li>
         </ul>
@@ -54,7 +56,7 @@
         </span>
     </div>
 </template>
-<style>
+<style scoped>
     ul {
         list-style-type: none;
         padding: 0;
@@ -65,11 +67,36 @@
         width: 100%;
     }
 
-    .player-column-faction > ul, .player-column-input-faction > ul {
+    .player-column-image-holder {
+        position: relative;
+        width: 100%;
+    }
+
+    .player-column-image-holder:after {
+        content: "";
+        display: block;
+        padding-bottom: 100%;
+    }
+
+    /* from https://stackoverflow.com/questions/51447317/image-height-same-as-width */
+    .player-column-image-holder > img {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%; /* This if for the object-fit */
+        height: 100%; /* This if for the object-fit */
+        object-fit: cover; /* Equivalent of the background-size: cover; of a background-image */
+        object-position: center;
+    }
+
+    /*.player-column-faction > ul, 
+    .player-column-input-faction > ul {
         position: relative;
         top: 50%;
         transform: translateY(-50%);
-    }
+    }*/
 
     .active-faction > button > img:hover {
         filter: brightness(110%);
