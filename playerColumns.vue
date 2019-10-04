@@ -255,9 +255,13 @@ module.exports = {
             return names[this.type] || this.type;
         },
         computedFactionHeightStyle: function() {
-            const count = this.editable ? this.computedFactionData.length : computedActiveFactions.length;
-            const f = x => 0.2 * x * x - 1.1 * x + 1.9;
-            const height = this.$el.clientWidth * f(Math.min(count, 3));
+            let height = 0;
+            if(this.$el) {
+                const count = this.editable ? this.computedFactionData.length : computedActiveFactions.length;
+                const f = x => 0.2 * x * x - 1.1 * x + 1.9;
+                height = this.$el.clientWidth * f(Math.min(count, 3));
+            }
+            
             return {
                 'height': height + 'px'
             }
