@@ -122,47 +122,47 @@
 
             .player-row > td.m-width-1 {
                 display: initial;
-                width: calc(100% / 36.0 * 1);
+                width: calc(100% / 12.0 * 1);
             }
 
             .player-row > td.m-width-2 {
                 display: initial;
-                width: calc(100% / 36.0 * 2);
+                width: calc(100% / 12.0 * 2);
             }
 
             .player-row > td.m-width-3 {
                 display: initial;
-                width: calc(100% / 36.0 * 3);
+                width: calc(100% / 12.0 * 3);
             }
 
             .player-row > td.m-width-4 {
                 display: initial;
-                width: calc(100% / 36.0 * 4);
+                width: calc(100% / 12.0 * 4);
             }
 
             .player-row > td.m-width-5 {
                 display: initial;
-                width: calc(100% / 36.0 * 5);
+                width: calc(100% / 12.0 * 5);
             }
 
             .player-row > td.m-width-6 {
                 display: initial;
-                width: calc(100% / 36.0 * 6);
+                width: calc(100% / 12.0 * 6);
             }
 
             .player-row > td.m-width-7 {
                 display: initial;
-                width: calc(100% / 36.0 * 7);
+                width: calc(100% / 12.0 * 7);
             }
 
             .player-row > td.m-width-8 {
                 display: initial;
-                width: calc(100% / 36.0 * 8);
+                width: calc(100% / 12.0 * 8);
             }
 
             .player-row > td.m-width-9 {
                 display: initial;
-                width: calc(100% / 36.0 * 9);
+                width: calc(100% / 12.0 * 9);
             }
         }
 
@@ -182,22 +182,21 @@
     <div id="nss">
         <h1>NSS玩家列表</h1>
         <judgers id="judgersInfo" v-model="access"></judgers>
-
-        <!-- 访客模式下也可以在输入完整正确 QQ 号的情况下进行查找 -->
-        <div v-if="access.accessLevel == 0">
-            <input type="text" v-model="guestQQInput" placeholder="完整QQ号" />
-            <div>{{ guestQueryStatus }}</div>
-        </div>
-        <button v-on:click="guestQQInput = null; input = getEmptyInput()">
-            清空数据
-        </button>
-        <button v-if="access.accessLevel > 0" v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
-            {{ !!players.find(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
-        </button>
-        <button v-if="access.accessLevel > 0" v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
-            删除
-        </button>
         <div id="playersInfo">
+            <!-- 访客模式下也可以在输入完整正确 QQ 号的情况下进行查找 -->
+            <div v-if="access.accessLevel == 0">
+                <input type="text" v-model="guestQQInput" placeholder="完整QQ号" />
+                <div>{{ guestQueryStatus }}</div>
+            </div>
+            <button v-on:click="guestQQInput = null; input = getEmptyInput()">
+                清空数据
+            </button>
+            <button v-if="access.accessLevel > 0" v-bind:disabled="isInputInvalidForUpload || input.uploading" v-on:click="judgePlayer">
+                {{ !!players.find(p => (p.qq == input.qq)) ? "编辑" : "添加" }}
+            </button>
+            <button v-if="access.accessLevel > 0" v-bind:disabled="isInputInvalidForDelete || input.uploading" v-on:click="removePlayer">
+                删除
+            </button>
             <table id="playersInfoTable">
                 <tr class="player-row">
                     <td v-for="column in filteredColumns" v-bind:class="column.classes">
