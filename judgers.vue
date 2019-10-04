@@ -1,7 +1,7 @@
 <template>
     <div class="judgers-container">
         <div>
-            <form v-if="!validValue.accessLevel" v-on:submit.stop="login()">
+            <form v-if="!validValue.accessLevel" v-on:submit.prevent="login()">
                 <input type="text" name="username" v-model="input.username" placeholder="鉴定员用户名">
                 <input type="password" name="password" v-model="input.password" placeholder="密码">
                 <input type="submit" value="登录">
@@ -59,7 +59,7 @@ module.exports = {
                     // 然后按照'='把每个部分再分成两部分（key 和 value）
                     // 并把这些 key 和 value 转换成一个 Map
                 );
-                const token = (cookies.get('token') || '0');
+                return (cookies.get('token') || '0');
             },
             set: function(value) {
                 if(!value || value == '0') {
@@ -86,7 +86,7 @@ module.exports = {
                     this.$emit('input', {
                         username: response.username,
                         accessLevel: response.accessLevel,
-                        token: token
+                        token: this.localToken
                     });
                 });
         },
@@ -103,7 +103,7 @@ module.exports = {
                 if(!result || !result.token || result.token == '0') {
                     throw new Error('登录失败');
                 }
-                localToken = token;
+                this.localToken = result.token;
                 this.updateAccessLevel();
             })
             .catch(reason => alert(reason));
