@@ -81,7 +81,7 @@
         width: 100%;
     }
 
-    .player-column-image-holder:after {
+    .player-column-image-holder:not(.player-column-faction-element):after {
         content: "";
         display: block;
         padding-bottom: 100%;
