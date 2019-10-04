@@ -24,9 +24,9 @@
                 </th>
             </thead>
             <tbody>
-                <tr v-for="row in judgers" v-bind:key="row.username">
-                    <td>{{ row.username }}</td>
-                    <td colspan="2">{{ row.description }}</td>
+                <tr v-for="judger in judgers" v-bind:key="judger.username">
+                    <td>{{ judger.username }}</td>
+                    <td colspan="2">{{ judger.description }}</td>
                 </tr>
             </tbody>
         </table>
@@ -39,7 +39,8 @@ module.exports = {
             input: {
                 username: '',
                 password: '',
-            }
+            },
+            judgers: []
         };
     },
     props: {
