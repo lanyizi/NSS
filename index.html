@@ -42,7 +42,7 @@
         #judgersInfo {
             display: inline-block;
             box-sizing: border-box;
-            width: 30%;
+            width: 25%;
             margin: 0;
         }
 
@@ -54,7 +54,7 @@
         }
 
         #judgersInfoTable,
-        #playerInfoTable {
+        #playersInfoTable {
             width: 100%;
         }
 
@@ -78,9 +78,10 @@
             top: 0;
         }
 
-        .player-column > * {
+        .player-column * {
             height: 100%;
-            font-size: 1.944vw;
+            font-size: 100%;
+            vertical-align: middle;
         }
 
         .player-row > td.width-hidden {
@@ -124,10 +125,6 @@
         }
 
         @media only screen and (max-device-width: 1200px) {
-            .player-column {
-                font-size: 5.833vw;
-            }
-
             .player-row > td {
                 position: relative;
                 padding-top: calc(100% / 12.0);
@@ -238,31 +235,13 @@
             #playersInfo {
                 width: 100%;
             }
-
-            .player-column {
-                font-size: 2.777vw;
-            }
-        }
-
-        @media screen and (max-device-width: 1200px) and (max-device-aspect-ratio: 1/1) {
-            #judgersInfo {
-                width: 100%;
-            }
-
-            #playersInfo {
-                width: 100%;
-            }
-
-            .player-column {
-                font-size: 8.333vw;
-            }
         }
     </style>
 </head>
 
 <body>
     <div id="nss">
-        <h1>NSS玩家列表</h1>
+        <h1>NSS玩家列表</h1><br/>
         <judgers id="judgersInfo" v-model="access"></judgers>
         <div id="playersInfo">
             <!-- 访客模式下也可以在输入完整正确 QQ 号的情况下进行查找 -->

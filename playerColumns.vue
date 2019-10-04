@@ -80,7 +80,6 @@
         position: relative;
         display: block;
         width: 100%;
-        padding-top: 100%;
     }
 
     /* from https://stackoverflow.com/questions/51447317/image-height-same-as-width */
