@@ -260,7 +260,7 @@ module.exports = {
             return names[this.type] || this.type;
         },
         computedFactionHeightStyle: function() {
-            const count = this.editable ? this.computedFactionData.length : computedActiveFactions.length;
+            const count = this.editable ? this.computedFactionData.length : this.computedActiveFactions.length;
             const f = x => 0.2 * x * x - 1.1 * x + 1.9;
             const percent = 100 * f(Math.min(count, 3));
 
