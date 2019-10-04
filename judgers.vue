@@ -1,13 +1,13 @@
 <template>
     <div class="judgers-container">
         <div>
-            <form v-if="!localValue.accessLevel" v-on:submit.stop="login()">
+            <form v-if="!validValue.accessLevel" v-on:submit.stop="login()">
                 <input type="text" name="username" v-model="input.username" placeholder="鉴定员用户名">
                 <input type="password" name="password" v-model="input.password" placeholder="密码">
                 <input type="submit" value="登录">
             </form>
             <div v-else>
-                当前身份：{{ localValue.username }}
+                当前身份：{{ validValue.username }}
                 <button v-on:click="localToken = null; updateAccessLevel()">
                     退出
                 </button>
@@ -18,7 +18,7 @@
                 <th>鉴定员名称</th>
                 <th>个人信息</th>
                 <th>
-                    <div id="setJudger" v-if="localValue.accessLevel > 0">
+                    <div id="setJudger" v-if="validValue.accessLevel > 0">
                         <a href="admincontrol.html">编辑鉴定员</a>
                     </div>
                 </th>
@@ -71,15 +71,14 @@ module.exports = {
                 document.cookie = 'token=' + value + '; expires=' + date.toUTCString();
             }
         }, 
-        localValue: function() {
+        validValue: function() {
             const valid = this.value && this.value.username && this.value.accessLevel;
-            return vaild ? this.value : { username: '游客', accessLevel: 0 };
+            return valid ? this.value : { username: '游客', accessLevel: 0 };
         }
     },
     methods: {
         updateAccessLevel: function() {
-            const token = getLocalToken();
-            fetch('nss.php?do=getAccessLevel&token=' + token)
+            fetch('nss.php?do=getAccessLevel&token=' + this.localToken)
                 .then(response => response.json())
                 .then(response => {
                     // 设置数据

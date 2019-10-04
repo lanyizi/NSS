@@ -128,7 +128,7 @@
                         <player-column
                             v-bind:type="column.type" 
                             v-model="input"
-                            v-bind:editable="access.accessLevel > 0 || column != 'replays'"
+                            v-bind:editable="access.accessLevel > 0 || column.type != 'replays'"
                             v-on:replay-click="showReplayList(input.name, true)"
                             faction-icon-format="/static/ra3factions/*.png">
                         </player-column>
