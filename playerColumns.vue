@@ -97,6 +97,7 @@
 
     .player-column-faction-element {
         position: relative;
+        height: 0;
     }
 
     .player-column-faction-element > * {
@@ -105,7 +106,6 @@
         left: 0;
         width: 100%;
         height: 100%;
-        padding-top: initial;
     }
 
     .player-column-faction-element > button > img:hover {
