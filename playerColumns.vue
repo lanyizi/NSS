@@ -256,7 +256,11 @@ module.exports = {
         },
         computedFactionHeightStyle: function() {
             if(!this.$el) {
+                console.log(this.computedType + ' no el');
                 return {};
+            }
+            else {
+                console.log(this.computedType + ' have el, width = ' + this.$el.clientWidth);
             }
 
             const count = this.editable ? this.computedFactionData.length : computedActiveFactions.length;
@@ -269,7 +273,7 @@ module.exports = {
         },
     },
     mounted: function() {
-        this.$forceUpdate();
+        Vue.nextTick(() => this.$forceUpdate());
     },
     methods: {
         update: function(value) {
