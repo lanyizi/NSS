@@ -64,15 +64,23 @@
 
         .player-row > td {
             position: relative;
-            display: inline-block;
-            vertical-align: middle;
+            padding-top: calc(100% / 36.0);
             box-sizing: border-box;
             margin: 0;
         }
 
         .player-row > td > .player-column {
+            position: absolute;
             display: inline-block;
             width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .player-column > * {
+            height: 100%;
+            font-size: 1.944vw;
         }
 
         .player-row > td.width-hidden {
@@ -115,7 +123,18 @@
             width: calc(100% / 36.0 * 9);
         }
 
-        /*@media screen and (max-width: 1500px) {
+        @media only screen and (max-device-width: 1200px) {
+            .player-column {
+                font-size: 5.833vw;
+            }
+
+            .player-row > td {
+                position: relative;
+                padding-top: calc(100% / 12.0);
+                box-sizing: border-box;
+                margin: 0;
+            }
+
             .player-row > td.width-1 {
                 display: inline-block;
                 width: calc(100% / 12.0 * 1);
@@ -209,15 +228,33 @@
                 display: inline-block;
                 width: calc(100% / 12.0 * 9);
             }
-        }*/
+        }
 
-        @media screen and (max-width: 1200px), screen and (max-aspect-ratio: 1/1) {
+        @media only screen and (max-device-aspect-ratio: 1/1) {
             #judgersInfo {
                 width: 100%;
             }
 
             #playersInfo {
                 width: 100%;
+            }
+
+            .player-column {
+                font-size: 2.777vw;
+            }
+        }
+
+        @media screen and (max-device-width: 1200px) and (max-device-aspect-ratio: 1/1) {
+            #judgersInfo {
+                width: 100%;
+            }
+
+            #playersInfo {
+                width: 100%;
+            }
+
+            .player-column {
+                font-size: 8.333vw;
             }
         }
     </style>
@@ -563,8 +600,8 @@
                         (this.input.id == null);
                 },
                 filteredPlayerArray: function() {
-                    let filtered = this.players.filter(playerData => {
-                        let input = this.input;
+                    const filtered = this.players.filter(playerData => {
+                        const input = this.input;
                         let match = true;
                         match = match && (input.qq ? playerData.qq.startsWith(input.qq) : true);
                         match = match && (input.name ? (playerData.name.includes(input.name) || (playerData.nickname || '').includes(input.name)) : true);
@@ -577,54 +614,65 @@
                         return match;
                     });
 
-                    const currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(y => y.id == x.id));
-                    const previousContainsCurrent = filtered.every(x => this.previouslyFiltered.find(y => y.id == x.id));
+                    const isEqual = (x, y) => x.qq == y.qq && x.id == y.id;
+                    const currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(isEqual(x, y)));
+                    const previousContainsCurrent = filtered.every(x => this.previouslyFiltered.find(isEqual(x, y)));
                     const notChanged = (currentContainsPrevious == previousContainsCurrent);
                     if (notChanged) {
                         return this.previouslyFiltered;
                     }
-                    this.previouslyFiltered = filtered;
 
+                    // 假如玩家是使用访客模式QQ查询的就直接返回查询结果
+                    if (this.access.accessLevel == 0 && this.qqTypedByGuest) {
+                        this.previouslyFiltered = filtered;
+                        return filtered;
+                    }
 
-                    // 设置查询结果至输入框，但假如玩家是使用访客模式QQ查询的就不这么做
-                    const guestUseQQ = (this.access.accessLevel == 0 && this.qqTypedByGuest);
-                    if(filtered.length == 1 && (!guestUseQQ)) {
+                    // 检查是否（几乎）完美吻合查询结果
+                    const matchExists = (filtered.length == 1 && filtered[0].id == this.input.id);
+                    if (!matchExists) {
+                        this.id = null;
+                    }
+
+                    // 假如之前找到过相符的玩家信息，那么现在可能仍然在修改输入框里的信息
+                    // 只要 QQ 号不改，就不重设找到的玩家列表，把之前的信息继续留下来供现在参考
+                    if (this.input.matchedQQ && this.input.qq == this.input.matchedQQ) {
+                        return this.previouslyFiltered;
+                    }
+
+                    // 假如 QQ 号改了，那么头像之类的就可以去掉了
+                    this.matchedQQ = null;
+                    this.input.avatar = null;
+                    this.input.replays = [];
+
+                    if (matchExists) {
                         let matched = JSON.parse(JSON.stringify(this.players.find(x => x.id == filtered[0].id)));
+                        // 假如找到了与之前不一样的玩家，那么就更新
                         if(this.input.qq != matched.qq) {
                             matched.faction = matched.faction.split(',');
                             Object.assign(this.input, matched);
                             this.input.matchedQQ = this.input.qq;
                         }
                     }
-                    else {
-                        this.input.id = null;
-                        // 除非玩家修改了QQ号，否则下面这些就不改
-                        if(this.input.qq != this.matchedQQ) {
-                            this.input.avatar = null;
-                            this.input.replays = [];
-                        }
-                    }
 
+                    this.previouslyFiltered = filtered;
                     return filtered;
                 },
                 filteredColumns: function() {
                     if (this.access.accessLevel > 0) {
                         //[, 'avatar', 'name', 'nickname', 'level', 'faction', 'judger', 'judgeDate', 'replays', 'description']
                         return [
-                            { type: 'qq', classes: ['width-5'] },
+                            { type: 'qq', classes: ['width-4'] },
                             { type: 'avatar', classes: ['width-1'] },
-                            { type: 'name', classes: ['width-4'] },
-                            { type: 'nickname', classes: ['width-4', 'm-width-2'] },
-                            
-                            { type: 'empty', classes: ['width-hidden', 'm-width-2'] },
                             { type: 'level', classes: ['width-1'] },
                             { type: 'faction', classes: ['width-1'] },
-                            { type: 'judger', classes: ['width-4'] },
-                            { type: 'judgeDate', classes: ['width-4'] },
+                            { type: 'name', classes: ['width-3'] },
+                            { type: 'nickname', classes: ['width-4', 'm-width-2'] },
                             
-                            { type: 'empty', classes: ['width-hidden', 'm-width-2'] },
-                            { type: 'replays', classes: ['width-4', 'm-width-3'] },
-                            { type: 'description', classes: ['width-8', 'm-width-7'] }
+                            { type: 'judger', classes: ['width-4', 'm-width-3'] },
+                            { type: 'judgeDate', classes: ['width-4', 'm-width-3'] },
+                            { type: 'replays', classes: ['width-4', 'm-width-2'] },
+                            { type: 'description', classes: ['width-8', 'm-width-4'] }
                         ];
                     }
 
@@ -633,14 +681,11 @@
                         { type: 'faction', classes: ['width-1'] },
                         { type: 'avatar', classes: ['width-1'] },
                         { type: 'nameAndNickname', classes: ['width-9'] },
-                        
-                        { type: 'empty', classes: ['width-hidden', 'm-width-2'] },
-                        { type: 'judger', classes: ['width-5', 'm-width-4'] },
-                        { type: 'judgeDate', classes: ['width-4', 'm-width-3'] },
-                        { type: 'replays', classes: ['width-3'] },
 
-                        { type: 'empty', classes: ['width-hidden', 'm-width-2'] },
-                        { type: 'description', classes: ['width-8', 'm-width-7'] }
+                        { type: 'judgeDate', classes: ['width-4', 'm-width-3'] },
+                        { type: 'judger', classes: ['width-5', 'm-width-3'] },
+                        { type: 'replays', classes: ['width-2'] },
+                        { type: 'description', classes: ['width-8', 'm-width-4'] }
                     ];
                 },
                 isReplayInvalidForUpload: function() {
