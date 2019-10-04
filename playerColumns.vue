@@ -100,12 +100,17 @@
         object-position: center;
     }
 
-    /*.player-column-faction > ul, 
-    .player-column-input-faction > ul {
+    .player-column-faction-element {
         position: relative;
-        top: 50%;
-        transform: translateY(-50%);
-    }*/
+    }
+
+    .player-column-faction-element > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
 
     .player-column-faction-element > button > img:hover {
         filter: brightness(110%);
@@ -255,20 +260,12 @@ module.exports = {
             return names[this.type] || this.type;
         },
         computedFactionHeightStyle: function() {
-            if(!this.$el) {
-                console.log(this.computedType + ' no el');
-                return {};
-            }
-            else {
-                console.log(this.computedType + ' have el, width = ' + this.$el.clientWidth);
-            }
-
             const count = this.editable ? this.computedFactionData.length : computedActiveFactions.length;
             const f = x => 0.2 * x * x - 1.1 * x + 1.9;
-            const height = this.$el.clientWidth * f(Math.min(count, 3));
+            const percent = 100 * f(Math.min(count, 3));
 
             return {
-                'height': height + 'px'
+                'padding-top': percent + '%'
             }
         },
     },
