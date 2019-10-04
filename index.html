@@ -615,8 +615,8 @@
                     });
 
                     const isEqual = (x, y) => x.qq == y.qq && x.id == y.id;
-                    const currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(isEqual(x, y)));
-                    const previousContainsCurrent = filtered.every(x => this.previouslyFiltered.find(isEqual(x, y)));
+                    const currentContainsPrevious = this.previouslyFiltered.every(x => filtered.find(y => isEqual(x, y)));
+                    const previousContainsCurrent = filtered.every(x => this.previouslyFiltered.find(y => isEqual(x, y)));
                     const notChanged = (currentContainsPrevious == previousContainsCurrent);
                     if (notChanged) {
                         return this.previouslyFiltered;
