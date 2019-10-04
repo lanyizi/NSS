@@ -257,7 +257,7 @@ module.exports = {
         },
         computedFactionHeightStyle: function() {
             const count = this.editable ? this.computedFactionData.length : this.computedActiveFactions.length;
-            const f = x => 0.2 * x * x - 1.1 * x + 1.9;
+            const f = x =>  0.25 * x * c - 1.25 * x + 2;
             const percent = 100 * f(Math.min(count, 3));
 
             return {

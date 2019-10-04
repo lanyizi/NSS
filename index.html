@@ -148,7 +148,8 @@
                             v-bind:type="column.type" 
                             v-model="input"
                             v-bind:editable="accessLevel > 0 || column != 'replays'"
-                            v-on:replay-click="showReplayList(input.name, true)">
+                            v-on:replay-click="showReplayList(input.name, true)"
+                            faction-icon-format="/static/ra3factions/*.png">
                         </player-column>
                     </td>
                 </tr>
@@ -158,7 +159,8 @@
                             v-bind:type="column.type" 
                             v-bind:value="row"
                             v-bind:editable="false"
-                            v-on:replay-click="showReplayList(row.name, false)">
+                            v-on:replay-click="showReplayList(row.name, false)"
+                            faction-icon-format="/static/ra3factions/*.png">
                         </player-column>
                     </td>
                 </tr>
@@ -199,7 +201,7 @@
                         所有录像
                         <ul>
                             <li v-for="replay in replayList.allReplays" v-bind:key="replay.id">
-                                <replay v-bind:replayid="replay.id"></replay>
+                                <replay v-bind:replay-id="replay.id" faction-icon-format="/static/ra3factions/*.png"></replay>
                             </li>
                         </ul>
                     </td>
@@ -211,16 +213,16 @@
                         <!-- 假如不在编辑玩家，那么单纯显示玩家的鉴定录像 -->
                         <ul v-if="!replayList.editingReplays">
                             <li v-for="replay in replayList.playerReplays" v-bind:key="replay">
-                                <replay v-bind:replayid="replay"></replay>
+                                <replay v-bind:replay-id="replay" faction-icon-format="/static/ra3factions/*.png"></replay>
                             </li>
                         </ul>
                         <!-- 否则还显示一个删除按钮-->
                         <ul v-else>
-                            <li  v-for="replay in input.replays" v-bind:key="replay">
+                            <li v-for="replay in input.replays" v-bind:key="replay">
                                 <button v-on:click="input.replays.splice(input.replays.indexOf(replay), 1)">
                                     移除
                                 </button>
-                                <replay v-bind:replayid="replay"></replay>
+                                <replay v-bind:replay-id="replay" faction-icon-format="/static/ra3factions/*.png"></replay>
                             </li>
                         </ul>
                     </td>
