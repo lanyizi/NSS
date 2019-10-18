@@ -180,7 +180,7 @@
                 updateTournament() {
                     fetch('cms.php?do=modifyLastTournament', {
                         method: 'post',
-                        data: JSON.stringify({ 
+                        body: JSON.stringify({ 
                             token: this.token,
                             tournament: this.tournament 
                         }),
@@ -240,7 +240,7 @@
                 newTournament() {
                     fetch('cms.php?do=newTournament', {
                         method: 'post',
-                        data: JSON.stringify({ token: this.token }),
+                        body: JSON.stringify({ token: this.token }),
                         headers: { 'Content-Type': 'application/json' }
                     })
                     .then(response => response.json())
