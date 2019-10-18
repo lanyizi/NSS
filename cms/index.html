@@ -325,7 +325,7 @@
                             const newLast = JSON.parse(JSON.stringify(matchTemplate));
                             newLast.first = secondExtraPlayer.name;
                             newLast.second = '玩家人数过少，目前的轮空模式导致无法生成正确的对阵表，请考虑重新生成比赛';
-                            matches.push(matchTemplate);
+                            matches.push(newLast);
                         }
                     }
 
