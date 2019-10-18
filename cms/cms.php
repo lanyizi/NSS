@@ -197,4 +197,6 @@ class CMS {
         ];
     }
 }
+
+echo json_encode(main());
 ?>
