@@ -39,7 +39,7 @@
             <label for="tokenInput">
                 神秘代码
             </label>
-            <input id="tokenInput" type="text" v-model="token"/>
+            <input id="tokenInput" type="text" v-model="token" />
         </div>
         <br/>
         
@@ -113,6 +113,7 @@
             el: "#app",
             data() {
                 return {
+                    currentToken: null,
                     isAdmin: false,
                     tournament: {
                         id: null,
@@ -142,9 +143,10 @@
                     }
                 },
                 checkAdmin() {
+                    const currentToken = this.token;
                     fetch('cms.php?do=checkToken', {
                         method: 'post',
-                        body: JSON.stringify({ token: this.token }),
+                        body: JSON.stringify({ token: currentToken }),
                         headers: {
                             'Content-Type': 'application/json'
                         }
@@ -152,6 +154,11 @@
                     .then(response => response.json())
                     .then(result => {
                         this.isAdmin = result.verified;
+                        if(this.isAdmin) {
+                            let date = new Date();
+                            date.setDate(date.getDate() + 1);
+                            document.cookie = 'cmsadmintoken=' + currentToken + '; expires=' + date.toUTCString();
+                        }
                     })
                 },
                 getTournament() {
@@ -225,23 +232,25 @@
             computed: {
                 token: {
                     get() {
-                        const cookies = new Map(
-                            decodeURIComponent(document.cookie)
-                            .split(';')
-                            .map(splitted => splitted.split('=', 2))
-                        );
-                        return (cookies.get('cmsadmintoken') || '');
+                        if(!this.currentToken) {
+                            const cookies = new Map(
+                                decodeURIComponent(document.cookie)
+                                .split(';')
+                                .map(splitted => splitted.split('=', 2))
+                            );
+                            this.currentToken = (cookies.get('cmsadmintoken') || '');
+                        }
+                        return this.currentToken;
                     },
                     set(value) {
+                        this.currentToken = value;
                         this.isAdmin = false;
-                        if(!value) {
+                        if(!this.currentToken) {
                             document.cookie = 'cmsadmintoken=0; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                             return;
                         }
 
-                        let date = new Date();
-                        date.setDate(date.getDate() + 1);
-                        document.cookie = 'cmsadmintoken=' + value + '; expires=' + date.toUTCString();
+                        this.checkAdmin();
                     }
                 },
                 bracket() {
