@@ -82,7 +82,7 @@
                 </div>
             </li>
             <li v-if="isAdmin">
-                <input type="text" v-model="nextNewPlayer">
+                <input type="text" v-model="nextNewPlayer" />
                 <button @click="playerAdd">添加</button>
             </li>
         </ol>
@@ -227,9 +227,9 @@
                     this.tournament.players.splice(index, 1);
                     this.updateTournament();
                 },
-                playerAdd(name) {
+                playerAdd() {
                     const newPlayer = this.playerTemplate();
-                    newPlayer.name = name;
+                    newPlayer.name = this.nextNewPlayer;
                     this.tournament.players.push(newPlayer);
                     this.updateTournament();
                 },
