@@ -20,12 +20,12 @@
         }
         .match {
             position: relative;
+            margin: 15px;
         }
         .player {
             width: 200px;
             height: 30px;
             text-align: center;
-            vertical-align: middle;
             background: lightgray;
         }
         .player.second-round {
@@ -298,15 +298,14 @@
                     
                     const matches = checkedIn.reduce((matches, player) => {
                         const last = matches[matches.length - 1];
-                        if(last.second == null) {
-                            last.second = player.name;
+                        if(last.first == null) {
+                            last.first = player.name;
                         }
                         else {
+                            last.second = player.name;
                             const newMatch = JSON.parse(JSON.stringify(matchTemplate));
-                            newMatch.first = player.name;
                             matches.push(newMatch);
                         }
-
                         return matches;
                     }, [ JSON.parse(JSON.stringify(matchTemplate)) ]);
                     
