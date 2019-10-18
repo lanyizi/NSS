@@ -154,7 +154,7 @@ class CMS {
         if(is_string($previousPlayers)) {
             $previousPlayers = json_decode($previousPlayers, true);
         }
-        if(is_array($previousPlayers)) {
+        if(!is_array($previousPlayers)) {
             $previousPlayers = [];
         }
         $this->database->insert('tournaments', [
