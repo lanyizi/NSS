@@ -52,7 +52,7 @@ class CMS {
                 'TEXT',
                 'NOT NULL'
             ], 
-            'desc' => [
+            'description' => [
                 'TEXT',
                 'NOT NULL'
             ]
