@@ -152,7 +152,7 @@ class CMS {
             'ORDER' => [ 'id' => 'DESC' ]
         ]);
         if(is_string($previousPlayers)) {
-            $previousPlayers = json_decode($previousPlayers, true);
+            $previousPlayers = json_decode($previousPlayers, true)['players'];
         }
         if(!is_array($previousPlayers)) {
             $previousPlayers = [];
