@@ -188,7 +188,7 @@
                             'Content-Type': 'application/json'
                         }
                     })
-                    .then(response => response.json)
+                    .then(response => response.json())
                     .then(result => {
                         if(result.succeeded) {
                             alert('操作成功');
