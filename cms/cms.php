@@ -113,7 +113,7 @@ class CMS {
     }
 
     public function getLastTournament() {
-        if(!$this->database->has('tournaments', [ 1 ])) {
+        if(!$this->database->has('tournaments', [ 'id[!]' => null ])) {
             $this->newTournament();
         }
 
