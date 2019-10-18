@@ -17,7 +17,7 @@ function main() {
             'password' => '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_general_ci',
-            'prefix' => 'nss-cms-',
+            'prefix' => 'nss_cms_',
             'option' => [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ],
