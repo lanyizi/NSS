@@ -188,7 +188,7 @@ class CMS {
         $tournament['lastModifiedDate'] = time();
         $id = $tournament['id'];
         unset($tournament['id']);
-        $this->database->update('touraments', $tournament, [
+        $this->database->update('tournaments', $tournament, [
             'id' => $id
         ]);
 
