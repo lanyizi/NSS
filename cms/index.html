@@ -101,7 +101,9 @@
                 <li class="match" v-for="(match, index) in bracket.matches" :key="index">
                     <p class="player">{{ match.first }}</p>
                     <p class="player">{{ match.second }}</p>
-                    <p class="player second-round">{{ match.secondRound }}</p>
+                    <p class="player second-round" v-if="match.secondRound">
+                        {{ match.secondRound }}
+                    </p>
                 </li>
             </ul>
         </div>
@@ -260,13 +262,13 @@
                             last.second = player.name;
                         }
                         else {
-                            const newMatch = JSON.parse(JSON.stringify(template));
+                            const newMatch = JSON.parse(JSON.stringify(matchTemplate));
                             newMatch.first = player.name;
                             matches.push(newMatch);
                         }
 
                         return matches;
-                    }, [ JSON.parse(JSON.stringify(template)) ]);
+                    }, [ JSON.parse(JSON.stringify(matchTemplate)) ]);
                     
                     if(firstExtraPlayer != null) {
                         matches[0].secondRound = firstExtraPlayer.name;
