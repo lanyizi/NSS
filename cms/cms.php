@@ -185,7 +185,7 @@ class CMS {
                 $tournament[$key] = $value;
             }
             else if($key == 'players' && is_array(($value))) {
-                $tournament[$key] = $value;
+                $tournament[$key] = json_encode($value);
             }
         }
         $tournament['lastModifiedDate'] = time();
