@@ -14,6 +14,13 @@
             width: 50%;
             display: inline-block;
         }
+        .player-name,
+        .player-control {
+            display: inline-block;
+        }
+        .checked-in {
+            background: lightgreen;
+        }
         #bracket {
             width: 40%;
             display: inline-block;
@@ -48,11 +55,11 @@
             <!-- Player -->
             <li v-for="player in tournament.players" :key="player.name">
                 <!-- Player name-->
-                <div>
+                <div :class="player.checkedIn ? ['checked-in', 'player-name'] : ['player-name']">
                     {{ player.name }}
                 </div>
                 <!-- Admin control -->
-                <div v-if="isAdmin">
+                <div class="player-control" v-if="isAdmin">
                     <table>
                         <tr>
                             <td>
