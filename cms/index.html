@@ -309,6 +309,10 @@
                         return matches;
                     }, [ JSON.parse(JSON.stringify(matchTemplate)) ]);
                     
+                    if(matches[matches.length - 1].first == null) {
+                        matches.pop();
+                    }
+
                     if(firstExtraPlayer != null) {
                         matches[0].secondRound = firstExtraPlayer.name;
                     }
