@@ -16,7 +16,8 @@ function main() {
             'username' => 'lanyi',
             'password' => '',
             'charset' => 'utf8mb4',
-	        'collation' => 'utf8mb4_general_ci',
+            'collation' => 'utf8mb4_general_ci',
+            'prefix' => 'nss-cms-',
             'option' => [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ],
@@ -46,7 +47,7 @@ class CMS {
     public function __construct($input, Medoo $database) {
         $this->input = $input;
         $this->database = $database;
-        $this->database->create('nss-cms-tokens', [
+        $this->database->create('tokens', [
             'token' => [
                 'TEXT',
                 'NOT NULL'
@@ -56,7 +57,7 @@ class CMS {
                 'NOT NULL'
             ]
         ]);
-        $this->database->create('nss-cms-tournaments', [
+        $this->database->create('tournaments', [
             'id' => [
                 'INT',
                 'NOT NULL',
@@ -84,7 +85,7 @@ class CMS {
             $this->verified = false;
         }
         else {
-            $this->verified = $this->database->has('nss-cms-tokens', [
+            $this->verified = $this->database->has('tokens', [
                 'token' => $this->input['token']
             ]);
         }
@@ -112,11 +113,11 @@ class CMS {
     }
 
     public function getLastTournament() {
-        if(!$this->database->has('nss-cms-tournaments', [ 1 ])) {
+        if(!$this->database->has('tournaments', [ 1 ])) {
             $this->newTournament();
         }
 
-        $tournament = $this->database->get('nss-cms-tournaments', [
+        $tournament = $this->database->get('tournaments', [
             'id',
             'status',
             'players',
@@ -142,7 +143,7 @@ class CMS {
             ];
         }
 
-        $previousPlayers = $this->database->get('nss-cms-tournaments', [
+        $previousPlayers = $this->database->get('tournaments', [
             'players'
         ], [
             'ORDER' => [ 'id' => 'DESC' ]
@@ -153,7 +154,7 @@ class CMS {
         if(is_array($previousPlayers)) {
             $previousPlayers = [];
         }
-        $this->database->insert('nss-cms-tournaments', [
+        $this->database->insert('tournaments', [
             'status' => 'registering',
             'players' => json_encode($previousPlayers),
             'creationDate' => time(),
@@ -187,7 +188,7 @@ class CMS {
         $tournament['lastModifiedDate'] = time();
         $id = $tournament['id'];
         unset($tournament['id']);
-        $this->database->update('nss-cms-touraments', $tournament, [
+        $this->database->update('touraments', $tournament, [
             'id' => $id
         ]);
 

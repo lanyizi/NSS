@@ -125,7 +125,7 @@
                 }
             },
             mounted() {
-                
+                this.checkAdmin();
             },
             methods: {
                 tournamentTemplate() {
@@ -158,6 +158,9 @@
                             let date = new Date();
                             date.setDate(date.getDate() + 1);
                             document.cookie = 'cmsadmintoken=' + currentToken + '; expires=' + date.toUTCString();
+                        }
+                        else {
+                            document.cookie = 'cmsadmintoken=0; expires=Thu, 01 Jan 1970 00:00:01 GMT;';    
                         }
                     })
                 },
