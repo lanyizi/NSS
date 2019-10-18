@@ -22,16 +22,16 @@
             position: relative;
         }
         .player {
-            width: 300px;
-            height: 50px;
+            width: 200px;
+            height: 30px;
             text-align: center;
             vertical-align: middle;
-            background: gray;
+            background: lightgray;
         }
         .player.second-round {
             position: absolute;
-            left: 320px;
-            top: 25px;
+            left: 250px;
+            top: 15px;
         }
     </style>
     <div id="app">
@@ -89,7 +89,9 @@
 
         <!-- Bracket -->
         <div id="bracket">
-            <button>创建新比赛</button>
+            <button @click="newTournament">
+                创建新比赛
+            </button>
             <p v-if="bracket.isOdd">
                 此次比赛序首轮空
             </p>
@@ -228,8 +230,29 @@
                 playerAdd(name) {
                     const newPlayer = this.playerTemplate();
                     newPlayer.name = name;
-                    this.tournament.push(newPlayer);
+                    this.tournament.players.push(newPlayer);
                     updateTournament();
+                },
+                newTournament() {
+                    fetch('cms.php?do=newTournament', {
+                        method: 'post',
+                        data: JSON.stringify({ token: this.token }),
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if(result.succeeded) {
+                            alert('操作成功');
+                        }
+                        else {
+                            alert('操作失败：' + result.message);
+                        }
+                        this.getTournament();
+                    })
+                    .catch(reason => {
+                        alert('错误：' + reason);
+                        this.getTournament();
+                    });
                 }
             },
             computed: {
