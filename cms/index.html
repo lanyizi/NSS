@@ -316,7 +316,7 @@
                         return matches;
                     }, [ JSON.parse(JSON.stringify(matchTemplate)) ]);
                     
-                    if(matches[matches.length - 1].first == null) {
+                    if(matches[matches.length - 1].first == null && matches.length > 1) {
                         matches.pop();
                     }
 
