@@ -129,6 +129,9 @@ class CMS {
 
         if(is_array($tournament) && is_string($tournament['players'])) {
             $tournament['players'] = json_decode($tournament['players'], true);
+            if(!is_array($tournament['players'])) {
+                $tournament['players'] = [];
+            }
         }
         return [
             'tournament' => $tournament
