@@ -65,12 +65,20 @@
         }
 
         .player-row > td {
+            padding-bottom: 5%;
+        }
+
+        .player-row > td > .wrapper {
             position: relative;
             padding-top: calc(100% / 36.0);
             margin: 0;
         }
 
-        .player-row > td > .player-column {
+        .player-row > td > .wrapper.input-row {
+            margin-bottom: 10px;
+        }
+
+        .player-row > td > .wrapper > .player-column {
             position: absolute;
             display: inline-block;
             width: 100%;
@@ -126,7 +134,7 @@
         }
 
         @media only screen and (max-device-width: 1200px) {
-            .player-row > td {
+            .player-row > td > .wrapper {
                 position: relative;
                 padding-top: calc(100% / 12.0);
                 margin: 0;
@@ -261,24 +269,28 @@
             <table id="playersInfoTable">
                 <tr class="player-row">
                     <td v-for="column in filteredColumns" v-bind:class="column.classes">
-                        <player-column
-                            v-bind:type="column.type" 
-                            v-model="input"
-                            v-bind:editable="access.accessLevel > 0 || column.type != 'replays'"
-                            v-on:replay-click="showReplayList(input.name, true)"
-                            faction-icon-format="/static/ra3factions/*.png">
-                        </player-column>
+                        <div class="wrapper input-row">
+                            <player-column
+                                v-bind:type="column.type" 
+                                v-model="input"
+                                v-bind:editable="access.accessLevel > 0 || column.type != 'replays'"
+                                v-on:replay-click="showReplayList(input.name, true)"
+                                faction-icon-format="/static/ra3factions/*.png">
+                            </player-column>
+                        </div>
                     </td>
                 </tr>
                 <tr v-for="row in filteredPlayerArray" class="player-row">
                     <td v-for="column in filteredColumns" v-bind:class="column.classes">
-                        <player-column
-                            v-bind:type="column.type" 
-                            v-bind:value="row"
-                            v-bind:editable="false"
-                            v-on:replay-click="showReplayList(row.name, false)"
-                            faction-icon-format="/static/ra3factions/*.png">
-                        </player-column>
+                        <div class="wrapper">
+                            <player-column
+                                v-bind:type="column.type" 
+                                v-bind:value="row"
+                                v-bind:editable="false"
+                                v-on:replay-click="showReplayList(row.name, false)"
+                                faction-icon-format="/static/ra3factions/*.png">
+                            </player-column>
+                        </div>
                     </td>
                 </tr>
             </table>

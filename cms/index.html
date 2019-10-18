@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/http-vue-loader/src/httpVueLoader.min.js"></script>
+</head>
+<body>
+    <style>
+        #app {
+            position: relative;
+        }
+        #playerList {
+            width: 50%;
+            display: inline-block;
+        }
+        #bracket {
+            width: 40%;
+            display: inline-block;
+        }
+        .match {
+            position: relative;
+        }
+        .player {
+            width: 300px;
+            height: 50px;
+            text-align: center;
+            vertical-align: middle;
+            background: gray;
+        }
+        .player.second-round {
+            position: absolute;
+            left: 320px;
+            top: 25px;
+        }
+    </style>
+    <div id="app">
+        <div v-if="!isAdmin">
+            <label for="tokenInput">
+                神秘代码
+            </label>
+            <input id="tokenInput" type="text" v-model="token"/>
+        </div>
+        <br/>
+        
+        <!-- All players -->
+        <ol id="playerList">
+            <!-- Player -->
+            <li v-for="player in tournament.players" :key="player.name">
+                <!-- Player name-->
+                <div>
+                    {{ player.name }}
+                </div>
+                <!-- Admin control -->
+                <div v-if="isAdmin">
+                    <table>
+                        <tr>
+                            <td>
+                                <button @click="playerOffset(player, -1)">
+                                    上移
+                                </button>
+                            </td>
+                            <td>
+                                <button @click="playerToggleCheckIn(player)">
+                                    {{ player.checkedIn ? '取消检录' : '检录' }} 
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button @click="playerOffset(player, 1)">
+                                    下移
+                                </button>
+                            </td>
+                            <td>
+                                <button @click="confirm('确认删除？') ? playerDelete(player) : null">
+                                    删除
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </li>
+            <li v-if="isAdmin">
+                <input type="text" v-model="nextNewPlayer">
+                <button @click="playerAdd">添加</button>
+            </li>
+        </ol>
+
+        <!-- Bracket -->
+        <div id="bracket">
+            <button>创建新比赛</button>
+            <p v-if="bracket.isOdd">
+                此次比赛序首轮空
+            </p>
+            <p v-else>
+                此次比赛序首不轮空
+            </p>
+            <ul>
+                <!-- Match -->
+                <li class="match" v-for="(match, index) in bracket.matches" :key="index">
+                    <p class="player">{{ match.first }}</p>
+                    <p class="player">{{ match.second }}</p>
+                    <p class="player second-round">{{ match.secondRound }}</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        const app = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    isAdmin: false,
+                    tournament: {
+                        id: null,
+                        status: null,
+                        players: [],
+                        lastModifiedDate: null
+                    },
+                    nextNewPlayer: ''
+                }
+            },
+            mounted() {
+                
+            },
+            methods: {
+                tournamentTemplate() {
+                    return {
+                        id: null,
+                        status: null,
+                        players: [],
+                        lastModifiedDate: null
+                    };
+                },
+                playerTemplate() {
+                    return {
+                        name: null,
+                        checkedIn: false,
+                    }
+                },
+                checkAdmin() {
+                    fetch('cms.php?do=checkToken', {
+                        method: 'post',
+                        body: JSON.stringify({ token: this.token }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        this.isAdmin = result.verified;
+                    })
+                },
+                getTournament() {
+                    fetch('cms.php?do=getLastTournament')
+                    .then(response => response.json())
+                    .then(result => {
+                        this.tournament = result.tournament;
+                    });
+                },
+                updateTournament() {
+                    fetch('cms.php?do=modifyLastTournament', {
+                        method: 'post',
+                        data: JSON.stringify({ 
+                            token: this.token,
+                            tournament: this.tournament 
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json)
+                    .then(result => {
+                        if(result.succeeded) {
+                            alert('操作成功');
+                        }
+                        else {
+                            alert('操作失败：' + result.message);
+                        }
+                        this.getTournament();
+                    })
+                    .catch(reason => {
+                        alert('错误：' + reason);
+                        this.getTournament();
+                    });
+                },
+                getPlayerIndex(player) {
+                    return this.tournament.players.findIndex(item => item.name == player.name);
+                },
+                playerOffset(player, offset) {
+                    const index = this.getPlayerIndex(player);
+                    if(index == -1) {
+                        alert('找不到该玩家，可能已经被删除了');
+                        return;
+                    }
+
+                    this.tournament.players.splice(index, 1);
+                    const newIndex = Math.max(Math.min(index + offset, this.tournament.players.length), 0);
+                    this.tournament.players.splice(newIndex, 0, player);
+                    updateTournament();
+                },
+                playerToggleCheckIn(player) {
+                    player.checkedIn = !player.checkedIn;
+                    updateTournament();
+                },
+                playerDelete(player) {
+                    const index = this.getPlayerIndex(player);
+                    if(index == -1) {
+                        alert('找不到该玩家，可能已经被删除了');
+                        return;
+                    }
+                    this.tournament.players.splice(index, 1);
+                    updateTournament();
+                },
+                playerAdd(name) {
+                    const newPlayer = this.playerTemplate();
+                    newPlayer.name = name;
+                    this.tournament.push(newPlayer);
+                    updateTournament();
+                }
+            },
+            computed: {
+                token: {
+                    get() {
+                        const cookies = new Map(
+                            decodeURIComponent(document.cookie)
+                            .split(';')
+                            .map(splitted => splitted.split('=', 2))
+                        );
+                        return (cookies.get('cmsadmintoken') || '');
+                    },
+                    set(value) {
+                        this.isAdmin = false;
+                        if(!value) {
+                            document.cookie = 'cmsadmintoken=0; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                            return;
+                        }
+
+                        let date = new Date();
+                        date.setDate(date.getDate() + 1);
+                        document.cookie = 'cmsadmintoken=' + value + '; expires=' + date.toUTCString();
+                    }
+                },
+                bracket() {
+                    const matchTemplate = {
+                        first: null,
+                        second: null,
+                        secondRound: null
+                    };
+
+                    const checkedIn = this.tournament.players.filter(player => player.checkedIn);
+                    const isOdd = (checkedIn.length > 2) && ((this.tournament.id % 2) == 0);
+                    const firstExtraPlayer = isOdd ? checkedIn.shift() : null;
+                    const secondExtraPlayer = (checkedIn.length % 2 != 0) ? checkedIn.pop() : null;
+                    
+                    const matches = checkedIn.reduce((matches, player) => {
+                        const last = matches[matches.length - 1];
+                        if(last.second == null) {
+                            last.second = player.name;
+                        }
+                        else {
+                            const newMatch = JSON.parse(JSON.stringify(template));
+                            newMatch.first = player.name;
+                            matches.push(newMatch);
+                        }
+
+                        return matches;
+                    }, [ JSON.parse(JSON.stringify(template)) ]);
+                    
+                    if(firstExtraPlayer != null) {
+                        matches[0].secondRound = firstExtraPlayer.name;
+                    }
+                    if(secondExtraPlayer != null) {
+                        matches[matches.length - 1].secondRound = secondExtraPlayer.name;
+                    }
+
+                    return {
+                        isOdd: isOdd,
+                        matches: matches
+                    };
+                }
+            }
+        })
+    </script>
+</body>
+</html>
