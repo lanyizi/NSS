@@ -151,12 +151,16 @@ class CMS {
         ], [
             'ORDER' => [ 'id' => 'DESC' ]
         ]);
-        if(is_string($previousPlayers)) {
-            $previousPlayers = json_decode($previousPlayers, true)['players'];
-        }
-        if(!is_array($previousPlayers)) {
+        if(!is_array($previousPlayers) || !is_string($previousPlayers['players'])) {
             $previousPlayers = [];
         }
+        else {
+            $previousPlayers = json_decode($previousPlayers['players'], true);
+            if(!is_array($previousPlayers)) {
+                $previousPlayers = [];
+            }
+        }
+        
         $this->database->insert('tournaments', [
             'status' => 'registering',
             'players' => json_encode($previousPlayers),
