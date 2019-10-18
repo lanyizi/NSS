@@ -212,11 +212,11 @@
                     this.tournament.players.splice(index, 1);
                     const newIndex = Math.max(Math.min(index + offset, this.tournament.players.length), 0);
                     this.tournament.players.splice(newIndex, 0, player);
-                    updateTournament();
+                    this.updateTournament();
                 },
                 playerToggleCheckIn(player) {
                     player.checkedIn = !player.checkedIn;
-                    updateTournament();
+                    this.updateTournament();
                 },
                 playerDelete(player) {
                     const index = this.getPlayerIndex(player);
@@ -225,13 +225,13 @@
                         return;
                     }
                     this.tournament.players.splice(index, 1);
-                    updateTournament();
+                    this.updateTournament();
                 },
                 playerAdd(name) {
                     const newPlayer = this.playerTemplate();
                     newPlayer.name = name;
                     this.tournament.players.push(newPlayer);
-                    updateTournament();
+                    this.updateTournament();
                 },
                 newTournament() {
                     fetch('cms.php?do=newTournament', {
