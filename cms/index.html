@@ -170,7 +170,11 @@
                     fetch('cms.php?do=getLastTournament')
                     .then(response => response.json())
                     .then(result => {
-                        this.tournament = result.tournament;
+                        if(!result) {
+                            this.tournament = this.tournamentTemplate();
+                            return;
+                        }
+                        this.tournament = result.tournament || this.tournamentTemplate();
                     });
                 },
                 updateTournament() {
