@@ -7,6 +7,9 @@
 </head>
 <body>
     <style>
+        ul {
+            list-style: none;
+        }
         #app {
             position: relative;
         }
@@ -56,8 +59,33 @@
             <li v-for="player in tournament.players" :key="player.name">
                 <!-- Player name-->
                 <div :class="player.checkedIn ? ['checked-in', 'player-name'] : ['player-name']">
-                    {{ player.name }}
+                    <ul>
+                        <li>
+                            {{ player.name }}
+                        </li>
+                        <li>
+                            {{ player.qq }}
+                        </li>
+                        <li>
+                            <div v-if="player.editingScore">
+                                <input type="number" step="1" v-model="player.score" />
+                                <button @click="updateTournament">
+                                    保存
+                                </button>
+                            </div>
+                            <div v-else>
+                                {{ player.score }}
+                                <button @click="player.editingScore = true">
+                                    修改
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+
+                        
                 </div>
+                
+                
                 <!-- Admin control -->
                 <div class="player-control" v-if="isAdmin">
                     <table>
@@ -89,8 +117,32 @@
                 </div>
             </li>
             <li v-if="isAdmin">
-                <input type="text" v-model="nextNewPlayer" />
-                <button @click="playerAdd">添加</button>
+                <input type="text" v-model="nextNewPlayer.name" placeholder="玩家名称" />
+                <input type="text" v-model="nextNewPlayer.qq" placeholder="玩家QQ" />
+                <input type="number" step="1" v-model="nextNewPlayer.score" placeholder="玩家积分" />
+                <br/>
+                <label for="newPlayerPosition">把新玩家添加到第</label>
+                <input id="newPlayerPosition" type="number" step="1" v-model="newPlayerIndex" placeholder="默认为末尾" />
+                位&nbsp;
+                <button @click="playerAdd">
+                    {{ nextNewPlayerIndex instanceof Number ? '添加' : '添加至末尾' }}
+                </button>
+                <br />
+                <button v-if="!enableMassUpload" @click="enableMassUpload = true">
+                    批量导入（添加至末尾）
+                </button>
+                <div v-else>
+                    格式：玩家名称 QQ 积分
+                    <br />
+                    每行一个
+                    <textarea v-model="massUploadBuffer"></textarea>
+                    <p v-if="isMassUploadBufferInvalid">
+                        没有内容或者格式不正确
+                    </p>
+                    <button :disable="isMassUploadBufferInvalid" @click="massUpload">
+                        上传
+                    </button>
+                </div>
             </li>
         </ol>
 
@@ -100,10 +152,10 @@
                 创建新比赛
             </button>
             <p v-if="bracket.isOdd">
-                此次比赛序首轮空
+                此次比赛序首轮空（奇数轮）
             </p>
             <p v-else>
-                此次比赛序首不轮空
+                此次比赛序首不轮空（偶数轮）
             </p>
             <ul>
                 <!-- Match -->
@@ -130,7 +182,15 @@
                         players: [],
                         lastModifiedDate: null
                     },
-                    nextNewPlayer: ''
+                    nextNewPlayer: {
+                        name: null,
+                        qq: null,
+                        checkedIn: null,
+                        score: null
+                    },
+                    nextNewPlayerIndex: null,
+                    enableMassUpload = false,
+                    massUploadBuffer = ''
                 }
             },
             mounted() {
@@ -149,7 +209,10 @@
                 playerTemplate() {
                     return {
                         name: null,
+                        qq: null,
                         checkedIn: false,
+                        score: null,
+                        editingScore: false,
                     }
                 },
                 checkAdmin() {
@@ -240,9 +303,29 @@
                     this.updateTournament();
                 },
                 playerAdd() {
-                    const newPlayer = this.playerTemplate();
-                    newPlayer.name = this.nextNewPlayer;
-                    this.tournament.players.push(newPlayer);
+                    const newPlayer = this.nextNewPlayer;
+                    const newPlayerIndex = this.nextNewPlayerIndex;
+                    this.nextNewPlayer = this.playerTemplate();
+                    this.nextNewPlayerIndex = null;
+                    if(newPlayerIndex instanceof Number) {
+                        const max = this.tournament.players.length;
+                        const clamped = Math.max(Math.min(Math.round(newPlayerIndex), max), 0);
+                        this.tournament.players.splice(clamped, 0, newPlayer);
+                    }
+                    else {
+                        this.tournament.players.push(newPlayer);
+                    }
+                    this.updateTournament();
+                },
+                massUpload() {
+                    this.massUploadBuffer.split('\n').forEach(line => {
+                        const splitted = line.trim().split(' \t');
+                        const player = this.playerTemplate();
+                        player.name = splitted[0];
+                        player.qq = splitted[1];
+                        player.score = parseInt(splitted[2]);
+                        this.tournament.players.push(player);
+                    });
                     this.updateTournament();
                 },
                 newTournament() {
@@ -340,6 +423,18 @@
                         isOdd: isOdd,
                         matches: matches
                     };
+                },
+                isMassUploadBufferInvalid() {
+                    return this.massUploadBuffer.split('\n').every(line => {
+                        const splitted = line.trim().split(' \t');
+                        if(splitted.length != 4) {
+                            return false;
+                        }
+                        if(isNaN(parseInt(splitted[1])) || isNaN(parseInt(splitted[1]))) {
+                            return false;
+                        }
+                        return true;
+                    });
                 }
             }
         })
