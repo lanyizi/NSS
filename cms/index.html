@@ -108,7 +108,7 @@
                                 </button>
                             </td>
                             <td>
-                                <button @click="window.confirm('确认删除？') ? playerDelete(player) : null">
+                                <button @click="playerDelete(player)">
                                     删除
                                 </button>
                             </td>
@@ -294,6 +294,10 @@
                     this.updateTournament();
                 },
                 playerDelete(player) {
+                    if(!confirm('确认删除？')) {
+                        return;
+                    }
+
                     const index = this.getPlayerIndex(player);
                     if(index == -1) {
                         alert('找不到该玩家，可能已经被删除了');
