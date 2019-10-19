@@ -326,11 +326,12 @@
                     .split('\n')
                     .filter(line => line.length != 0)
                     .forEach(line => {
-                        const splitted = line.trim().split(' \t');
+                        const columns = line.trim().split(' ')
+                            .filter(column => column.length != 0);
                         const player = this.playerTemplate();
-                        player.name = splitted[0];
-                        player.qq = splitted[1];
-                        player.score = parseInt(splitted[2]);
+                        player.name = columns[0];
+                        player.qq = columns[1];
+                        player.score = parseInt(columns[2]);
                         this.tournament.players.push(player);
                     });
                     this.updateTournament();
