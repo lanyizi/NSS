@@ -323,7 +323,10 @@
                     this.updateTournament();
                 },
                 massUpload() {
-                    this.massUploadBuffer.split('\n').forEach(line => {
+                    this.massUploadBuffer
+                    .split('\n')
+                    .filter(line => line.length != 0)
+                    .forEach(line => {
                         const splitted = line.trim().split(' \t');
                         const player = this.playerTemplate();
                         player.name = splitted[0];
@@ -430,7 +433,7 @@
                     };
                 },
                 isMassUploadBufferInvalid() {
-                    const splitted = this.massUploadBuffer.split('\n');
+                    const splitted = this.massUploadBuffer.split('\n').filter(line => line.length != 0);
                     return splitted.length == 0 || splitted.some(line => {
                         const splitted = line.trim().split(' \t');
                         if(splitted.length != 4) {
