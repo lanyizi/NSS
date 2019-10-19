@@ -175,6 +175,13 @@ class CMS {
     }
 
     public function modifyLastTournament() {
+        if(!$this->verified) {
+            return [
+                'succeeded' => false,
+                'message' => 'Token unverified'
+            ];
+        }
+
         $tournament = $this->getLastTournament()['tournament'];
         $newData = $this->input['tournament'];
         if($tournament['id'] != $newData['id']) {
