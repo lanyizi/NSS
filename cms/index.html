@@ -437,9 +437,11 @@
                     return splitted.length == 0 || splitted.some(line => {
                         const splitted = line.trim().split(' \t').filter(line => line.length != 0);
                         if(splitted.length != 3) {
+                            console.log('lenno3');
                             return true;
                         }
-                        if(isNaN(parseInt(splitted[1])) || isNaN(parseInt(splitted[1]))) {
+                        if(isNaN(parseInt(splitted[1])) || isNaN(parseInt(splitted[2]))) {
+                            console.log('12nonum')
                             return true;
                         }
                         return false;
