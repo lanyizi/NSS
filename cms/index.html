@@ -151,11 +151,11 @@
             <button @click="newTournament">
                 创建新比赛
             </button>
-            <p v-if="bracket.isOdd">
-                此次比赛序首轮空（奇数轮）
+            <p v-else-if="bracket.isOdd">
+                此次比赛{{ bracket.matches.length < 4 ? : '人数过少' : '序首轮空' }}（偶数轮）
             </p>
             <p v-else>
-                此次比赛序首不轮空（偶数轮）
+                此次比赛序首不轮空（奇数轮）
             </p>
             <ul>
                 <!-- Match -->
@@ -390,7 +390,8 @@
                     };
 
                     const checkedIn = this.tournament.players.filter(player => player.checkedIn);
-                    const isOdd = (checkedIn.length > 2) && ((this.tournament.id % 2) == 0);
+                    const isOddFormal = (this.tournament.id % 2) == 0;
+                    const isOdd = isOddFormal && (checkedIn.length > 2);
                     const firstExtraPlayer = isOdd ? checkedIn.shift() : null;
                     const secondExtraPlayer = (checkedIn.length % 2 != 0) ? checkedIn.pop() : null;
                     
