@@ -435,7 +435,7 @@
                 isMassUploadBufferInvalid() {
                     const splitted = this.massUploadBuffer.split('\n').filter(line => line.length != 0);
                     return splitted.length == 0 || splitted.some(line => {
-                        const splitted = line.trim().split(' \t');
+                        const splitted = line.trim().split(' \t').filter(line => line.length != 0);
                         if(splitted.length != 3) {
                             return true;
                         }
