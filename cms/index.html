@@ -152,7 +152,9 @@
                 创建新比赛
             </button>
             <p v-else-if="bracket.isOdd">
-                此次比赛{{ bracket.matches.length < 4 ? : '人数过少' : '序首轮空' }}（偶数轮）
+                此次比赛
+                {{ bracket.matches.length < 4 ? : '人数过少（本应是' : '序首轮空（' }}
+                偶数轮）
             </p>
             <p v-else>
                 此次比赛序首不轮空（奇数轮）
