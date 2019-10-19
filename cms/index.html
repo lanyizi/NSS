@@ -124,7 +124,7 @@
                 <label for="newPlayerPosition">把新玩家添加到第</label>
                 <input id="newPlayerPosition" type="number" step="1" v-model="nextNewPlayerIndex" placeholder="默认为末尾" />
                 位&nbsp;
-                <button @click="playerAdd" :disabled="nextNewPlayer.name && nextNewPlayer.qq">
+                <button @click="playerAdd" :disabled="!nextNewPlayer.name || !nextNewPlayer.qq">
                     {{ nextNewPlayerIndex instanceof Number ? '添加' : '添加至末尾' }}
                 </button>
                 <br />
