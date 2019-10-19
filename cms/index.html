@@ -435,12 +435,13 @@
                 isMassUploadBufferInvalid() {
                     const splitted = this.massUploadBuffer.split('\n').filter(line => line.length != 0);
                     return splitted.length == 0 || splitted.some(line => {
-                        const splitted = line.trim().split(' \t').filter(line => line.length != 0);
-                        if(splitted.length != 3) {
+                        const columns = line.trim().split(' \t').filter(column => column.length != 0);
+                        if(columns.length != 3) {
                             console.log('lenno3');
+                            console.log(columns);
                             return true;
                         }
-                        if(isNaN(parseInt(splitted[1])) || isNaN(parseInt(splitted[2]))) {
+                        if(isNaN(parseInt(columns[1])) || isNaN(parseInt(columns[2]))) {
                             console.log('12nonum')
                             return true;
                         }
