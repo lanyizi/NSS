@@ -133,7 +133,7 @@
                 <input id="newPlayerPosition" type="number" step="1" v-model="nextNewPlayerIndex" placeholder="默认为末尾" />
                 位&nbsp;
                 <button @click="playerAdd" :disabled="!nextNewPlayer.name || !nextNewPlayer.qq">
-                    {{ nextNewPlayerIndex instanceof Number ? '添加' : '添加至末尾' }}
+                    {{ nextNewPlayerIndex != null ? '添加' : '添加至末尾' }}
                 </button>
                 <br />
                 <br />
@@ -322,7 +322,7 @@
                     const newPlayerIndex = this.nextNewPlayerIndex;
                     this.nextNewPlayer = this.playerTemplate();
                     this.nextNewPlayerIndex = null;
-                    if(newPlayerIndex instanceof Number) {
+                    if(newPlayerIndex != null) {
                         const max = this.tournament.players.length;
                         const clamped = Math.max(Math.min(Math.round(newPlayerIndex), max), 0);
                         this.tournament.players.splice(clamped, 0, newPlayer);
