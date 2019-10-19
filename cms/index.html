@@ -150,7 +150,7 @@
 
         <!-- Bracket -->
         <div id="bracket" class="inline-block">
-            <button @click="newTournament">
+            <button v-if="isAdmin" @click="newTournament">
                 创建新比赛
             </button>
             <p v-if="bracket.isOdd">
