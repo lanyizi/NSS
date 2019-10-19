@@ -151,7 +151,7 @@
             <button @click="newTournament">
                 创建新比赛
             </button>
-            <p v-else-if="bracket.isOdd">
+            <p v-if="bracket.isOdd">
                 此次比赛
                 {{ bracket.matches.length < 4 ? : '人数过少（本应是' : '序首轮空（' }}
                 偶数轮）
