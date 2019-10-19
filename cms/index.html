@@ -67,7 +67,7 @@
             <!-- Player -->
             <li v-for="player in tournament.players" :key="player.name">
                 <!-- Player name-->
-                <div class="player-info inline-block" :class="{ checked-in: player.checkedIn }">
+                <div class="player-info inline-block" :class="{ 'checked-in': player.checkedIn }">
                     <ul>
                         <li>
                             名称：{{ player.name }}
