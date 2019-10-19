@@ -13,6 +13,9 @@
         ul li {
             display: block;
         }
+        li .inline-block {
+            vertical-align: middle;
+        }
         .inline-block {
             display: inline-block;
         }
@@ -20,13 +23,17 @@
             position: relative;
         }
         #playerList {
+            vertical-align: top;
             width: 50%;
+        }
+        .player-info {
+            margin: 5px;
         }
         .checked-in {
             background: lightgreen;
         }
         #bracket {
-            position: absolute;
+            vertical-align: top;
             width: 40%;
         }
         .match {
@@ -60,7 +67,7 @@
             <!-- Player -->
             <li v-for="player in tournament.players" :key="player.name">
                 <!-- Player name-->
-                <div :class="player.checkedIn ? ['checked-in', 'inline-block'] : ['inline-block']">
+                <div class="player-info inline-block" :class="{ checked-in: player.checkedIn }">
                     <ul>
                         <li>
                             名称：{{ player.name }}
