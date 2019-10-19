@@ -76,7 +76,7 @@
                             </div>
                             <div v-else class="inline-block">
                                 {{ player.score }}
-                                <button @click="player.editingScore = true">
+                                <button v-if="isAdmin" @click="player.editingScore = true">
                                     修改
                                 </button>
                             </div>
