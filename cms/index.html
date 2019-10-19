@@ -10,6 +10,9 @@
         ul {
             list-style: none;
         }
+        li {
+            display: block;
+        }
         #app {
             position: relative;
         }
@@ -61,15 +64,16 @@
                 <div :class="player.checkedIn ? ['checked-in', 'player-name'] : ['player-name']">
                     <ul>
                         <li>
-                            {{ player.name }}
+                            名称：{{ player.name }}
                         </li>
                         <li>
-                            {{ player.qq }}
+                            QQ：{{ player.qq }}
                         </li>
                         <li>
+                            积分：
                             <div v-if="player.editingScore">
                                 <input type="number" step="1" v-model="player.score" />
-                                <button @click="updateTournament">
+                                <button @click="player.editingScore = false; updateTournament">
                                     保存
                                 </button>
                             </div>
