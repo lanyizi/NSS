@@ -13,23 +13,20 @@
         li {
             display: block;
         }
+        .inline-block {
+            display: inline-block;
+        }
         #app {
             position: relative;
         }
         #playerList {
             width: 50%;
-            display: inline-block;
-        }
-        .player-name,
-        .player-control {
-            display: inline-block;
         }
         .checked-in {
             background: lightgreen;
         }
         #bracket {
             width: 40%;
-            display: inline-block;
         }
         .match {
             position: relative;
@@ -57,11 +54,11 @@
         <br/>
         
         <!-- All players -->
-        <ol id="playerList">
+        <ol id="playerList" class="inline-block">
             <!-- Player -->
             <li v-for="player in tournament.players" :key="player.name">
                 <!-- Player name-->
-                <div :class="player.checkedIn ? ['checked-in', 'player-name'] : ['player-name']">
+                <div :class="player.checkedIn ? ['checked-in', 'inline-block'] : ['inline-block']">
                     <ul>
                         <li>
                             名称：{{ player.name }}
@@ -71,13 +68,13 @@
                         </li>
                         <li>
                             积分：
-                            <div v-if="player.editingScore">
+                            <div v-if="player.editingScore" class="inline-block">
                                 <input type="number" step="1" v-model="player.score" />
                                 <button @click="player.editingScore = false; updateTournament">
                                     保存
                                 </button>
                             </div>
-                            <div v-else>
+                            <div v-else class="inline-block">
                                 {{ player.score }}
                                 <button @click="player.editingScore = true">
                                     修改
@@ -85,13 +82,11 @@
                             </div>
                         </li>
                     </ul>
-
-                        
                 </div>
                 
                 
                 <!-- Admin control -->
-                <div class="player-control" v-if="isAdmin">
+                <div class="inline-block" v-if="isAdmin">
                     <table>
                         <tr>
                             <td>
@@ -152,7 +147,7 @@
         </ol>
 
         <!-- Bracket -->
-        <div id="bracket">
+        <div id="bracket" class="inline-block">
             <button @click="newTournament">
                 创建新比赛
             </button>
