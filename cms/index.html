@@ -436,7 +436,7 @@
                     const splitted = this.massUploadBuffer.split('\n').filter(line => line.length != 0);
                     return splitted.length == 0 || splitted.some(line => {
                         const splitted = line.trim().split(' \t');
-                        if(splitted.length != 4) {
+                        if(splitted.length != 3) {
                             return true;
                         }
                         if(isNaN(parseInt(splitted[1])) || isNaN(parseInt(splitted[1]))) {
