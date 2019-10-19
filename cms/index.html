@@ -153,7 +153,7 @@
             </button>
             <p v-if="bracket.isOdd">
                 此次比赛
-                {{ bracket.matches.length < 4 ? : '人数过少（本应是' : '序首轮空（' }}
+                {{ bracket.tooLessPeople ? : '人数过少（本应是' : '序首轮空（' }}
                 偶数轮）
             </p>
             <p v-else>
@@ -392,6 +392,7 @@
                     };
 
                     const checkedIn = this.tournament.players.filter(player => player.checkedIn);
+                    const numberOfPlayers = checkedIn.length;
                     const isOddFormal = (this.tournament.id % 2) == 0;
                     const isOdd = isOddFormal && (checkedIn.length > 2);
                     const firstExtraPlayer = isOdd ? checkedIn.shift() : null;
@@ -432,6 +433,7 @@
 
                     return {
                         isOdd: isOdd,
+                        tooLessPeople: numberOfPlayers < 5,
                         matches: matches
                     };
                 },
