@@ -70,7 +70,7 @@
                             积分：
                             <div v-if="player.editingScore" class="inline-block">
                                 <input type="number" step="1" v-model="player.score" />
-                                <button @click="player.editingScore = false; updateTournament">
+                                <button @click="player.editingScore = false; updateTournament()">
                                     保存
                                 </button>
                             </div>
