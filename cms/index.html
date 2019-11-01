@@ -7,6 +7,11 @@
 </head>
 <body>
     <style>
+        body {
+            background: darkslategrey url('background.jpg') cover no-repeat top;
+            font-family: 'Microsoft YaHei', sans-serif;
+            color: white;
+        }
         ul {
             list-style: none;
         }
@@ -18,6 +23,13 @@
         }
         .inline-block {
             display: inline-block;
+        }
+        .dark-block {
+            padding: 10px;
+            background: #00000040;
+        }
+        .is-admin-green {
+            color: green;
         }
         #app {
             position: relative;
@@ -54,8 +66,8 @@
         }
     </style>
     <div id="app">
-        <div v-if="!isAdmin">
-            <label for="tokenInput">
+        <div class="dark-block">
+            <label :class="{ 'is-admin-green': isAdmin }" for="tokenInput">
                 神秘代码
             </label>
             <input id="tokenInput" type="text" v-model="token" />
@@ -63,7 +75,7 @@
         <br/>
         
         <!-- All players -->
-        <ol id="playerList" class="inline-block">
+        <ol id="playerList" class="inline-block dark-block">
             <!-- Player -->
             <li v-for="player in tournament.players" :key="player.name">
                 <!-- Player name-->
@@ -77,7 +89,7 @@
                         </li>
                         <li>
                             积分：
-                            <div v-if="player.editingScore" class="inline-block">
+                            <div v-if="isAdmin || player.editingScore" class="inline-block">
                                 <input type="number" step="1" v-model="player.score" />
                                 <button @click="player.editingScore = false; updateTournament()">
                                     保存
@@ -156,7 +168,7 @@
         </ol>
 
         <!-- Bracket -->
-        <div id="bracket" class="inline-block">
+        <div id="bracket" class="inline-block dark-block">
             <button v-if="isAdmin" @click="newTournament">
                 创建新比赛
             </button>
