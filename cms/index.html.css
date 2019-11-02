@@ -3,69 +3,88 @@
     font-family: 'Microsoft YaHei', sans-serif;
     color: white;
 }
+
 body {
-    background: url('background-fadeout.png'), darkslategrey;
+    background: url('background-fadeout.png'), #30303030;
     background-size: 100% auto;
     background-repeat: no-repeat;
     background-position: top;
 }
+
 ul {
     list-style: none;
+    padding-left: initial;
 }
+
+ol li {
+    margin-left: 2em;
+}
+
 ul li {
     display: block;
 }
+
 li .inline-block {
     vertical-align: middle;
 }
+
 .inline-block {
     display: inline-block;
 }
 
 .dark-block {
-    background: #00000080;
+    background: #000000A0;
     padding: 10px;
 }
 
 input,
 button {
-    background: #00000080;
-    border: lightgray;
+    background: #000000A0;
+    border: 1px solid lightgray;
 }
 
 button:hover {
-    background: #30303080;
-    border: white;
+    background: #202020A0;
+    border: 1px solid white;
 }
 
 button:active {
-    background: #000000A0;
+    background: #000000C0;
+    border: 1px solid white;
+}
+
+#app {
+    position: relative;
 }
 
 .is-admin-green {
     color: green;
 }
-#app {
-    position: relative;
-}
+
 #playerList {
     vertical-align: top;
-    width: 50%;
+    width: 40%;
+    margin-right: 50%;
 }
+
 .player-info {
     margin: 5px;
 }
+
 .checked-in {
     background: lightgreen;
 }
+
 #bracket {
     vertical-align: top;
     width: 40%;
 }
+
 .match {
     position: relative;
     margin: 15px;
 }
+
 .player {
     width: 200px;
     height: 30px;
@@ -73,6 +92,7 @@ button:active {
     text-align: center;
     background: lightgray;
 }
+
 .player.second-round {
     position: absolute;
     left: 220px;
