@@ -5,7 +5,7 @@
 }
 
 body {
-    background: url('background-fadeout.png'), #30303030;
+    background: url('background-fadeout.png'), #303030;
     background-size: 100% auto;
     background-repeat: no-repeat;
     background-position: top;
@@ -64,7 +64,7 @@ button:active {
 #playerList {
     vertical-align: top;
     width: 40%;
-    margin-right: 50%;
+    margin-right: 10%;
 }
 
 .player-info {
