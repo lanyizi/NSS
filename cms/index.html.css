@@ -3,13 +3,7 @@
     font-family: 'Microsoft YaHei', sans-serif;
     color: white;
 }
-body::before {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1000;
+body {
     background: url('background-fadeout.png'), darkslategrey;
     background-size: 100% auto;
     background-repeat: no-repeat;
