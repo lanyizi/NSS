@@ -53,6 +53,10 @@ button:active {
     border: 1px solid white;
 }
 
+.short-input {
+    width: 5em;
+}
+
 #app {
     position: relative;
 }
