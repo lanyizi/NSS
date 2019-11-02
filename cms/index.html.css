@@ -72,7 +72,7 @@ button:active {
 }
 
 .checked-in {
-    background: lightgreen;
+    background: #008000A0;
 }
 
 #bracket {
@@ -90,7 +90,7 @@ button:active {
     height: 30px;
     margin: 5px;
     text-align: center;
-    background: lightgray;
+    background: darkslategrey;
 }
 
 .player.second-round {
