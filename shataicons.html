@@ -2,20 +2,28 @@
     <head>
     </head>
     <body>
+<input oninput="update(this.value);" type="text" value="3,7,15,30,38" />
+<br/>
 <script>
-const url = 'http://shatabrick.com/cco/ra3/images/IconsLarge/';
+const url = '//shatabrick.com/cco/ra3/images/IconsLarge/';
 const maxLevel = 87;
-function addImage(prefix) {
-    for(let i = 0; i <= maxLevel; ++i) {
+function addImage(prefix, filter) {
+    for(const i of filter) {
+        if(i.trim().length === 0) {
+            continue;
+        }
         let img = '<img src="';
-        img += (url + prefix + i + '.png');
+        img += (url + prefix + i.trim() + '.png');
         img += '"/>';
         document.body.innerHTML += img;
     }
 }
-addImage('GDI');
-addImage('NOD');
-addImage('jap');
+
+function update(text) {
+    addImage('GDI', text.split(','));
+    addImage('NOD', text.split(','));
+    addImage('jap', text.split(','));
+}
 </script>
     </body>
 </html>
