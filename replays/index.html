@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/http-vue-loader/src/httpVueLoader.min.js"></script>
+        <script src="https://unpkg.com/@johmun/vue-tags-input/dist/vue-tags-input.js"></script>
+        <style>
+            .right {
+                float: right;
+            }
+            .inline-block {
+                display: inline-block;
+            }
+            .replay-container {
+                border-top: 1px solid gray;
+                border-bottom: 1px solid gray;
+            }
+            .short-input {
+                width: 3em;
+            }
+            .high-input-as-tag-input {
+                padding: 8px 9px;
+                border: 1px solid gray;
+                vertical-align: bottom;
+            }
+            .replay-item-compact {
+                border-bottom: 1px solid gray;
+                max-width: 1280px;
+            }
+            textarea {
+                width: 500px;
+                height: 100px;
+            }
+            .upload-status-error {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <vue-tags-input
+                class="inline-block"
+                placeholder="过滤录像类型"
+                v-model="filterTag"
+                :tags="complexFilterTags"
+                :autocomplete-items="availableComplexFilterTags"
+                @tags-changed="newTags => { complexFilterTags = newTags; loadReplays(); }"
+                :add-only-from-autocomplete="true"
+                :autocomplete-min-length="0"
+            >
+            </vue-tags-input>
+            <select id="sortMethod" class="inline-block high-input-as-tag-input" v-model="selectedOrder" @change="loadReplays">
+                <option disabled value="">
+                    排序方式
+                </option>
+                <option v-for="option in orderOptions" :value="option.value">
+                    {{ option.text }}
+                </option>
+            </select>
+            <a href="#upload" class="right">上传录像</a>
+            <div class="replay-container">
+                <label for="replaysPerPage">每页显示</label>
+                <input id="replaysPerPage" class="short-input" type="number" v-model="clampedReplaysPerPage" />
+                <label for="replaysPerPage">个录像</label>
+                &nbsp;
+                <label for="currentPage">转到第</label>
+                <input id="currentPage" class="short-input" type="number" v-model="clampedOneBasedCurrentPage"/>
+                <label for="currentPage">页</label>
+                
+                <div v-for="replay in currentPageReplays" :key="replay.id">
+                    <replay-item :replay-id="replay.id" 
+                        faction-icon-format="/replays/ra3images/v1/factions/*.png"
+                        map-image-format="/replays/ra3images/v1/maps/*_art.png"
+                        default-map-image-path="/replays/ra3images/v1/factions/7.png"
+                    >
+                    </replay-item>
+                </div>
+            </div>
+            
+            <div id="upload">
+                <h2>上传录像</h2>
+                <input class="high-input-as-tag-input" type="text" v-model="title" placeholder="标题" />
+                <vue-tags-input
+                    class="inline-block"
+                    placeholder="上传录像类型"
+                    v-model="uploadTag"
+                    :tags="complexUploadTags"
+                    :autocomplete-items="availableComplexFilterTags"
+                    :autocomplete-min-length="0"
+                    @tags-changed="newTags => complexUploadTags = newTags"
+                >
+                </vue-tags-input>
+                <br/>
+                <textarea v-model="description" placeholder="录像说明">
+                </textarea><br/>
+                <label for="upload">选择录像文件：</label>
+                <input type="file" id="upload" ref="upload" />
+                <button @click="uploadReplay">上传录像</button>
+                <p :class="uploadStatusClasses">{{ uploadStatus }}</p>
+            </div>
+            
+        </div>
+        <script>
+            const app = new Vue({
+                el: '#app',
+                components: {
+                    'replay-item': httpVueLoader('replay-compact.vue'),
+                },
+                data() {
+                    return {
+                        title: '',
+                        description: '',
+                        uploadStatus: '',
+                        uploadStatusClasses: [],
+                        replayList: [],
+                        filterTag: '',
+                        orderTag: '',
+                        uploadTag: '',
+                        complexFilterTags: [],
+                        complexOrderTags: [],
+                        complexUploadTags: [],
+                        availableComplexFilterTags: [],
+                        selectedOrder: '',
+                        currentPage: 0,
+                        replaysPerPage: 10,
+                        orderOptions: [
+                            { text: '上传时间降序', value: { column: 'id', order: 'DESC' } },
+                            { text: '上传时间升序', value: { column: 'id', order: 'ASC' } },
+                            { text: '录像日期降序', value: { column: 'timeStamp', order: 'DESC' } },
+                            { text: '录像日期升序', value: { column: 'timeStamp', order: 'ASC' } },
+                            { text: '录像时长降序', value: { column: 'totalFrames', order: 'DESC' } },
+                            { text: '录像时长升序', value: { column: 'totalFrames', order: 'ASC' } },
+                            { text: '文件大小降序', value: { column: 'fileSize', order: 'DESC' } },
+                            { text: '文件大小升序', value: { column: 'fileSize', order: 'ASC' } },
+                        ],
+                        requiredTags: ['1v1', '3v3', 'CMS', '其他']
+                    };
+                },
+                mounted() {
+                    setInterval(this.loadReplays, 10000);
+                    this.loadReplays();
+                },
+                methods: {
+                    processComplexTags(complexTags) {
+                        return complexTags
+                        .filter(tag => tag.tiClasses.includes('ti-valid'))
+                        .map(tag => tag.text);
+                    },
+                    loadReplays() {
+                        const filters = JSON.stringify(this.processComplexTags(this.complexFilterTags));
+                        const orders = JSON.stringify([this.selectedOrder])
+                        fetch('/replays/replay.php?do=getReplayList&tags=' + filters + '&orders=' + orders)
+                        .then(response => response.json())
+                        .then(json => { this.replayList = json.replays || []; });
+
+                        fetch('/replays/replay.php?do=getTagList')
+                        .then(response => response.json())
+                        .then(json => {
+                            const result = json.tags
+                            .map(x => x.tag)
+                            .concat(this.requiredTags)
+                            .map(x => { return { text: x }; });
+                            this.availableComplexFilterTags = result;
+                        })
+                    },
+                    setUploadStatus(text) {
+                        this.uploadStatus = text;
+                        this.uploadStatusClasses = [];
+                    },
+                    setUploadError(text) {
+                        this.uploadStatus = text;
+                        this.uploadStatusClasses = ['upload-status-error'];
+                    },
+                    uploadReplayBytes(fileName, uint8Array) {
+                        this.setUploadStatus('正在准备...');
+                        let binaryString = '';
+                        const bytes = uint8Array;
+                        const length = bytes.byteLength;
+                        for (var i = 0; i < length; ++i) {
+                            binaryString += String.fromCharCode(bytes[i]);
+                        }
+                        const base64 = btoa(binaryString);
+                        this.setUploadStatus('正在上传...');
+
+                        fetch('/replays/replay.php?do=uploadReplay', {
+                            method: 'post',
+                            body: JSON.stringify({
+                                fileName: fileName,
+                                data: base64,
+                                title: this.title,
+                                description: this.description,
+                                tags: uploadTags
+                            }),
+                            headers: {
+                                'content-type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(json => { 
+                            this.setUploadStatus('处理结果：' + JSON.stringify(json));
+                            this.loadReplays();
+                        })
+                        .catch(reason => {
+                            this.setUploadError('失败：' + reason);
+                        })
+                    },
+                    uploadReplay() {
+                        try {
+                            const uploadTags = this.processComplexTags(this.complexUploadTags);
+                            if(uploadTags.every(tag => !this.requiredTags.includes(tag))) {
+                                throw '请选择一个必选的标签（' + this.requiredTags.join('，') + '）';
+                            }
+                            const files = this.$refs.upload.files;
+                            this.setUploadStatus('正在读取...');
+                            if(files.length == 0) {
+                                throw '没有选择录像文件';
+                            }
+                            const file = files.item(0);
+                            const reader = new FileReader();
+                            reader.onloadend = () => this.uploadReplayBytes(file.name, new Uint8Array(reader.result));
+                            reader.readAsArrayBuffer(file);
+                        }
+                        catch(e) {
+                            const head = (typeof(e) === 'string') ? '' : '错误：'
+                            this.setUploadError(head + e);
+                        }
+                    },
+                },
+                computed: {
+                    currentPageReplays() {
+                        const begin = this.currentPage * this.replaysPerPage;
+                        return this.replayList.slice(begin, begin + this.replaysPerPage);
+                    },
+                    clampedOneBasedCurrentPage: {
+                        get() { 
+                            return this.currentPage + 1;
+                        },
+                        set(value) {
+                            const maxPage = Math.ceil(this.replayList.length / this.replaysPerPage);
+                            this.currentPage = Math.min(Math.max(value - 1, 0), maxPage);
+                        }
+                    },
+                    clampedReplaysPerPage: {
+                        get() {
+                            return this.replaysPerPage;
+                        },
+                        set(value) {
+                            this.replaysPerPage = Math.max(value, 1);
+                        }
+                    }
+                },
+            });
+        </script>
+    </body>
+        
+</html>
