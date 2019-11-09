@@ -35,6 +35,9 @@
             .upload-status-error {
                 color: red;
             }
+            .margin-right-1-em {
+                margin-right: 1em;
+            }
         </style>
     </head>
     <body>
@@ -50,7 +53,7 @@
                 :autocomplete-min-length="0"
             >
             </vue-tags-input>
-            <select id="sortMethod" class="inline-block high-input-as-tag-input" v-model="selectedOrder" @change="loadReplays">
+            <select id="sortMethod" class="inline-block high-input-as-tag-input margin-right-1-em" v-model="selectedOrder" @change="loadReplays">
                 <option disabled value="">
                     排序方式
                 </option>
@@ -58,7 +61,8 @@
                     {{ option.text }}
                 </option>
             </select>
-            <a href="#upload" class="right">上传录像</a>
+            <a href="#upload" class="margin-right-1-em">上传录像</a>
+            <a href="/nss/cms" class="margin-right-1-em">CMS比赛页面</a>
             <div class="replay-container">
                 <label for="replaysPerPage">每页显示</label>
                 <input id="replaysPerPage" class="short-input" type="number" v-model="clampedReplaysPerPage" />
