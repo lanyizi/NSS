@@ -172,7 +172,7 @@
                         this.uploadStatus = text;
                         this.uploadStatusClasses = ['upload-status-error'];
                     },
-                    uploadReplayBytes(fileName, uint8Array) {
+                    uploadReplayBytes(fileName, tags, uint8Array) {
                         this.setUploadStatus('正在准备...');
                         let binaryString = '';
                         const bytes = uint8Array;
@@ -190,7 +190,7 @@
                                 data: base64,
                                 title: this.title,
                                 description: this.description,
-                                tags: uploadTags
+                                tags: tags
                             }),
                             headers: {
                                 'content-type': 'application/json'
@@ -218,7 +218,7 @@
                             }
                             const file = files.item(0);
                             const reader = new FileReader();
-                            reader.onloadend = () => this.uploadReplayBytes(file.name, new Uint8Array(reader.result));
+                            reader.onloadend = () => this.uploadReplayBytes(file.name, uploadTags, new Uint8Array(reader.result));
                             reader.readAsArrayBuffer(file);
                         }
                         catch(e) {
