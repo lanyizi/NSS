@@ -146,7 +146,7 @@
                     this.loadReplays();
                     const questionIndex = window.location.href.indexOf('?');
                     if(questionIndex != -1) {
-                        const queryString = window.location.href.substr(questionIndex);
+                        const queryString = window.location.href.substr(questionIndex + 1);
                         const defaultTag = queryString.split('&').filter(x => x.startsWith('defaultTag='));
                         if(defaultTag.length > 0) {
                             this.complexUploadTags = [ { text: defaultTag[0].split('=')[1] } ];
