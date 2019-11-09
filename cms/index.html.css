@@ -95,7 +95,6 @@ button:active {
     margin: 5px;
     text-align: center;
     background: darkslategrey;
-    vertical-align: middle;
 }
 
 .player.second-round {
