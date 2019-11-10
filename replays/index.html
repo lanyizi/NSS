@@ -267,7 +267,7 @@
                         },
                         set(value) {
                             const maxPage = Math.ceil(this.replayList.length / this.replaysPerPage);
-                            this.currentPage = Math.min(Math.max(value - 1, 0), maxPage);
+                            this.currentPage = Math.min(Math.max(value - 1, 0), maxPage - 1);
                         }
                     },
                     clampedReplaysPerPage: {
