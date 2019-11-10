@@ -67,9 +67,10 @@ button:active {
 
 #playerList {
     vertical-align: top;
-    width: 40%;
+    /*width: 40%;*/
     margin-right: 10%;
 }
+
 
 .player-info {
     margin: 5px;
@@ -101,4 +102,46 @@ button:active {
     position: absolute;
     left: 220px;
     top: 12.5px;
+}
+
+/* ------------ 分页 --------------*/
+.pagination {
+    list-style-type: none;
+    display: flex;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.page-item {
+    font-weight: 400;
+}
+
+.page-link {
+    text-decoration: none;
+    display: block;
+    line-height: 1.25;
+    padding: 7px 9px;
+}
+
+.page-link:hover {
+    border: 1px solid gainsboro;
+}
+
+.page-item.disabled .page-link {
+    color: gray;
+    pointer-events: none;
+    cursor: auto;
+    border-color: gray;
+}
+
+.page-item.active .page-link {
+    color: white;
+    background-color: gray;
+    border: 1px solid gainsboro;
 }
