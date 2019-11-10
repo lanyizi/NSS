@@ -53,6 +53,17 @@
                 :autocomplete-min-length="0"
             >
             </vue-tags-input>
+            <vue-tags-input
+                class="inline-block"
+                placeholder="剔除录像类型"
+                v-model="filterNoTag"
+                :tags="complexFilterNoTags"
+                :autocomplete-items="availableComplexFilterTags"
+                @tags-changed="newTags => { complexFilterNoTags = newTags; loadReplays(); }"
+                :add-only-from-autocomplete="true"
+                :autocomplete-min-length="0"
+            >
+            </vue-tags-input>
             <select id="sortMethod" class="inline-block high-input-as-tag-input margin-right-1-em" v-model="selectedOrder" @change="loadReplays">
                 <option disabled value="">
                     排序方式
@@ -71,7 +82,8 @@
                 <label for="currentPage">转到第</label>
                 <input id="currentPage" class="short-input" type="number" v-model="clampedOneBasedCurrentPage"/>
                 <label for="currentPage">页</label>
-                
+                <button @click="clampedOneBasedCurrentPage -= 1">上一页</button>
+                <button @click="clampedOneBasedCurrentPage += 1">下一页</button>
                 <div v-for="replay in currentPageReplays" :key="replay.id">
                     <replay-item :replay-id="replay.id" 
                         faction-icon-format="/replays/ra3images/v1/factions/*.png"
@@ -119,9 +131,11 @@
                         uploadStatusClasses: [],
                         replayList: [],
                         filterTag: '',
+                        filterNoTag: '',
                         orderTag: '',
                         uploadTag: '',
                         complexFilterTags: [],
+                        complexFilterNoTags: [],
                         complexOrderTags: [],
                         complexUploadTags: [],
                         availableComplexFilterTags: [],
@@ -137,6 +151,8 @@
                             { text: '录像时长升序', value: { column: 'totalFrames', order: 'ASC' } },
                             { text: '文件大小降序', value: { column: 'fileSize', order: 'DESC' } },
                             { text: '文件大小升序', value: { column: 'fileSize', order: 'ASC' } },
+                            { text: '下载数量降序', value: { column: 'downloads', order: 'DESC' } },
+                            { text: '下载数量升序', value: { column: 'downloads', order: 'ASC' } },
                         ],
                         requiredTags: ['1v1', '3v3', 'CMS', '其他']
                     };
@@ -161,8 +177,9 @@
                     },
                     loadReplays() {
                         const filters = JSON.stringify(this.processComplexTags(this.complexFilterTags));
+                        const noTags = JSON.stringify(this.processComplexTags(this.complexFilterNoTags));
                         const orders = JSON.stringify([this.selectedOrder])
-                        fetch('/replays/replay.php?do=getReplayList&tags=' + filters + '&orders=' + orders)
+                        fetch('/replays/replay.php?do=getReplayList&tags=' + filters + '&notags=' + noTags + '&orders=' + orders)
                         .then(response => response.json())
                         .then(json => { this.replayList = json.replays || []; });
 
