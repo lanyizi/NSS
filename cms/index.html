@@ -24,95 +24,129 @@
         <br/>
         
         <!-- All players -->
-        <ol id="playerList" class="inline-block dark-block">
-            <!-- Player -->
-            <li v-for="player in tournament.players" :key="player.name">
-                <!-- Player name-->
-                <div class="player-info inline-block" :class="{ 'checked-in': player.checkedIn }">
-                    <ul>
-                        <li>
-                            名称：{{ player.name }}
-                        </li>
-                        <li>
-                            QQ：{{ player.qq }}
-                        </li>
-                        <li>
-                            积分：
-                            <div v-if="isAdmin || player.editingScore" class="inline-block">
-                                <input class="short-input" type="number" step="1" v-model="player.score" />
-                                <button @click="player.editingScore = false; updateTournament()">
-                                    保存
-                                </button>
-                            </div>
-                            <div v-else class="inline-block">
-                                {{ player.score }}
-                                <button v-if="isAdmin" @click="player.editingScore = true">
-                                    修改
-                                </button>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Admin control -->
-                <div class="inline-block" v-if="isAdmin">
-                    <table>
-                        <tr>
-                            <td>
-                                <button @click="playerOffset(player, -1)">
-                                    上移
-                                </button>
-                            </td>
-                            <td>
-                                <button @click="playerToggleCheckIn(player)">
-                                    {{ player.checkedIn ? '取消检录' : '检录' }} 
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button @click="playerOffset(player, 1)">
-                                    下移
-                                </button>
-                            </td>
-                            <td>
-                                <button @click="playerDelete(player)">
-                                    删除
-                                </button>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </li>
-            <li v-if="isAdmin">
-                <input type="text" v-model="nextNewPlayer.name" placeholder="玩家名称" />
-                <input type="text" v-model="nextNewPlayer.qq" placeholder="玩家QQ" />
-                <input type="number" step="1" v-model="nextNewPlayer.score" placeholder="玩家积分" />
-                <br/>
-                <label for="newPlayerPosition">把新玩家添加到第</label>
-                <input id="newPlayerPosition" type="number" step="1" v-model="nextNewPlayerIndex" placeholder="默认为末尾" />
-                位&nbsp;
-                <button @click="playerAdd" :disabled="!nextNewPlayer.name || !nextNewPlayer.qq">
-                    {{ nextNewPlayerIndex != null ? '添加' : '添加至末尾' }}
-                </button>
-                <br />
-                <br />
-                <button v-if="!enableMassUpload" @click="enableMassUpload = true">
-                    批量导入（添加至末尾）
-                </button>
-                <div v-else>
-                    格式：玩家名称 QQ 积分
-                    <br />
-                    每行一个
-                    <textarea v-model="massUploadBuffer"></textarea>
-                    <p v-if="isMassUploadBufferInvalid">
-                        没有内容或者格式不正确
-                    </p>
-                    <button :disabled="isMassUploadBufferInvalid" @click="massUpload">
-                        上传
+        <div class="dark-block inline-block" style="width: 40%">
+            <!-- 玩家列表 -->
+            <ol id="playerList" class="">
+                <!-- Player -->
+                <li v-for="(player, index) in pageInfo.list" :key="player.name">
+                    <!-- Player name-->
+                    <div class="player-info inline-block" :class="{ 'checked-in': player.checkedIn }">
+                        <ul>
+                            <li>
+                                序号：{{pageInfo.startRow + index + 1}}
+                            </li>
+                            <li>
+                                名称：{{ player.name }}
+                            </li>
+                            <li>
+                                QQ：{{ player.qq }}
+                            </li>
+                            <li>
+                                积分：
+                                <div v-if="isAdmin || player.editingScore" class="inline-block">
+                                    <input class="short-input" type="number" step="1" v-model="player.score" />
+                                    <button @click="player.editingScore = false; updateTournament()">
+                                        保存
+                                    </button>
+                                </div>
+                                <div v-else class="inline-block">
+                                    {{ player.score }}
+                                    <button v-if="isAdmin" @click="player.editingScore = true">
+                                        修改
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Admin control -->
+                    <div class="inline-block" v-if="isAdmin">
+                        <table>
+                            <tr>
+                                <td>
+                                    <button @click="playerOffset(player, -1)">
+                                        上移
+                                    </button>
+                                </td>
+                                <td>
+                                    <button @click="playerToggleCheckIn(player)">
+                                        {{ player.checkedIn ? '取消检录' : '检录' }}
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button @click="playerOffset(player, 1)">
+                                        下移
+                                    </button>
+                                </td>
+                                <td>
+                                    <button @click="playerDelete(player)">
+                                        删除
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </li>
+                <li v-if="isAdmin">
+                    <input type="text" v-model="nextNewPlayer.name" placeholder="玩家名称" />
+                    <input type="text" v-model="nextNewPlayer.qq" placeholder="玩家QQ" />
+                    <input type="number" step="1" v-model="nextNewPlayer.score" placeholder="玩家积分" />
+                    <br/>
+                    <label for="newPlayerPosition">把新玩家添加到第</label>
+                    <input id="newPlayerPosition" type="number" step="1" v-model="nextNewPlayerIndex" placeholder="默认为末尾" />
+                    位&nbsp;
+                    <button @click="playerAdd" :disabled="!nextNewPlayer.name || !nextNewPlayer.qq">
+                        {{ nextNewPlayerIndex != null ? '添加' : '添加至末尾' }}
                     </button>
-                </div>
-            </li>
-        </ol>
+                    <br />
+                    <br />
+                    <button v-if="!enableMassUpload" @click="enableMassUpload = true">
+                        批量导入（添加至末尾）
+                    </button>
+                    <div v-else>
+                        格式：玩家名称 QQ 积分
+                        <br />
+                        每行一个
+                        <textarea v-model="massUploadBuffer"></textarea>
+                        <p v-if="isMassUploadBufferInvalid">
+                            没有内容或者格式不正确
+                        </p>
+                        <button :disabled="isMassUploadBufferInvalid" @click="massUpload">
+                            上传
+                        </button>
+                    </div>
+                </li>
+            </ol>
+            <!-- 分页 -->
+            <nav v-if="pageInfo.pages > 1">
+                <ul class="pagination justify-content-center">
+                    <!-- 上一页 -->
+                    <li class="page-item" :class="{disabled: !pageInfo.hasPreviousPage}">
+                        <a class="page-link" href="javascript:(0)" @click="currentPage = pageInfo.pageNum-1">
+                            <span>&laquo;</span>
+                        </a>
+                    </li>
+                    <!-- 前面有页数被省略 -->
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:(0)" v-show="pageInfo.navigateFirstPage > 1">...</a>
+                    </li>
+                    <li class="page-item" v-for="(navigatepageNum) in pageInfo.navigatepageNums" :class="{active: navigatepageNum == pageInfo.pageNum}">
+                        <a class="page-link" href="javascript:(0)" @click="currentPage =  navigatepageNum">{{navigatepageNum}}</a>
+                    </li>
+                    <!-- 后面有页数被省略 -->
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:(0)" v-show="pageInfo.navigateLastPage < pageInfo.pages">...</a>
+                    </li>
+                    <!-- 下一页 -->
+                    <li class="page-item" :class="{disabled: !pageInfo.hasNextPage}" @click="currentPage = pageInfo.pageNum+1">
+                        <a class="page-link" href="javascript:(0)" >
+                            <span>&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
         <!-- Bracket -->
         <div id="bracket" class="inline-block dark-block">
@@ -139,6 +173,7 @@
             </ul>
         </div>
     </div>
+
     <script src="index.html.js"></script>
 </body>
 </html>
