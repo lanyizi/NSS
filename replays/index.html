@@ -285,8 +285,6 @@
                         },
                         set(value) { 
                             this.$router.push({ query: { tournamentMode: value } });
-                            this.replayList = [];
-                            this.loadReplays();
                         },
                     },
                     availableComplexFilterTags() {
@@ -314,6 +312,12 @@
                         set(value) {
                             this.replaysPerPage = Math.max(value, 1);
                         }
+                    }
+                },
+                watch: {
+                    $route(from, to) {
+                        this.replayList = [];
+                        this.loadReplays();
                     }
                 },
             });
