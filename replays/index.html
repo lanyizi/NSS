@@ -3,8 +3,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/http-vue-loader/src/httpVueLoader.min.js"></script>
-        <script src="https://unpkg.com/@johmun/vue-tags-input/dist/vue-tags-input.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@johmun/vue-tags-input@2.1.0/dist/vue-tags-input.min.js"></script>
         <style>
             .right {
                 float: right;
@@ -42,13 +43,16 @@
     </head>
     <body>
         <div id="app">
+            <h1>
+                {{ tournamentMode ? "比赛录像" : "所有录像" }}
+            </h1>
             <vue-tags-input
                 class="inline-block"
                 placeholder="过滤录像类型"
-                v-model="filterTag"
-                :tags="complexFilterTags"
+                v-model="includeTag"
+                :tags="complexIncludeTags"
                 :autocomplete-items="availableComplexFilterTags"
-                @tags-changed="newTags => { complexFilterTags = newTags; loadReplays(); }"
+                @tags-changed="newTags => { complexIncludeTags = newTags; loadReplays(); }"
                 :add-only-from-autocomplete="true"
                 :autocomplete-min-length="0"
             >
@@ -56,10 +60,10 @@
             <vue-tags-input
                 class="inline-block"
                 placeholder="剔除录像类型"
-                v-model="filterNoTag"
-                :tags="complexFilterNoTags"
+                v-model="excludeTag"
+                :tags="complexExcludeTags"
                 :autocomplete-items="availableComplexFilterTags"
-                @tags-changed="newTags => { complexFilterNoTags = newTags; loadReplays(); }"
+                @tags-changed="newTags => { complexExcludeTags = newTags; loadReplays(); }"
                 :add-only-from-autocomplete="true"
                 :autocomplete-min-length="0"
             >
@@ -72,13 +76,18 @@
                     {{ option.text }}
                 </option>
             </select>
+            <router-link 
+                :to="{ query: { tournamentMode: !tournamentMode } }"
+                class="margin-right-1-em"
+            >
+                {{ tournamentMode ? "显示所有录像" : "仅显示比赛录像" }}
+            </router-link>
             <a href="#upload" class="margin-right-1-em">上传录像</a>
             <a href="/nss/cms" class="margin-right-1-em">CMS比赛页面</a>
             <div class="replay-container">
                 <label for="replaysPerPage">每页显示</label>
                 <input id="replaysPerPage" class="short-input" type="number" v-model="clampedReplaysPerPage" />
-                <label for="replaysPerPage">个录像</label>
-                &nbsp;
+                <label for="replaysPerPage" class="margin-right-1-em">个录像</label>
                 <label for="currentPage">转到第</label>
                 <input id="currentPage" class="short-input" type="number" v-model="clampedOneBasedCurrentPage"/>
                 <label for="currentPage">页</label>
@@ -102,7 +111,7 @@
                     placeholder="上传录像类型"
                     v-model="uploadTag"
                     :tags="complexUploadTags"
-                    :autocomplete-items="availableComplexFilterTags"
+                    :autocomplete-items="availableComplexUploadTags"
                     :autocomplete-min-length="0"
                     @tags-changed="newTags => complexUploadTags = newTags"
                 >
@@ -118,8 +127,13 @@
             
         </div>
         <script>
+            const router = new VueRouter({
+                routes: [{ path: '' }]    
+            });
+
             const app = new Vue({
                 el: '#app',
+                router,
                 components: {
                     'replay-item': httpVueLoader('/replays/replay-compact.vue'),
                 },
@@ -130,15 +144,15 @@
                         uploadStatus: '',
                         uploadStatusClasses: [],
                         replayList: [],
-                        filterTag: '',
-                        filterNoTag: '',
+                        includeTag: '',
+                        excludeTag: '',
                         orderTag: '',
                         uploadTag: '',
-                        complexFilterTags: [],
-                        complexFilterNoTags: [],
+                        complexIncludeTags: [],
+                        complexExcludeTags: [],
                         complexOrderTags: [],
                         complexUploadTags: [],
-                        availableComplexFilterTags: [],
+                        availableComplexUploadTags: [],
                         selectedOrder: '',
                         currentPage: 0,
                         replaysPerPage: 10,
@@ -154,44 +168,52 @@
                             { text: '下载数量降序', value: { column: 'downloads', order: 'DESC' } },
                             { text: '下载数量升序', value: { column: 'downloads', order: 'ASC' } },
                         ],
-                        requiredTags: ['1v1', '3v3', 'CMS', '其他']
+                        requiredTags: ['1v1', '3v3', 'CMS', '其他'],
+                        tournamentTags: ['CMS'],
                     };
                 },
                 mounted() {
                     setInterval(this.loadReplays, 10000);
                     this.loadReplays();
-                    const questionIndex = window.location.href.indexOf('?');
-                    if(questionIndex != -1) {
-                        const queryString = window.location.href.substr(questionIndex + 1);
-                        const defaultTag = queryString.split('&').filter(x => x.startsWith('defaultTag='));
-                        if(defaultTag.length > 0) {
-                            this.complexUploadTags = [ { text: defaultTag[0].split('=')[1] } ];
-                        }
-                    }
                 },
                 methods: {
                     processComplexTags(complexTags) {
-                        return complexTags
-                        .filter(tag => tag.tiClasses.includes('ti-valid'))
-                        .map(tag => tag.text);
+                        const processed = complexTags
+                            .filter(tag => tag.tiClasses.includes('ti-valid'))
+                            .map(tag => tag.text)
+                            .map(x => {
+                                return x || 
+                                    this.availableComplexUploadTags
+                                        .find(y => x.toLowercase() == y.toLowercase());
+                            });
+                        return this.uniqueArray(processed);
+                    },
+                    uniqueArray(array) {
+                        return array.filter((x, i) => array.findIndex((y, j) => x.toLowercase() == y.toLowercase()));
                     },
                     loadReplays() {
-                        const filters = JSON.stringify(this.processComplexTags(this.complexFilterTags));
-                        const noTags = JSON.stringify(this.processComplexTags(this.complexFilterNoTags));
+                        const originalIncludes = this.processComplexTags(this.complexIncludeTags);
+                        const needDefaultTournamentTags = (this.tournamentMode && originalIncludes.length == 0);
+                        const includes = JSON.stringify(needDefaultTournamentTags ? originalIncludes : this.tournamentTags);
+                        const excludes = JSON.stringify(this.processComplexTags(this.complexExcludeTags));
+
                         const orders = JSON.stringify([this.selectedOrder])
-                        fetch('/replays/replay.php?do=getReplayList&tags=' + filters + '&notags=' + noTags + '&orders=' + orders)
-                        .then(response => response.json())
-                        .then(json => { this.replayList = json.replays || []; });
+                        fetch('/replays/replay.php?do=getReplayList&tags=' + includes + '&notags=' + excludes + '&orders=' + orders)
+                            .then(response => response.json())
+                            .then(json => { this.replayList = json.replays || []; });
 
                         fetch('/replays/replay.php?do=getTagList')
-                        .then(response => response.json())
-                        .then(json => {
-                            const result = json.tags
-                            .map(x => x.tag)
-                            .concat(this.requiredTags)
-                            .map(x => { return { text: x }; });
-                            this.availableComplexFilterTags = result;
-                        })
+                            .then(response => response.json())
+                            .then(json => {
+                                const normalTags = (json.tags || [])
+                                    .map(x => x.tag)
+                                    .concat(this.requiredTags);
+
+                                const result = this.uniqueArray(normalTags)
+                                    .map(x => { return { text: x }; });
+
+                                this.availableComplexUploadTags = result;
+                            });
                     },
                     setUploadStatus(text) {
                         this.uploadStatus = text;
@@ -225,14 +247,14 @@
                                 'content-type': 'application/json'
                             }
                         })
-                        .then(response => response.json())
-                        .then(json => { 
-                            this.setUploadStatus('处理结果：' + JSON.stringify(json));
-                            this.loadReplays();
-                        })
-                        .catch(reason => {
-                            this.setUploadError('失败：' + reason);
-                        })
+                            .then(response => response.json())
+                            .then(json => { 
+                                this.setUploadStatus('处理结果：' + json.message);
+                                this.loadReplays();
+                            })
+                            .catch(reason => {
+                                this.setUploadError('失败：' + reason);
+                            })
                     },
                     uploadReplay() {
                         try {
@@ -257,6 +279,15 @@
                     },
                 },
                 computed: {
+                    tournamentMode: {
+                        get() { return this.$route.query.tournamentMode; },
+                        set(value) { this.$router.push({ query: { tournamentMode: value } }); },
+                    },
+                    availableComplexFilterTags() {
+                        return this.tournamentMode ? 
+                            this.tournamentTags.map(x => { return { text: x }; }) : 
+                            this.availableComplexUploadTags;
+                    },
                     currentPageReplays() {
                         const begin = this.currentPage * this.replaysPerPage;
                         return this.replayList.slice(begin, begin + this.replaysPerPage);
