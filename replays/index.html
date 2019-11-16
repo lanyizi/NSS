@@ -280,12 +280,10 @@
                 computed: {
                     tournamentMode: {
                         get() { 
-                            const value = this.$route.query.tournamentMode.toString();
+                            const value = (this.$route.query.tournamentMode || false).toString();
                             return value === 'true' || value === 'on' || value === '1';
                         },
-                        set(value) { 
-                            this.$router.push({ query: { tournamentMode: value } });
-                        },
+                        set(value) { this.$router.push({ query: { tournamentMode: value } }); },
                     },
                     availableComplexFilterTags() {
                         return this.tournamentMode ? 
