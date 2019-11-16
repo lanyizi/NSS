@@ -182,14 +182,13 @@
                             .filter(tag => tag.tiClasses.includes('ti-valid'))
                             .map(tag => tag.text)
                             .map(x => {
-                                return x || 
-                                    this.availableComplexUploadTags
-                                        .find(y => x.toLowercase() == y.toLowercase());
+                                return this.availableComplexUploadTags
+                                    .find(y => x.toLowerCase() == y.toLowerCase()) || x;
                             });
                         return this.uniqueArray(processed);
                     },
                     uniqueArray(array) {
-                        return array.filter((x, i) => array.findIndex((y, j) => x.toLowercase() == y.toLowercase()));
+                        return array.filter((x, i) => i == array.findIndex((y, j) => x.toLowerCase() == y.toLowerCase()));
                     },
                     loadReplays() {
                         const originalIncludes = this.processComplexTags(this.complexIncludeTags);
