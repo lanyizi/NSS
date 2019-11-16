@@ -279,7 +279,10 @@
                 },
                 computed: {
                     tournamentMode: {
-                        get() { return this.$route.query.tournamentMode; },
+                        get() { 
+                            const value = this.$route.query.tournamentMode.toString();
+                            return value === 'true' || value === 'on' || value === '1';
+                        },
                         set(value) { 
                             this.$router.push({ query: { tournamentMode: value } });
                             this.replayList = [];
