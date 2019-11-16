@@ -183,7 +183,7 @@
                             .map(tag => tag.text)
                             .map(x => {
                                 return this.availableComplexUploadTags
-                                    .find(y => x.toLowerCase() == y.toLowerCase()) || x;
+                                    .find(y => x.toLowerCase() == y.text.toLowerCase()) || x;
                             });
                         return this.uniqueArray(processed);
                     },
