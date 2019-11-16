@@ -280,7 +280,11 @@
                 computed: {
                     tournamentMode: {
                         get() { return this.$route.query.tournamentMode; },
-                        set(value) { this.$router.push({ query: { tournamentMode: value } }); },
+                        set(value) { 
+                            this.$router.push({ query: { tournamentMode: value } });
+                            this.replayList = [];
+                            this.loadReplays();
+                        },
                     },
                     availableComplexFilterTags() {
                         return this.tournamentMode ? 
