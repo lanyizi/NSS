@@ -190,6 +190,22 @@ const app = new Vue({
                 alert('错误：' + reason);
                 this.getTournament();
             });
+        },
+        getRankIcon(points, index) {
+            const icons = [
+                { points: 60, id: 84 },
+                { points: 45, id: 48 },
+                { points: 30, id: 33 },
+                { points: 20, id: 12 },
+                { points: 10, id: 5 },
+            ];
+            const defaultValue = { id: 1 };
+            const special = 87;
+            if (points >= 60 && index == 0) {
+                return special;
+            }
+
+            return (icons.find(x => points >= x.points) || defaultValue).id;
         }
     },
     computed: {

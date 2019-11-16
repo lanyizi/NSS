@@ -26,15 +26,15 @@
         <!-- All players -->
         <div class="dark-block inline-block" style="width: 40%">
             <!-- 玩家列表 -->
-            <ol id="playerList" class="">
+            <ol id="playerList" :start="pageInfo.startRow + 1">
                 <!-- Player -->
                 <li v-for="(player, index) in pageInfo.list" :key="player.name">
+                    <div class="rank-icon-container inline-block">
+                        <img class="rank-icon" :src="'rankicons/NOD' + getRankIcon(player.score, index) + '.png'" />
+                    </div>
                     <!-- Player name-->
                     <div class="player-info inline-block" :class="{ 'checked-in': player.checkedIn }">
-                        <ul>
-                            <li>
-                                序号：{{pageInfo.startRow + index + 1}}
-                            </li>
+                        <ul >
                             <li>
                                 名称：{{ player.name }}
                             </li>

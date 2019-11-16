@@ -1,29 +1,39 @@
 <html>
     <head>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     </head>
     <body>
-<input oninput="update(this.value);" type="text" value="3,7,15,30,38" />
+        <div id="app">
+            <input type="text" v-model="ids" />
+            <img v-for="i in ids" :src="url + 'GDI' + i + '.png'"/>
+            <img v-for="i in ids" :src="url + 'NOD' + i + '.png'"/>
+            <img v-for="i in ids" :src="url + 'jap' + i + '.png'"/>
+        </div>
+
 <br/>
 <script>
-const url = '//shatabrick.com/cco/ra3/images/IconsLarge/';
-const maxLevel = 87;
-function addImage(prefix, filter) {
-    for(const i of filter) {
-        if(i.trim().length === 0) {
-            continue;
+    const app = new Vue({
+        el: '#app',
+        data: {
+            url: 'http://shatabrick.com/cco/ra3/images/IconsLarge/',
+            iids: [],
+        },
+        computed: {
+            ids: {
+                get() {
+                    return this.iids.length == 0 ?
+                        new Array(88).fill(0).map((x, i) => i) :
+                        this.iids;
+                },
+                set(value) {
+                    this.iids = value.split(',')
+                        .map(x => x.trim())
+                        .filter(x => x.length > 0)
+                        .map(x => parseInt(x)) || [];
+                }
+            }
         }
-        let img = '<img src="';
-        img += (url + prefix + i.trim() + '.png');
-        img += '"/>';
-        document.body.innerHTML += img;
-    }
-}
-
-function update(text) {
-    addImage('GDI', text.split(','));
-    addImage('NOD', text.split(','));
-    addImage('jap', text.split(','));
-}
+    });
 </script>
     </body>
 </html>
