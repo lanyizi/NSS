@@ -193,7 +193,7 @@
                     loadReplays() {
                         const originalIncludes = this.processComplexTags(this.complexIncludeTags);
                         const needDefaultTournamentTags = (this.tournamentMode && originalIncludes.length == 0);
-                        const includes = JSON.stringify(needDefaultTournamentTags ? originalIncludes : this.tournamentTags);
+                        const includes = JSON.stringify(needDefaultTournamentTags ? this.tournamentTags : originalIncludes);
                         const excludes = JSON.stringify(this.processComplexTags(this.complexExcludeTags));
 
                         const orders = JSON.stringify([this.selectedOrder])
