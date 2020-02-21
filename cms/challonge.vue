@@ -5,7 +5,7 @@
                 <td>比赛链接</td>
                 <td>
                     <input type="text" v-if="isAdmin" v-model="lastTournament.link" />
-                    <a v-else :src="lastTournament.link" >{{ lastTournament.link }}</a>
+                    <a v-else :href="lastTournament.link" >{{ lastTournament.link }}</a>
                 </td>
             </tr>
             <tr v-if="isAdmin">
@@ -115,5 +115,16 @@ module.exports = {
 .challonge-container {
     vertical-align: top;
     width: 40%;
+}
+
+.challonge-container a {
+    color: inherit;
+}
+.challonge-container a:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+.challonge-container a:visited {
+    color: inherit;
 }
 </style>
