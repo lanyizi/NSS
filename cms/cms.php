@@ -57,6 +57,20 @@ class CMS {
                 'NOT NULL'
             ]
         ]);
+        $this->database->create('challonge-links', [
+            'link' => [
+                'TEXT',
+                'NOT NULL'
+            ], 
+            'description' => [
+                'TEXT',
+                'NOT NULL'
+            ],
+            'timeStamp' => [
+                'BIGINT',
+                'NOT NULL'
+            ]
+        ]);
         $this->database->create('tournaments', [
             'id' => [
                 'INT',
@@ -109,6 +123,40 @@ class CMS {
     public function checkToken() {
         return [
             'verified' => $this->verified
+        ];
+    }
+
+    public function setChallongeLink() {
+        if(!$this->verified) {
+            return [
+                'succeeded' => false,
+                'message' => 'Token unverified'
+            ];
+        }
+
+        $this->database->insert('challonge-links', [
+            'link' => $this->input['link'],
+            'description' => $this->input['description'],
+            'timeStamp' => time()
+        ]);
+
+        return [
+            'succeeded' => true,
+            'message' => 'Operation succeeded'
+        ];
+    }
+
+    public function getChallongeLink() {
+        $challonge = $this->database->get('challonge-links', [
+            'link',
+            'description',
+            'timeStamp'
+        ], [
+            'ORDER' => [ 'timeStamp' => 'DESC' ]
+        ]);
+
+        return [
+            'challonge' => $challonge
         ];
     }
 
