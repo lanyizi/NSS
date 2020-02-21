@@ -62,6 +62,10 @@ class CMS {
                 'TEXT',
                 'NOT NULL'
             ], 
+            'additionalParameters' => [
+                'TEXT',
+                'NOT NULL'
+            ],
             'description' => [
                 'TEXT',
                 'NOT NULL'
@@ -136,6 +140,7 @@ class CMS {
 
         $this->database->insert('challonge-links', [
             'link' => $this->input['link'],
+            'additionalParameters' => $this->input['additionalParameters'],
             'description' => $this->input['description'],
             'timeStamp' => time()
         ]);
@@ -149,6 +154,7 @@ class CMS {
     public function getChallongeLink() {
         $challonge = $this->database->get('challonge-links', [
             'link',
+            'additionalParameters',
             'description',
             'timeStamp'
         ], [
