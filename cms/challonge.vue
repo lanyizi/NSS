@@ -31,7 +31,15 @@
             </tr>
         </table>
         <br />
-        <iframe :src="challongeIframeLink" width="100%" height="500" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
+        <iframe v-if="lastTournament && lastTournament.link" 
+            :src="challongeIframeLink" 
+            width="100%" 
+            height="500" 
+            frameborder="0" 
+            scrolling="auto" 
+            allowtransparency="true"    
+        ></iframe>
+        <div v-else>没有比赛</div>
     </div>
 </template>
 
