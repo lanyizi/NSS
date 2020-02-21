@@ -57,7 +57,7 @@ class CMS {
                 'NOT NULL'
             ]
         ]);
-        $this->database->create('challonge-links', [
+        $this->database->create('challonge_links', [
             'link' => [
                 'TEXT',
                 'NOT NULL'
@@ -138,7 +138,7 @@ class CMS {
             ];
         }
 
-        $this->database->insert('challonge-links', [
+        $this->database->insert('challonge_links', [
             'link' => $this->input['link'],
             'additionalParameters' => $this->input['additionalParameters'],
             'description' => $this->input['description'],
@@ -152,7 +152,7 @@ class CMS {
     }
 
     public function getChallongeLink() {
-        $challonge = $this->database->get('challonge-links', [
+        $challonge = $this->database->get('challonge_links', [
             'link',
             'additionalParameters',
             'description',
