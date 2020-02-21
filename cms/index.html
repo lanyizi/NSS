@@ -149,7 +149,7 @@
         </div>
 
         <!-- Bracket -->
-        <div id="bracket" class="inline-block dark-block">
+        <div v-if="false" id="bracket" class="inline-block dark-block">
             <button v-if="isAdmin" @click="newTournament">
                 创建新比赛
             </button>
@@ -172,6 +172,7 @@
                 </li>
             </ul>
         </div>
+        <challonge v-else></challonge>
     </div>
 
     <script src="index.html.js?v=4"></script>

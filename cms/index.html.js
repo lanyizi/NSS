@@ -1,5 +1,8 @@
 const app = new Vue({
     el: "#app",
+    components: {
+        challonge: httpVueLoader('challonge.vue')
+    },
     data() {
         return {
             currentToken: null,
