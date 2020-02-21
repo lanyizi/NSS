@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="challonge-container">
         <table>
             <tr>
                 <td>比赛链接</td>
@@ -25,7 +25,9 @@
                 <td>{{ lastTournamentDate }}</td>
             </tr>
             <tr v-if="isAdmin">
-                <button @click="setChallonge">修改比赛</button>
+                <td>
+                    <button @click="setChallonge">修改比赛</button>
+                </td>
             </tr>
         </table>
         <br />
