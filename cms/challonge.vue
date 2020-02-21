@@ -52,7 +52,7 @@ module.exports = {
     computed: {
         /** @returns {Date} */
         lastTournamentDate: function() {
-            return new Date(lastTournament.timeStamp * 1000);
+            return new Date(this.lastTournament.timeStamp * 1000);
         },
         /** @returns {string} */
         challongeIframeLink: function() {
