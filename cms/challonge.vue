@@ -107,6 +107,7 @@ module.exports = {
 .challonge-container {
     display: inline-block;
     vertical-align: top;
+    background: rgba(0, 0, 0, 0.75);
 }
 
 </style>
