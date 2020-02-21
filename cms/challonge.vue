@@ -103,6 +103,10 @@ module.exports = {
 }
 </script>
 
-<style src="challonge.css">
+<style scoped>
+.challonge-container {
+    display: inline-block;
+    vertical-align: top;
+}
 
 </style>
