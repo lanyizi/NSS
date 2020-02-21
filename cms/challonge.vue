@@ -34,7 +34,7 @@
         <iframe v-if="lastTournament && lastTournament.link" 
             :src="challongeIframeLink" 
             width="100%" 
-            height="500" 
+            height="650" 
             frameborder="0" 
             scrolling="auto" 
             allowtransparency="true"    
@@ -113,9 +113,7 @@ module.exports = {
 
 <style scoped>
 .challonge-container {
-    display: inline-block;
     vertical-align: top;
-    background: rgba(0, 0, 0, 0.75);
+    width: 40%;
 }
-
 </style>
