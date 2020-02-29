@@ -196,11 +196,11 @@ const app = new Vue({
         },
         getRankIcon(points, index) {
             const icons = [
-                { points: 60, id: 84 },
-                { points: 45, id: 48 },
-                { points: 30, id: 33 },
-                { points: 20, id: 12 },
-                { points: 10, id: 5 },
+                { points: 12, id: 84 },
+                { points: 10, id: 48 },
+                { points: 8, id: 33 },
+                { points: 5, id: 12 },
+                { points: 3, id: 5 },
             ];
             const defaultValue = { id: 1 };
             const special = 87;
