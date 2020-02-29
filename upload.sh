@@ -5,13 +5,13 @@ if [ $? -ne 0 ]; then
 fi
 response_code=$(
     curl -s -o output.txt -w '%{http_code}' \
-    -X POST "https://lanyi.altervista.org/webhook.php?from=travis&repo=BSG-75%2FNSS" \
-    --user generic:$UPLOAD_SECRET \
+    --user generic:$UPLOAD_SECRET "https://lanyi.altervista.org/webhook.php?from=travis&repo=BSG-75%2FNSS" \
+    -X POST \
     -H "Content-Type: application/octet-stream" \
     --data-binary "@./latest.zip"
 )
-echo
 cat output.txt
+echo
 if [[ $response_code -ne 200 ]]; then
     echo "curl upload failed"
     exit 1
