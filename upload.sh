@@ -10,6 +10,7 @@ response_code=$(
     -H "Content-Type: application/octet-stream" \
     --data-binary "@./latest.zip"
 )
+echo
 cat output.txt
 if [[ $response_code -ne 200 ]]; then
     echo "curl upload failed"
