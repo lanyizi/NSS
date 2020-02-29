@@ -4,10 +4,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 response_code=$(
-    curl -s -o output.txt -w '%{http_code}'
+    curl -s -o output.txt -w '%{http_code}' \
     -X POST "https://lanyi.altervista.org/webhook.php?from=travis&repo=BSG-75%2FNSS" \
-    --user generic:$UPLOAD_SECRET
-    -H "Content-Type: application/octet-stream"
+    --user generic:$UPLOAD_SECRET \
+    -H "Content-Type: application/octet-stream" \
     --data-binary "@./latest.zip"
 )
 cat output.txt
