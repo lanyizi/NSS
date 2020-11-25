@@ -183,9 +183,7 @@ class CMS {
             'players',
             'creationDate',
             'lastModifiedDate'
-        ], [
-            'ORDER' => [ 'id' => 'DESC' ]
-        ]);
+        ], $where);
 
         if(is_array($tournament) && is_string($tournament['players'])) {
             $tournament['players'] = json_decode($tournament['players'], true);
