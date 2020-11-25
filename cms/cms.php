@@ -174,8 +174,8 @@ class CMS {
         $where = [
             'ORDER' => [ 'id' => 'DESC' ]
         ];
-        if (is_number($this->input['id'])) {
-            $where['id'] = $this->input['id'];
+        if (!empty($_GET['id'])) {
+            $where['id'] = $_GET['id'];
         }
         $tournament = $this->database->get('tournaments', [
             'id',
