@@ -221,7 +221,8 @@ class CMS {
         
         $this->database->insert('tournaments', [
             'status' => 'registering',
-            'players' => json_encode($previousPlayers),
+            //'players' => json_encode($previousPlayers),
+            'players' => json_encode([]),
             'creationDate' => time(),
             'lastModifiedDate' => time()
         ]);
