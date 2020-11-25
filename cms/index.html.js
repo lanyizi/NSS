@@ -24,6 +24,7 @@ const app = new Vue({
             massUploadBuffer: '',
             limit: 10,
             currentPage: 1,
+            selectedTournamentId: ''
         }
     },
     mounted() {
@@ -75,14 +76,22 @@ const app = new Vue({
             })
         },
         getTournament() {
-            fetch('cms.php?do=getLastTournament')
+            let url = 'cms.php?do=getLastTournament';
+            const id = parseInt(this.selectedTournamentId);
+            if (id > 0) {
+                url = url + '&id=' + id;
+            }
+            fetch(url)
             .then(response => response.json())
             .then(result => {
-                if(!result) {
+                if (!result) {
                     this.tournament = this.tournamentTemplate();
                     return;
                 }
                 this.tournament = result.tournament || this.tournamentTemplate();
+                if (this.tournament.id > 0) {
+                    this.selectedTournamentId = this.tournament.id.toString();
+                }
             });
         },
         updateTournament() {
@@ -187,6 +196,7 @@ const app = new Vue({
                 else {
                     alert('操作失败：' + result.message);
                 }
+                this.selectedTournamentId = null;
                 this.getTournament();
             })
             .catch(reason => {
