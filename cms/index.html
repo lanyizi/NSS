@@ -27,7 +27,10 @@
         <div class="dark-block inline-block" style="width: 40%">
             <label>
                 序列 ID
-                <input type="number" placeholder="序列 ID" v-model="selectedTournamentId" />
+                <input type="number" 
+                       placeholder="序列 ID" 
+                       v-model="selectedTournamentId" 
+                       @input="getTournament" />
             </label>
             <button v-if="isAdmin" @click="newTournament">
                 创建新序列
