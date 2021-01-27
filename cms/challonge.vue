@@ -1,7 +1,7 @@
 <template>
     <div class="challonge-container">
         <table>
-            <tr v-if="isAdmin && lastTournament.link">
+            <tr v-if="isAdmin || lastTournament.link">
                 <td>比赛链接</td>
                 <td>
                     <input type="text" v-if="isAdmin" v-model="lastTournament.link" />
@@ -17,7 +17,7 @@
             <tr>
                 <td>比赛说明</td>
                 <td>
-                    <div :contenteditable="isAdmin" @input="e => lastTournament.description = e.target.innerText">{{ lastTournament.description }}</div>
+                    <div style="white-space: pre-wrap" :contenteditable="isAdmin" @input="e => lastTournament.description = e.target.innerText">{{ lastTournament.description }}</div>
                 </td>
             </tr>
             <tr>
