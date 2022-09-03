@@ -81,7 +81,7 @@ const app = new Vue({
             if (id > 0) {
                 url = url + '&id=' + id;
             }
-            fetch(url)
+            return fetch(url)
             .then(response => response.json())
             .then(result => {
                 if (!result) {
@@ -183,7 +183,7 @@ const app = new Vue({
             this.updateTournament();
         },
         newTournament() {
-            fetch('cms.php?do=newTournament', {
+            return fetch('cms.php?do=newTournament', {
                 method: 'post',
                 body: JSON.stringify({ token: this.token }),
                 headers: { 'Content-Type': 'application/json' }
@@ -203,6 +203,15 @@ const app = new Vue({
                 alert('错误：' + reason);
                 this.getTournament();
             });
+        },
+        newTournamentFromCurrent() {
+            const players = this.tournament.players.map(p => { ...p, score: 0 });
+            this.newTournament()
+            .then(() => this.getTournament())
+            .then(() => {
+                this.tournament.players = players;
+                this.updateTournament();
+            })
         },
         getRankIcon(points, index) {
             const icons = [
