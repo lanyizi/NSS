@@ -205,7 +205,7 @@ const app = new Vue({
             });
         },
         newTournamentFromCurrent() {
-            const players = this.tournament.players.map(p => { score: 0, ...p });
+            const players = this.tournament.players.map(p => ({ ...p, score: 0 }));
             this.newTournament()
             .then(() => this.getTournament())
             .then(() => {
