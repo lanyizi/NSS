@@ -35,6 +35,9 @@
             <button v-if="isAdmin" @click="newTournament">
                 创建新序列
             </button>
+            <button v-if="isAdmin" @click="newTournamentFromLast">
+                从上一次的序列创建新序列
+            </button>
             <br />
             <!-- 玩家列表 -->
             <ol id="playerList" :start="pageInfo.startRow + 1">
